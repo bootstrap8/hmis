@@ -1,0 +1,1 @@
+insert into hbq_route_config(route_id,uri,predicates,filters,route_order) values('first_route','https://baidu.com','[{"name": "Query","args": {"_genkey_0":"wd"}}]','[]',0);

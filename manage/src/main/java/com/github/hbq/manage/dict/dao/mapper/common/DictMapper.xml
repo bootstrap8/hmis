@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.manage.dict.dao.DictDao">
+  <insert id="saveDict" parameterType="com.github.hbq.common.dict.DictInfo">
+    insert into hbq_dic_info(field_name, field_desc, enum_type)
+    values (#{fieldName}, #{fieldDesc}, #{enumType})
+  </insert>
+
+  <insert id="saveDictEnumExt">
+    insert into hbq_dic_ext_kv(field_name, enum_key, enum_value)
+    values (#{fn}, #{pair.key}, #{pair.value})
+  </insert>
+
+  <insert id="saveDictSqlExt">
+    insert into hbq_dic_ext_sql(field_name, enum_sql)
+    values (#{fn}, #{sql})
+  </insert>
+
+  <delete id="deleteDict">
+    delete
+    from hbq_dic_info
+    where field_name = #{fn}
+  </delete>
+
+  <delete id="deleteDictEnumExt">
+    delete
+    from hbq_dic_ext_kv
+    where field_name = #{fn}
+  </delete>
+
+  <delete id="deleteDictSqlExt">
+    delete
+    from hbq_dic_ext_sql
+    where field_name = #{fn}
+  </delete>
+
+  <select id="queryAllDict" resultType="com.github.hbq.common.dict.DictInfo">
+    select field_name AS "fieldName",
+    field_desc AS "fieldDesc",
+    enum_type AS "enumType"
+    from hbq_dic_info
+    <where>
+      <if test="word!=null and word!=''">
+        <bind name="wordLike" value="'%' + word + '%'"/>
+        and (field_name like #{wordLike} or field_desc like #{wordLike})
+      </if>
+    </where>
+    order by field_name
+  </select>
+
+  <select id="queryDictPairs" resultType="com.github.hbq.common.dict.DictPair">
+    select enum_key   AS "key",
+           enum_value AS "value"
+    from hbq_dic_ext_kv
+    where field_name = #{fn}
+    order by enum_key
+  </select>
+
+  <select id="queryDict" resultType="com.github.hbq.common.dict.DictInfo">
+    select field_name AS "fieldName",
+           field_desc AS "fieldDesc",
+           enum_type  AS "enumType"
+    from hbq_dic_info
+    where field_name = #{fn}
+  </select>
+
+  <select id="queryDictSqlExt" resultType="com.github.hbq.common.dict.DictInfo">
+    select field_name AS "fieldName",
+           enum_sql   AS "enumSql"
+    from hbq_dic_ext_sql
+    where field_name = #{fn}
+  </select>
+</mapper>

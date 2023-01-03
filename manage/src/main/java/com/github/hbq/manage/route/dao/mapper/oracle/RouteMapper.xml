@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.manage.route.dao.RouteDao">
+  <update id="createRouteConfig">
+    create table hbq_route_config
+    (
+      route_id    varchar2(100) primary key,
+      uri         varchar2(500),
+      predicates  varchar2(1000),
+      filters     varchar2(1000),
+      route_order number(10)
+    )
+  </update>
+</mapper>

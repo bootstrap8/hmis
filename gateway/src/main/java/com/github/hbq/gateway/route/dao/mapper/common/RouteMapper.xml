@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.gateway.route.dao.RouteDao">
+  <select id="queryAllRouteConfig" resultType="com.github.hbq.gateway.route.RouteInfo">
+    select route_id    AS "id",
+           uri         AS "uri",
+           predicates  AS "predicates",
+           filters     AS "filters",
+           route_order AS "order"
+    from hbq_route_config
+    order by route_id
+  </select>
+</mapper>
