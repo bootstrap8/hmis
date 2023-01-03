@@ -50,32 +50,6 @@ public Result<?> foo(@ApiParam(required = true, defaultValue = "v1.0")
 
 
 
-## RESTful接口限流
-
-### 使用说明
-
-```java
-@QPS(size = 30, unit = TimeUnit.MINUTES)
-@Version("v1.0")
-@RequestMapping(path = "/foo/{v}", method = RequestMethod.GET)
-@ResponseBody
-public Result<?> foo(@ApiParam(required = true, defaultValue = "v1.0") 
-                  @PathVariable String v) {
-    return Result.suc(...);
-    
-}
-```
-
-
-
-### 启用配置
-
-```properties
-common.restful.qps.enable=true
-```
-
-
-
 ## 分布式锁使用
 
 ### 启用配置
