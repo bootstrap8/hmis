@@ -6,11 +6,10 @@ import lombok.Data;
  * @author hbq
  */
 @Data
-public class Offset
-{
+public class Offset {
 
-    private long beginLongValue;
-    private long endLongValue;
-    private int beginIntValue;
-    private int endIntValue;
+  private long beginLongValue;
+  private long endLongValue;
+  private int beginIntValue;
+  private int endIntValue;
 }

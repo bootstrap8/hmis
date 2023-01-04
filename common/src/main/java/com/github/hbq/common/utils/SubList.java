@@ -7,9 +7,8 @@ import lombok.Data;
  * @author hbq
  */
 @Data
-public class SubList<T>
-{
+public class SubList<T> {
 
-    private Offset offset;
-    private List<T> list;
+  private Offset offset;
+  private List<T> list;
 }
