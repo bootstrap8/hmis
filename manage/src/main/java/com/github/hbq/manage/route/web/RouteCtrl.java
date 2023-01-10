@@ -1,16 +1,25 @@
 package com.github.hbq.manage.route.web;
 
+import com.alibaba.fastjson.JSON;
 import com.github.hbq.common.spring.boot.ctrl.Result;
 import com.github.hbq.common.spring.boot.ctrl.Version;
+import com.github.hbq.common.utils.ResourceUtils;
+import com.github.hbq.manage.route.pojo.RouteConfig;
 import com.github.hbq.manage.route.pojo.RouteInfo;
 import com.github.hbq.manage.route.serv.RouteService;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +34,33 @@ import org.springframework.web.bind.annotation.RestController;
  * @author hbq
  */
 @RestController("hbq-manage-web-RouteCtrl")
-@RequestMapping(path = "/manage/route")
+@RequestMapping(path = "/route")
 @Api(description = "路由管理")
 @Slf4j
 public class RouteCtrl {
 
   @Autowired
   private RouteService service;
+
+  @ApiOperation("获取路由选项列表")
+  @Version("v1.0")
+  @RequestMapping(path = "/queryRouteOptions/{v}", method = RequestMethod.GET)
+  @ResponseBody
+  public Result<?> queryRouteOptions(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v) {
+    log.info("获取路由选项列表");
+    try (InputStream in = ResourceUtils.read("/", "route-options.json", null)) {
+      String str = IOUtils.toString(in, "utf-8");
+      List<Map> options = JSON.parseArray(str, Map.class);
+      return Result.suc(options);
+    } catch (Exception e) {
+      log.error("获取路由选项列表异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("获取路由选项列表异常");
+    }
+  }
 
   @ApiOperation("分页查询路由信息")
   @Version("v1.0")
@@ -44,10 +73,12 @@ public class RouteCtrl {
       @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
     log.info("分页查询路由信息");
     try {
-      PageHelper.startPage(pageNum, pageSize);
-      List<RouteInfo> routes = service.queryAllRouteConfig(pageNum, pageSize);
-      PageInfo<RouteInfo> pageInfo = new PageInfo<>(routes);
-      log.debug("{}", routes);
+      Page page = PageHelper.startPage(pageNum, pageSize);
+      List<RouteConfig> routes = service.queryAllRouteConfig(pageNum, pageSize)
+          .stream().map(r -> r.config()).collect(Collectors.toList());
+      PageInfo<RouteConfig> pageInfo = new PageInfo<>(routes);
+      pageInfo.setTotal(page.getTotal());
+      log.info("{}", pageInfo);
       return Result.suc(pageInfo);
     } catch (Exception e) {
       log.error("分页查询路由信息异常", e);

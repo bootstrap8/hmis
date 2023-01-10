@@ -1,0 +1,18 @@
+[
+  {
+    "value": "route_id",
+    "label": "路由标识"
+  },
+  {
+    "value": "uri",
+    "label": "uri"
+  },
+  {
+    "value": "predicates",
+    "label": "路由谓语"
+  },
+  {
+    "value": "filters",
+    "label": "路由过滤器"
+  }
+]

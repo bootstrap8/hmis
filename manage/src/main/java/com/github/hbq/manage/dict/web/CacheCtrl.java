@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author hbq
  */
 @RestController
-@RequestMapping(path = "/manage/cache")
+@RequestMapping(path = "/dict/cache")
 @Api(description = "缓存测试")
 @Slf4j
 public class CacheCtrl {
