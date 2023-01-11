@@ -1,9 +1,11 @@
 package com.github.hbq.manage.route.serv.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hbq.common.utils.SqlUtils;
 import com.github.hbq.manage.route.dao.RouteDao;
 import com.github.hbq.manage.route.pojo.RouteConfig;
 import com.github.hbq.manage.route.pojo.RouteInfo;
+import com.github.hbq.manage.route.pojo.TemplateInfo;
 import com.github.hbq.manage.route.serv.RouteService;
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +30,15 @@ public class RouteServiceImpl implements RouteService, InitializingBean {
   private KafkaTemplate kafka;
 
   @Autowired
+  private JdbcTemplate jt;
+
+  @Autowired
   private RouteDao dao;
 
   @Override
   public void afterPropertiesSet() throws Exception {
     createRouteConfig();
+    createRouteTemplate();
   }
 
   @Override
@@ -63,8 +70,8 @@ public class RouteServiceImpl implements RouteService, InitializingBean {
   }
 
   @Override
-  public List<RouteInfo> queryAllRouteConfig(int pageNum, int pageSize) {
-    return dao.queryAllRouteConfig(new RowBounds(pageNum, pageSize)).stream()
+  public List<RouteInfo> queryAllRouteConfig(int pageNum, int pageSize, String routeSelect, String routeKey) {
+    return dao.queryAllRouteConfig(new RowBounds(pageNum, pageSize), routeSelect, routeKey).stream()
         .map(r -> r.info()).collect(Collectors.toList());
   }
 
@@ -75,9 +82,30 @@ public class RouteServiceImpl implements RouteService, InitializingBean {
         config.info() : null;
   }
 
+  @Override
+  public void refreshRouteConfig() {
+    if (Objects.nonNull(kafka)) {
+      kafka.send("HBQ-GATEWAY-ROUTE-CHANGE", "{}");
+    }
+  }
+
+  @Override
+  public List<TemplateInfo> queryRouteTemplateInfos() {
+    return dao.queryRouteTemplateInfos();
+  }
+
   private void createRouteConfig() {
     try {
       dao.createRouteConfig();
+    } catch (Exception e) {
+    }
+  }
+
+  private void createRouteTemplate() {
+    try {
+      dao.createRouteTemplate();
+      SqlUtils.initDataSql(jt, "/", "tps.sql", null);
+      log.info("初始化模板配置数据");
     } catch (Exception e) {
     }
   }

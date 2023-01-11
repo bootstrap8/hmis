@@ -1,6 +1,7 @@
 package com.github.hbq.manage.route.serv;
 
 import com.github.hbq.manage.route.pojo.RouteInfo;
+import com.github.hbq.manage.route.pojo.TemplateInfo;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,11 @@ public interface RouteService {
 
   void deleteRouteConfig(String id);
 
-  List<RouteInfo> queryAllRouteConfig(int pageNum, int pageSize);
+  List<RouteInfo> queryAllRouteConfig(int pageNum, int pageSize, String routeSelect, String routeKey);
 
   RouteInfo queryRoute(String id);
+
+  void refreshRouteConfig();
+
+  List<TemplateInfo> queryRouteTemplateInfos();
 }

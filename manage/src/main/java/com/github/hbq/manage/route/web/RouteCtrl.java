@@ -6,6 +6,7 @@ import com.github.hbq.common.spring.boot.ctrl.Version;
 import com.github.hbq.common.utils.ResourceUtils;
 import com.github.hbq.manage.route.pojo.RouteConfig;
 import com.github.hbq.manage.route.pojo.RouteInfo;
+import com.github.hbq.manage.route.pojo.TemplateInfo;
 import com.github.hbq.manage.route.serv.RouteService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -16,7 +17,6 @@ import io.swagger.annotations.ApiParam;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -70,11 +70,14 @@ public class RouteCtrl {
       @RequestHeader(name = "userInfo", required = false) String userInfo,
       @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
       @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
-      @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-    log.info("分页查询路由信息");
+      @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+      @RequestParam(name = "routeSelect", defaultValue = "route_id") String routeSelect,
+      @RequestParam(name = "routeKey", required = false) String routeKey) {
+    log.info("分页查询路由信息, 分页:({},{}), routeSelect:{}, routeKey:{}",
+        pageNum, pageSize, routeSelect, routeKey);
     try {
       Page page = PageHelper.startPage(pageNum, pageSize);
-      List<RouteConfig> routes = service.queryAllRouteConfig(pageNum, pageSize)
+      List<RouteConfig> routes = service.queryAllRouteConfig(pageNum, pageSize, routeSelect, routeKey)
           .stream().map(r -> r.config()).collect(Collectors.toList());
       PageInfo<RouteConfig> pageInfo = new PageInfo<>(routes);
       pageInfo.setTotal(page.getTotal());
@@ -144,6 +147,43 @@ public class RouteCtrl {
       return (e instanceof RuntimeException) ?
           Result.fail(e.getMessage()) :
           Result.fail("删除路由异常");
+    }
+  }
+
+  @ApiOperation("刷新路由")
+  @Version("v1.0")
+  @RequestMapping(path = "/refresh/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<?> refresh(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v) {
+    log.info("刷新路由");
+    try {
+      service.refreshRouteConfig();
+      return Result.suc("刷新成功");
+    } catch (Exception e) {
+      log.error("刷新路由异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("刷新路由异常");
+    }
+  }
+
+  @ApiOperation("查询路由模板列表")
+  @Version("v1.0")
+  @RequestMapping(path = "/queryRouteTemplates/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<List<TemplateInfo>> queryRouteTemplates(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v) {
+    log.info("查询路由模板列表");
+    try {
+      return Result.suc(service.queryRouteTemplateInfos());
+    } catch (Exception e) {
+      log.error("查询路由模板列表异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("查询路由模板列表异常");
     }
   }
 }
