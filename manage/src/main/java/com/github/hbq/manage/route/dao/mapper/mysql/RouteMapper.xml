@@ -10,4 +10,15 @@
       `route_order` numeric(10)
       )
   </update>
+  <update id="createRouteTemplate">
+    create table `hbq_route_template`
+    (
+      `t_id`    varchar(100) primary key,
+      `name`         varchar(500),
+      `uri`         varchar(500),
+      `predicates`  varchar(1000),
+      `filters`     varchar(1000),
+      `t_order` numeric(10)
+    )
+  </update>
 </mapper>

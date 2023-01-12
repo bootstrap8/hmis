@@ -52,7 +52,6 @@
     <module>gateway</module>
     <module>event</module>
     <module>manage</module>
-    <module>manage-ui</module>
   </modules>
 
   <dependencyManagement>

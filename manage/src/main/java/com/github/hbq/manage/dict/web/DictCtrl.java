@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author hbq
  */
 @RestController("hbq-manage-dict-web-DictCtrl")
-@RequestMapping(path = "/manage/dict")
+@RequestMapping(path = "/dict")
 @Api(description = "字典管理")
 @Slf4j
 public class DictCtrl {

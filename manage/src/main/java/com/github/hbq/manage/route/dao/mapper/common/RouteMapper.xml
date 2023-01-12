@@ -13,12 +13,38 @@
   </delete>
 
   <select id="queryAllRouteConfig" resultType="com.github.hbq.manage.route.pojo.RouteConfig">
-    select route_id    AS "id",
-           uri         AS "uri",
-           predicates  AS "predicates",
-           filters     AS "filters",
-           route_order AS "order"
+    select route_id AS "id",
+    uri AS "uri",
+    predicates AS "predicates",
+    filters AS "filters",
+    route_order AS "order"
     from hbq_route_config
+    <where>
+      <if test="routeSelect!=null and routeSelect!='' and routeSelect=='route_id'">
+        <if test="routeKey!=null and routeKey!=''">
+          <bind name="routeKeyLike" value="'%' + routeKey + '%'"/>
+          and route_id like #{routeKeyLike}
+        </if>
+      </if>
+      <if test="routeSelect!=null and routeSelect!='' and routeSelect=='uri'">
+        <if test="routeKey!=null and routeKey!=''">
+          <bind name="routeKeyLike" value="'%' + routeKey + '%'"/>
+          and uri like #{routeKeyLike}
+        </if>
+      </if>
+      <if test="routeSelect!=null and routeSelect!='' and routeSelect=='predicates'">
+        <if test="routeKey!=null and routeKey!=''">
+          <bind name="routeKeyLike" value="'%' + routeKey + '%'"/>
+          and predicates like #{routeKeyLike}
+        </if>
+      </if>
+      <if test="routeSelect!=null and routeSelect!='' and routeSelect=='filters'">
+        <if test="routeKey!=null and routeKey!=''">
+          <bind name="routeKeyLike" value="'%' + routeKey + '%'"/>
+          and filters like #{routeKeyLike}
+        </if>
+      </if>
+    </where>
     order by route_id
   </select>
 
@@ -30,5 +56,16 @@
            route_order AS "order"
     from hbq_route_config
     where route_id = #{id}
+  </select>
+
+  <select id="queryRouteTemplateInfos" resultType="com.github.hbq.manage.route.pojo.TemplateInfo">
+    select t_id       AS "tid",
+           name       AS "name",
+           uri        AS "uri",
+           predicates AS "predicates",
+           filters    AS "filters",
+           t_order    AS "order"
+    from hbq_route_template
+    order by name
   </select>
 </mapper>
