@@ -38,15 +38,18 @@
     <el-table-column prop="fieldDesc" label="字段描述" :show-overflow-tooltip="true" header-align="center"/>
     <el-table-column prop="enumType" label="枚举值来源" :show-overflow-tooltip="true" header-align="center"/>
   </el-table>
-  <el-pagination
+  <el-pagination class="page"
       v-model:page-size="pg.pageSize"
       v-model:current-page="pg.pageNum"
-      layout="total, prev, pager, next"
+      layout="->, total, sizes, prev, pager, next, jumper"
       v-model:total="pg.total"
       @size-change="submitForm"
       @current-change="submitForm"
       @prev-click="submitForm"
       @next-click="submitForm"
+      :small="true"
+      :background="true"
+      :page-sizes="[5, 10, 20, 50,100]"
   />
 </template>
 

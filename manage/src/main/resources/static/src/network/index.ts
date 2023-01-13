@@ -12,7 +12,7 @@ export default (config: any) => {
       "development" == process.env.NODE_ENV ?
           // dev环境
           {
-            baseURL: 'http://localhost:20000',
+            baseURL: 'http://192.168.56.2:20000',
             timeout: 5000,
             headers: {defaultAuthentication}
           } :
