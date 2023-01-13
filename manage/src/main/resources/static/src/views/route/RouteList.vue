@@ -41,15 +41,18 @@
       <el-table-column prop="predicates" label="路由谓语" :show-overflow-tooltip="true" header-align="center"/>
       <el-table-column prop="filters" label="路由过滤器" :show-overflow-tooltip="true" header-align="center"/>
     </el-table>
-    <el-pagination
+    <el-pagination class="page"
         v-model:page-size="fq.pageSize"
         v-model:current-page="fq.pageNum"
-        layout="total, prev, pager, next"
+        layout="->, total, sizes, prev, pager, next, jumper"
         v-model:total="fq.total"
         @size-change="queryRoutes"
         @current-change="queryRoutes"
         @prev-click="queryRoutes"
         @next-click="queryRoutes"
+        :small="true"
+        :background="true"
+        :page-sizes="[5, 10, 20, 50,100]"
     />
 
   </div>
