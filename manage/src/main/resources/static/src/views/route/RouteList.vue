@@ -132,7 +132,7 @@
           params: {id: routeId}
         }).then(res => {
           if (res.data.code == 1) {
-            vAlert('操作结果', '操作成功')
+            vAlert('操作结果', '操作成功','success')
             this.queryRoutes()
           }
         }).catch(e => {
@@ -154,7 +154,7 @@
           method: 'post'
         }).then(res => {
           if (res.data.code == 1) {
-            vAlert('操作结果', '操作成功')
+            vAlert('操作结果', '操作成功','success')
           }
         }).catch(e => {
           alert('刷新失败');

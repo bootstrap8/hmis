@@ -110,7 +110,7 @@
           data: ruleForm
         }).then((res: any) => {
           if (res.data.code == 1) {
-            vAlert('操作结果', '保存成功')
+            vAlert('操作结果', '保存成功','success')
             router.push('/dict/list')
           }
         }).catch((e: Error) => {

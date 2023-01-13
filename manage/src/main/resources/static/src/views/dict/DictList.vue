@@ -127,7 +127,7 @@
       params: {fn: fn}
     }).then((res: any) => {
       if (res.data.code == 1) {
-        vAlert('操作结果', '删除成功')
+        vAlert('操作结果', '删除成功','success')
         submitForm()
       } else {
         vAlert('操作结果', res.data.body, 'error')
