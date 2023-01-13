@@ -5,7 +5,7 @@ if [[ -f "../setenv.sh" ]];then
 fi
 
 
-ProcessNo=`ps -ef|grep manage|grep -v grep|awk '{print $2}'`
+ProcessNo=`ps -ef|grep hmis-manage|grep -v grep|awk '{print $2}'`
 if [[ -n "${ProcessNo}" ]]; then
   echo -e "Find Process Info ...\n"
   echo "ProcessNo: ${ProcessNo}"
