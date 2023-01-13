@@ -2,6 +2,7 @@ package com.github.hbq.manage.dict.serv;
 
 import com.github.hbq.common.dict.DictInfo;
 import com.github.hbq.common.dict.DictPair;
+import com.github.hbq.manage.dict.pojo.DictKeyInfo;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface DictService {
 
+  @Transactional(rollbackFor = Exception.class)
   void saveDict(DictInfo dict);
 
   @Transactional(rollbackFor = Exception.class)
@@ -27,7 +29,7 @@ public interface DictService {
   @Transactional(rollbackFor = Exception.class)
   void deleteAllDictConfig(String fn);
 
-  List<DictInfo> queryAllDict(int pageNum, int pageSize, String word);
+  List<DictInfo> queryAllDict(int pageNum, int pageSize, DictKeyInfo key);
 
   DictInfo queryDictPairs(String fn);
 

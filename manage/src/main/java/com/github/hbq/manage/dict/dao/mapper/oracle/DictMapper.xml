@@ -1,4 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.github.hbq.manage.dict.dao.DictDao">
+  <update id="createDictInfo">
+    create table hbq_dic_info
+    (
+      field_name varchar2(200) primary key,
+      field_desc varchar2(500),
+      enum_type  varchar2(100)
+    )
+  </update>
+
+  <update id="createDictExtKv">
+    create table hbq_dic_ext_kv
+    (
+      field_name varchar2(200),
+      enum_key   varchar2(500),
+      enum_value varchar2(500),
+      primary key (field_name, enum_key)
+    )
+  </update>
+
+  <update id="createDictExtSql">
+    create table hbq_dic_ext_sql
+    (
+      field_name varchar2(200) primary key ,
+      enum_sql   varchar2(500)
+    )
+  </update>
 </mapper>
