@@ -2,6 +2,7 @@ package com.github.hbq.manage.dict.dao;
 
 import com.github.hbq.common.dict.DictInfo;
 import com.github.hbq.common.dict.DictPair;
+import com.github.hbq.manage.dict.pojo.DictKeyInfo;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -27,11 +28,17 @@ public interface DictDao {
 
   void deleteDictSqlExt(@Param("fn") String fn);
 
-  List<DictInfo> queryAllDict(RowBounds rb, @Param("word") String word);
+  List<DictInfo> queryAllDict(RowBounds rb, @Param("key") DictKeyInfo key);
 
   List<DictPair> queryDictPairs(@Param("fn") String fn);
 
   DictInfo queryDict(@Param("fn") String fn);
 
   DictInfo queryDictSqlExt(@Param("fn") String fn);
+
+  void createDictInfo();
+
+  void createDictExtKv();
+
+  void createDictExtSql();
 }

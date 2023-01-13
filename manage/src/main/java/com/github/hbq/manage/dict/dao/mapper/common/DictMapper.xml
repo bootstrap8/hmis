@@ -40,9 +40,17 @@
     enum_type AS "enumType"
     from hbq_dic_info
     <where>
-      <if test="word!=null and word!=''">
-        <bind name="wordLike" value="'%' + word + '%'"/>
-        and (field_name like #{wordLike} or field_desc like #{wordLike})
+      <if test="key.dictOption!=null and key.dictOption!='' and key.dictOption=='field_name'">
+        <bind name="wordLike" value="'%' + key.dictKey + '%'"/>
+        and field_name like #{wordLike}
+      </if>
+      <if test="key.dictOption!=null and key.dictOption!='' and key.dictOption=='field_desc'">
+        <bind name="wordLike" value="'%' + key.dictKey + '%'"/>
+        and field_desc like #{wordLike}
+      </if>
+      <if test="key.dictOption!=null and key.dictOption!='' and key.dictOption=='enum_type'">
+        <bind name="wordLike" value="'%' + key.dictKey + '%'"/>
+        and enum_type like #{wordLike}
       </if>
     </where>
     order by field_name

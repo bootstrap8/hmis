@@ -8,4 +8,4 @@
 -Xms512m
 -Xmx512m
 
--DAPP_SN=manage
+-DAPP_SN=hmis-manage

@@ -58,7 +58,6 @@
 <script>
   import request from '@/network'
   import {ref, reactive} from 'vue'
-  import {ElNotification} from 'element-plus'
   import {Edit} from '@element-plus/icons-vue'
   import {vAlert} from '@/utils/Utils'
   import router from '@/router/index'

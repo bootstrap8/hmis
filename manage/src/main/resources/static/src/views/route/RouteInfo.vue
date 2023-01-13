@@ -82,7 +82,7 @@
             router.push('/route/list')
           }
         }).catch((e: Error) => {
-          console.error(e);
+          vAlert('操作结果', '保存失败','error')
         })
       } else {
         console.log('error submit!', fields)

@@ -1,3 +1,62 @@
+# 工程说明
+
+主要包含以下模块：
+
+- 基础依赖包 `common`
+- 配置管理扩展包 `config`
+- `kafka`事件管理扩展包 `event`
+- 门户网关 `gateway`
+- 维护管理包 `manage`
+
+
+
+依赖组件：
+
+- 服务注册依赖`Consul`
+- kafka、zk
+- 数据库(mysql 或 oracle)
+
+
+
+各模块说明
+
+| 模块名  | 说明                                   | 功能特性                                                     |
+| :-----: | :------------------------------------- | :----------------------------------------------------------- |
+| common  | 封装了搭建微服务应用需要的一些基础代码 | 见基础模块文档                                               |
+| config  | 基于zk为配置中心的加密认证扩展包       |                                                              |
+|  event  | 封装了管理kafka消息主题处理的扩展包    | 1. 消息映射到java数据模型 <br>2.kafka事件接口的封装全部映射到自定义接口屏蔽处理细节 |
+| gateway | 基于spring cloud gateway进行扩展实现   | 1.动态路由(已实现)<br>2.灰度发布切换(已实现)<br>3.支持IPHash路由<br>4.认证鉴权封装扩展 |
+| manage  | 工程自维护管理功能                     | 1.路由管理页面(已实现)<br>2.字典管理页面(已实现)             |
+
+
+
+# 基础模块
+
+## 安装使用
+
+- 安装到本地仓库
+
+```bash
+cd common
+mvn -DskipTests=true clean install
+```
+
+
+
+- 依赖
+
+可以使用 [脚手架 h-mis-archetype](https://github.com/hbq969/h-mis-archetype) 创建工程已经包含依赖
+
+```xml
+<dependency>
+    <groupId>com.github.hbq</groupId>
+  	<artifactId>common</artifactId>
+  	<version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
+
+
 ## RESTful接口版本控制
 
 在`RestController`类中使用`@Version`标记方法
@@ -962,3 +1021,130 @@ public interface DemoDao {
 }
 ```
 
+
+
+# 门户网关
+
+## 安装使用
+
+- 打包
+
+```shell
+cd gateway
+mvn -DskipTests=true clean package
+```
+
+![image-20230113124754051](README/image/README/image-20230113124754051.png)
+
+![image-20230113124818789](README/image/README/image-20230113124818789.png)
+
+
+
+
+
+- 部署
+
+解压部署介质
+
+```shell
+tar -xvf gateway-1.0-SNAPSHOT.tar.gz
+```
+
+
+
+调整环境变量(系统级别的配置，如果需要调整应用级的配置可自行增加配置文件或指定环境变量进行覆盖)
+
+```bash
+cd gateway-1.0-SNAPSHOT/deploy
+vi setenv.sh
+```
+
+```bash
+#!/bin/sh
+# docker配置
+export docker_registry="localhost:9443"
+export docker_ns=""
+export docker_prefix="${docker_registry}${docker_ns}"
+export docker_registry_user=""
+export docker_registry_pwd=""
+# k8s配置
+export k8s_ns="default"
+export k8s_api_version="apps/v1"
+# 配置中心
+export spring_cloud_zookeeper_enabled="false"
+export spring_cloud_zookeeper_connectString="localhost:2181"
+export spring_cloud_zookeeper_auth_info="huangbq:123456"
+export spring_cloud_zookeeper_auth_secky=""
+export spring_profiles_active="dev"
+```
+
+
+
+启动应用(支持vm、docker、k8s三种部署方式)
+
+以vm启动为例
+
+```bash
+cd gateway-1.0-SNAPSHOT/bootstrap
+./start.sh
+```
+
+![image-20230113124951388](README/image/README/image-20230113124951388.png)
+
+
+
+# 维护管理模块
+
+## 安装使用
+
+- 打包
+
+```shell
+cd manage/src/main/resources/static
+npm run build
+
+cd manage
+mvn -DskipTests=true clean package
+```
+
+![image-20230113122148068](README/image/image-20230113122148068.png)
+
+
+
+- 部署
+
+同门户网关。
+
+
+
+## 维护页面
+
+### 路由管理
+
+- 路由查询
+
+![image-20230113153709574](README/image/README/image-20230113153709574.png)
+
+
+
+- 路由新增、编辑
+
+![image-20230113153748378](README/image/README/image-20230113153748378.png)
+
+
+
+### 字典管理
+
+- 字典查询
+
+![image-20230113154040475](README/image/README/image-20230113154040475.png)
+
+
+
+- 字典新增、编辑
+
+![image-20230113153848146](README/image/README/image-20230113153848146.png)
+
+
+
+![image-20230113154055870](README/image/README/image-20230113154055870.png)

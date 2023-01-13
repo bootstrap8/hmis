@@ -3,7 +3,9 @@ package com.github.hbq.manage.dict.web;
 import com.github.hbq.common.dict.DictInfo;
 import com.github.hbq.common.spring.boot.ctrl.Result;
 import com.github.hbq.common.spring.boot.ctrl.Version;
+import com.github.hbq.manage.dict.pojo.DictKeyInfo;
 import com.github.hbq.manage.dict.serv.DictService;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -34,18 +36,20 @@ public class DictCtrl {
 
   @ApiOperation("分页查询字典信息")
   @Version("v1.0")
-  @RequestMapping(path = "/queryAllDict/{v}", method = RequestMethod.GET)
+  @RequestMapping(path = "/queryAllDict/{v}", method = RequestMethod.POST)
   @ResponseBody
   public Result<?> queryAllDict(
       @RequestHeader(name = "userInfo", required = false) String userInfo,
       @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
       @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
       @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-      @RequestParam(name = "word", required = false) String word) {
-    log.info("分页查询字典信息, {}, ({},{})", word, pageNum, pageSize);
+      @RequestBody DictKeyInfo key) {
+    log.info("分页查询字典信息, {}, ({},{})", key, pageNum, pageSize);
     try {
-      PageHelper.startPage(pageNum, pageSize);
-      return Result.suc(new PageInfo<>(service.queryAllDict(pageNum, pageSize, word)));
+      Page pg = PageHelper.startPage(pageNum, pageSize);
+      PageInfo pi = new PageInfo<>(service.queryAllDict(pageNum, pageSize, key));
+      pi.setTotal(pg.getTotal());
+      return Result.suc(pi);
     } catch (Exception e) {
       log.error("分页查询字典信息异常", e);
       return (e instanceof RuntimeException) ?
