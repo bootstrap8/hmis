@@ -10,11 +10,14 @@
 
 
 
-依赖组件：
+应用安装部署依赖(勾选的必须)：
 
-- 服务注册依赖`Consul`
-- kafka、zk
-- 数据库(mysql 或 oracle)
++ [x] 服务注册依赖`Consul`
++ [x] kafka、zk
++ [x] 数据库(mysql 或 oracle)
++ [ ] docker
++ [ ] kubernetes
++ [ ] redis
 
 
 
