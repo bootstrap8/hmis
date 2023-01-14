@@ -1102,15 +1102,12 @@ cd gateway-1.0-SNAPSHOT/bootstrap
 
 - 打包
 
-```shell
-cd manage/src/main/resources/static
-npm run build
+包含`ui`代码和`微服务`代码的打包
 
+```shell
 cd manage
 mvn -DskipTests=true clean package
 ```
-
-![image-20230113122148068](README/image/image-20230113122148068.png)
 
 
 

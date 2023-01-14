@@ -73,13 +73,18 @@ public class CmdUtils {
     return processNo;
   }
 
-  public static String getLocalAddress() {
+  public static HostInfo getLocalAddress() {
+    HostInfo host = new HostInfo();
     String ip = "127.0.0.1";
+    String hostName = "localhost";
     try {
       ip = InetAddress.getLocalHost().getHostAddress();
+      hostName = InetAddress.getLocalHost().getHostName();
     } catch (Exception e) {
       log.error("获取本机IP异常:", e);
     }
-    return ip;
+    host.setIp(ip);
+    host.setHostName(hostName);
+    return host;
   }
 }

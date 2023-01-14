@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.agent.app.dao.AgentDao">
+  <update id="createAppInfo">
+    create table `hbq_agent_app`
+    (
+      `name`     varchar(255) primary key,
+      `a_desc`     varchar(500),
+      `tags`     varchar(500),
+      `reg_time` numeric(20)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  </update>
+
+  <update id="createInstInfo">
+    create table `hbq_agent_instance`
+    (
+      `data_center` varchar(255),
+      `ip`          varchar(255),
+      `host_name`   varchar(500),
+      `port`        numeric(20),
+      `process_no`  varchar(50),
+      `tags`        varchar(500),
+      `reg_time`    numeric(20),
+      `app_name`    varchar(255),
+      primary key (data_center, ip, port, app_name)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  </update>
+</mapper>

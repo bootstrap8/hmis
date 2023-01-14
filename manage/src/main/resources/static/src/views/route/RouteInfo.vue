@@ -78,7 +78,7 @@
           data: ruleForm.toRestfulObj()
         }).then((res: any) => {
           if (res.data.code == 1) {
-            vAlert('保存结果', res.data.body);
+            vAlert('保存结果', res.data.body,'success');
             router.push('/route/list')
           }
         }).catch((e: Error) => {

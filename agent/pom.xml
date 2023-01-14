@@ -8,9 +8,9 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>com.github.hbq</groupId>
-  <artifactId>manage</artifactId>
+  <artifactId>agent</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>manage</name>
+  <name>agent</name>
   <description>Spring Boot Template</description>
   <dependencies>
 
@@ -54,10 +54,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-consul-discovery</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-gateway</artifactId>
     </dependency>
 
     <!-- swagger -->
@@ -189,16 +185,6 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.github.hbq</groupId>
-      <artifactId>agent</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.github.hbq</groupId>
-      <artifactId>event</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
       <groupId>org.mybatis.spring.boot</groupId>
       <artifactId>mybatis-spring-boot-starter</artifactId>
     </dependency>
@@ -210,125 +196,22 @@
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis-spring</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.github.hbq</groupId>
+      <artifactId>common</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-archetype-plugin</artifactId>
-        <version>3.2.0</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.0.0</version>
-        <configuration>
-          <!-- not append assembly id in release file name -->
-          <appendAssemblyId>false</appendAssemblyId>
-          <descriptors>
-            <descriptor>src/main/assembly/assembly.xml</descriptor>
-          </descriptors>
-        </configuration>
-
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <excludes>**/node_modules/**</excludes>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.2.0</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
-        <executions>
-          <execution>
-            <id>exec-npm-config</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>config</argument>
-                <argument>set</argument>
-                <argument>registry</argument>
-                <argument>https://mirrors.huaweicloud.com/repository/npm/</argument>
-              </arguments>
-              <!-- <workingDirectory>${basedir}</workingDirectory>-->
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>exec-npm-config-4</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>config</argument>
-                <argument>set</argument>
-                <argument>sass_binary_site</argument>
-                <argument>https://mirrors-devcloud.rnd.huawei.com/node-sass</argument>
-              </arguments>
-              <!-- <workingDirectory>${basedir}</workingDirectory>-->
-            </configuration>
-          </execution>
-
-<!--          <execution>-->
-<!--            <id>exec-npm-install</id>-->
-<!--            <phase>prepare-package</phase>-->
-<!--            <goals>-->
-<!--              <goal>exec</goal>-->
-<!--            </goals>-->
-<!--            <configuration>-->
-<!--              <executable>npm</executable>-->
-<!--              <arguments>-->
-<!--                <argument>install</argument>-->
-<!--              </arguments>-->
-<!--              <workingDirectory>${basedir}</workingDirectory>-->
-<!--            </configuration>-->
-<!--          </execution>-->
-
-          <execution>
-            <id>exec-npm-run-build</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>run</argument>
-                <argument>build</argument>
-              </arguments>
-              <workingDirectory>${basedir}/src/main/resources/static</workingDirectory>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
     <resources>
@@ -337,20 +220,11 @@
         <includes>
           <include>**/*Mapper.xml</include>
         </includes>
-        <filtering>true</filtering>
       </resource>
       <resource>
         <directory>src/main/resources</directory>
         <includes>
-          <include>*.*</include>
-          <include>static/ui/</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/bin</directory>
-        <includes>
           <include>**/*</include>
-          <include>Dockerfile</include>
         </includes>
       </resource>
     </resources>
