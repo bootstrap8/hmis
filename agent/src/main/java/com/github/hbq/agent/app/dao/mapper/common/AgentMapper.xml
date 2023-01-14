@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.agent.app.dao.AgentDao">
+  <insert id="saveAppInfo" parameterType="map">
+    insert into hbq_agent_app(name, a_desc, tags, reg_time)
+    values (#{name}, #{desc}, #{tags}, #{reg_time})
+  </insert>
+
+  <delete id="deleteAppInfo">
+    delete
+    from hbq_agent_app
+    where name = #{name}
+  </delete>
+
+  <insert id="saveInstInfo" parameterType="map">
+    insert into hbq_agent_instance(data_center, ip, host_name, port, process_no, tags, reg_time, app_name)
+    values (#{data_center}, #{ip}, #{host_name}, #{port}, #{process_no}, #{tags}, #{reg_time}, #{app_name})
+  </insert>
+
+  <delete id="deleteInstInfo">
+    delete
+    from hbq_agent_instance
+    where data_center = #{data_center}
+      and ip = #{ip}
+      and port = #{port}
+  </delete>
+</mapper>

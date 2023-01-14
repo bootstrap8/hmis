@@ -52,6 +52,7 @@
     <module>gateway</module>
     <module>event</module>
     <module>manage</module>
+    <module>agent</module>
   </modules>
 
   <dependencyManagement>
