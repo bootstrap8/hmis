@@ -61,6 +61,7 @@ public class QuotaScheduleImpl implements QuotaSchedule, InitializingBean, Dispo
             TimeUnit.MILLISECONDS.sleep(50);
           } catch (InterruptedException e) {
             log.info("线程被正常中断");
+            break;
           }
           continue;
         }
