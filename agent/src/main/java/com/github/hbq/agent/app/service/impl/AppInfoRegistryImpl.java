@@ -1,12 +1,10 @@
 package com.github.hbq.agent.app.service.impl;
 
-import com.github.hbq.agent.app.dao.AgentDao;
+import com.github.hbq.agent.app.dao.impl.AgentDaoOptional;
 import com.github.hbq.agent.app.pojo.AppInfo;
 import com.github.hbq.agent.app.service.AppInfoRegistry;
 import com.github.hbq.common.spring.context.SpringContext;
-import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,22 +19,21 @@ public class AppInfoRegistryImpl implements AppInfoRegistry, InitializingBean {
 
   private AppInfo app;
 
-  private AgentDao dao;
+  @Autowired
+  private AgentDaoOptional optional;
 
 
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
-      SqlSessionTemplate stmt = context.getBean(SqlSessionTemplate.class);
-      if (stmt != null) {
-        dao = stmt.getMapper(AgentDao.class);
-      }
-      if (dao != null) {
+      optional.getAgentDao().ifPresent(agentDao -> {
         try {
-          dao.createAppInfo();
+          agentDao.createAppInfo();
+          log.info("应用配置表创建成功");
         } catch (Exception e) {
+          log.info("应用配置表已经存在");
         }
-      }
+      });
       registry();
     } catch (Exception e) {
       log.error("初始化异常", e);
@@ -49,9 +46,7 @@ public class AppInfoRegistryImpl implements AppInfoRegistry, InitializingBean {
     String desc = context.getProperty("spring.application.desc", name);
     this.app = new AppInfo(name, desc);
     log.info("注册的应用信息；{}", this.app);
-    if (dao != null) {
-      dao.saveAppInfo(this.app.toMybatisMap());
-    }
+    optional.getAgentDao().ifPresent(agentDao -> agentDao.saveAppInfo(this.app.toMybatisMap()));
   }
 
   @Override

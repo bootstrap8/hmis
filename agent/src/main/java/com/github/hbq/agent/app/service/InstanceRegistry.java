@@ -7,7 +7,15 @@ import com.github.hbq.agent.app.pojo.InstInfo;
  */
 public interface InstanceRegistry {
 
+  /**
+   * 注册实例信息
+   */
   void registry();
 
+  /**
+   * 返回实例信息
+   *
+   * @return
+   */
   InstInfo getInstance();
 }

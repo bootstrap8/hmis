@@ -10,14 +10,17 @@ import com.github.hbq.agent.app.pojo.InstInfo;
 import com.github.hbq.agent.app.pojo.MemInfo;
 import com.github.hbq.agent.app.pojo.QuotaData;
 import com.github.hbq.agent.app.pojo.QuotaInfo;
+import com.github.hbq.agent.app.pojo.QuotaInfo.Type;
 import com.github.hbq.agent.app.service.AbstractQuotaDataGet;
 import com.github.hbq.common.spring.context.SpringContext;
 import com.github.hbq.common.utils.FormatNumber;
+import com.github.hbq.common.utils.FormatTime;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -41,12 +44,45 @@ public class DefaultQuotaDataGet extends AbstractQuotaDataGet {
 
   @Override
   protected Collection<QuotaData> collectData(InstInfo instance) {
-    return null;
+    MemInfo mem = getMemInfo();
+    CpuInfo cpu = getCpuInfo();
+    GcInfo gc = getGcInfo();
+
+    Collection<QuotaInfo> qis = registry(instance);
+    List<QuotaData> qds = new ArrayList<>(qis.size());
+    long collectTime = FormatTime.nowSecs();
+
+    qds.addAll(mem.collectData(instance, collectTime));
+    qds.addAll(cpu.collectData(instance, collectTime));
+    qds.addAll(gc.collectData(instance, collectTime));
+
+    return qds;
   }
 
   @Override
   protected Collection<QuotaInfo> registry(InstInfo instance) {
-    return null;
+    String[] names = {"app,jvm,rate_heapmemory",
+        "app,jvm,rate_nonheapmemory",
+        "app,jvm,gc,ygc,count",
+        "app,jvm,gc,ygc,time",
+        "app,jvm,gc,fgc,count",
+        "app,jvm,gc,fgc,time",
+        "app,jvm,proc_cpuusage"};
+    String[] descs = {"应用指标,jvm,堆内存占用率",
+        "应用指标,jvm,非堆内存占用率",
+        "应用指标,jvm,新生代gc次数",
+        "应用指标,jvm,新生代gc耗时",
+        "应用指标,jvm,老年代gc次数",
+        "应用指标,jvm,老年代gc耗时",
+        "应用指标,jvm,进程CPU使用率"};
+    String[] units = {"%", "%", "次", "ms", "次", "ms", "%"};
+    CycleInfo cycleInfo = cycle();
+    List<QuotaInfo> qis = new ArrayList<>(names.length);
+    for (int i = 0; i < names.length; i++) {
+      QuotaInfo qi = new QuotaInfo(instance, names[i], descs[i], units[i], cycleInfo, Type.Data);
+      qis.add(qi);
+    }
+    return qis;
   }
 
   @Override
@@ -105,7 +141,7 @@ public class DefaultQuotaDataGet extends AbstractQuotaDataGet {
     return info;
   }
 
-  private CpuInfo queryCpuUsage() {
+  private CpuInfo getCpuInfo() {
     CpuInfo cpu = new CpuInfo();
     osMxBean = ManagementFactory.getOperatingSystemMXBean();
     threadBean = ManagementFactory.getThreadMXBean();
