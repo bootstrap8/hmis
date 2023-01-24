@@ -9,10 +9,25 @@ import java.util.Collection;
  */
 public interface QuotaDataGet extends QuotaRegistry {
 
+  /**
+   * 采集指标数据
+   *
+   * @return
+   */
   Collection<QuotaData> collectData();
 
+  /**
+   * 定义采集器名称
+   *
+   * @return
+   */
   String identify();
 
+  /**
+   * 采集周期定义
+   *
+   * @return
+   */
   CycleInfo cycle();
 
 }

@@ -11,9 +11,8 @@ public class QuotaData {
   private long collectTime;
   private DataInfo data;
 
-  public QuotaData(QuotaInfo quota, long collectTime) {
+  public QuotaData(QuotaInfo quota) {
     this.quota = quota;
-    this.collectTime = collectTime;
   }
 
   public void collectData(double value, long collectTime) {

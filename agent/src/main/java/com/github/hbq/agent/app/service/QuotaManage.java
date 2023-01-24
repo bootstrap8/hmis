@@ -6,12 +6,13 @@ import java.util.Collection;
 /**
  * @author hbq
  */
-public interface QuotaRegistry {
+public interface QuotaManage {
 
   /**
-   * 指标注册
+   * 保存注册的指标信息
    *
-   * @return
+   * @param qis
    */
-  Collection<QuotaInfo> registry();
+  void saveQuotaInfo(Collection<QuotaInfo> qis);
+
 }

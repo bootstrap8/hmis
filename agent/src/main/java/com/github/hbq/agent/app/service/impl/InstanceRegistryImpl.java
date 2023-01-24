@@ -1,6 +1,6 @@
 package com.github.hbq.agent.app.service.impl;
 
-import com.github.hbq.agent.app.dao.AgentDao;
+import com.github.hbq.agent.app.dao.impl.AgentDaoOptional;
 import com.github.hbq.agent.app.pojo.InstInfo;
 import com.github.hbq.agent.app.service.AppInfoRegistry;
 import com.github.hbq.agent.app.service.InstanceRegistry;
@@ -8,7 +8,6 @@ import com.github.hbq.common.spring.context.SpringContext;
 import com.github.hbq.common.utils.CmdUtils;
 import com.github.hbq.common.utils.HostInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +26,20 @@ public class InstanceRegistryImpl implements InstanceRegistry, InitializingBean,
 
   private InstInfo instance;
 
-  private AgentDao dao;
+  @Autowired
+  private AgentDaoOptional optional;
 
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
-      SqlSessionTemplate stmt = context.getBean(SqlSessionTemplate.class);
-      if (stmt != null) {
-        dao = stmt.getMapper(AgentDao.class);
-      }
-      if (dao != null) {
+      optional.getAgentDao().ifPresent(agentDao -> {
         try {
-          dao.createInstInfo();
+          agentDao.createInstInfo();
+          log.info("应用实例表创建成功");
         } catch (Exception e) {
+          log.info("应用实例表已经存在");
         }
-      }
+      });
       registry();
     } catch (Exception e) {
       log.error("初始化异常", e);
@@ -50,28 +48,26 @@ public class InstanceRegistryImpl implements InstanceRegistry, InitializingBean,
 
   @Override
   public void registry() {
-    String dc = context.getProperty("agent.data-center", "dc");
+    String dc = context.getProperty("hbq.agent.data-center", "dc");
     int port = context.getIntValue("server.port", 8080);
     HostInfo host = CmdUtils.getLocalAddress();
     this.instance = new InstInfo(registry.getApp(), dc, host.getIp(),
         host.getHostName(), port, CmdUtils.getProcessNo());
     log.info("注册的应用实例信息: {}", this.instance);
-    if (dao != null) {
-      dao.saveInstInfo(this.instance.toMybatisMap());
-    }
+    optional.getAgentDao().ifPresent(agentDao -> agentDao.saveInstInfo(this.instance.toMybatisMap()));
   }
 
   @Override
   public void destroy() throws Exception {
-    SqlSessionTemplate stmt = context.getBean(SqlSessionTemplate.class);
-    if (stmt != null) {
-      AgentDao dao = stmt.getMapper(AgentDao.class);
+    optional.getAgentDao().ifPresent(agentDao -> {
       try {
-        dao.deleteInstInfo(instance.getDataCenter(), this.instance.getIp(), instance.getPort());
+        agentDao.deleteInstInfo(instance.getDataCenter(), instance.getApp().getName(),
+            this.instance.getIp(), instance.getPort());
         log.info("应用实例注销成功: {}", instance);
       } catch (Exception e) {
+        log.error("应用实例注销失败", e);
       }
-    }
+    });
   }
 
   @Override

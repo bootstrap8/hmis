@@ -3,6 +3,7 @@
 主要包含以下模块：
 
 - 基础依赖包 `common`
+- 应用指标采集 `agent`
 - 配置管理扩展包 `config`
 - `kafka`事件管理扩展包 `event`
 - 门户网关 `gateway`
@@ -26,6 +27,7 @@
 | 模块名  | 说明                                   | 功能特性                                                     |
 | :-----: | :------------------------------------- | :----------------------------------------------------------- |
 | common  | 封装了搭建微服务应用需要的一些基础代码 | 见基础模块文档                                               |
+|  agent  | 封装了应用自定义指标采集的扩展代码     | 默认通过配置开启采集jvm指标数据，也可以通过扩展接口实现自定义业务指标的采集 |
 | config  | 基于zk为配置中心的加密认证扩展包       |                                                              |
 |  event  | 封装了管理kafka消息主题处理的扩展包    | 1. 消息映射到java数据模型 <br>2.kafka事件接口的封装全部映射到自定义接口屏蔽处理细节 |
 | gateway | 基于spring cloud gateway进行扩展实现   | 1.动态路由(已实现)<br>2.灰度发布切换(已实现)<br>3.支持IPHash路由<br>4.认证鉴权封装扩展 |
@@ -1022,6 +1024,130 @@ public interface DemoDao {
     
   List<Map> queryData3();
 }
+```
+
+
+
+# agent
+
+## 依赖
+
+```xml
+<dependency>
+    <groupId>com.github.hbq</groupId>
+    <artifactId>agent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
+
+
+## jvm指标采集
+
+```properties
+# 开启指标采集
+hbq.agent.enable=true
+# 启用jvm指标采集
+hbq.agent.jvm.enable=true
+
+# 额外配置项，不配置默认为空串
+# 实例所在数据中心
+hbq.agent.data-center=dc
+# 应用描述
+spring.application.desc=
+```
+
+
+
+## 自定义指标扩展 
+
+继承 `com.github.hbq.agent.app.service.AbstractQuotaDataGet` 实现以下四个方法即可
+
+```java
+@Component
+public class DemoQuotaDataGet extends AbstractQuotaDataGet {
+
+  // 采集指标
+  @Override
+  protected Collection<QuotaData> collectData(InstInfo instance) {
+    CycleInfo cycleInfo = cycle();
+    QuotaInfo qi = new QuotaInfo(instance, 
+                                 "app,jvm,rate_heapmemory", 
+                                 "应用指标,jvm,堆内存占用率", 
+                                 "%", cycleInfo, Type.Data);
+    QuotaData data = new QuotaData(qi);
+    data.collectData(new DataInfo(83.2, ""), FormatTime.nowSecs());
+    return Lists.newArrayList(data);
+  }
+
+  // 定义指标
+  @Override
+  protected Collection<QuotaInfo> registry(InstInfo instance) {
+    CycleInfo cycleInfo = cycle();
+    QuotaInfo qi = new QuotaInfo(instance, 
+                                 "app,jvm,rate_heapmemory", 
+                                 "应用指标,jvm,堆内存占用率", 
+                                 "%", cycleInfo, Type.Data);
+    return Lists.newArrayList(qi);
+  }
+    
+  // 指标采集器名称
+  @Override
+  public String identify() {
+    CycleInfo c = cycle();
+    return String.join("", "Demo指标采集器[", c.getKey(), "]");
+  }
+
+  // 指标采集周期
+  @Override
+  public CycleInfo cycle() {
+    return CycleInfo.SECOND30;
+  }
+}
+```
+
+
+
+## 采集指标上报的报文
+
+```json
+[{
+    "collectTime": 1674535955,
+    "data": {
+        "desc": "",
+        "fmtValue": 5.54
+    },
+    "fmtCollectTime": "2023-01-24 12:52:35",
+    "quota": {
+        "cycleInfo": {
+            "key": "SECONDS:30",
+            "time": 30,
+            "unit": "SECONDS"
+        },
+        "desc": "应用指标,jvm,堆内存占用率",
+        "instInfo": {
+            "app": {
+                "desc": "manage",
+                "fmtRegTime": "2023-01-24 12:52:05",
+                "key": "manage",
+                "name": "manage",
+                "regTime": 1674535925,
+                "tags": {}
+            },
+            "dataCenter": "dc",
+            "fmtRegTime": "2023-01-24 12:52:05",
+            "hostName": "1a666b43aa67",
+            "ip": "192.168.56.1",
+            "key": "manage,dc,192.168.56.1,21001",
+            "port": 21001,
+            "processNo": "13428",
+            "regTime": 1674535925,
+            "tags": {}
+        },
+        "name": "app,jvm,rate_heapmemory",
+        "type": "Data"
+    }
+}]
 ```
 
 

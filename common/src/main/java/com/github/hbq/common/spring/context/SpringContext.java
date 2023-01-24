@@ -41,7 +41,7 @@ public class SpringContext {
     return this.context.getBeansOfType(requiredType);
   }
 
-  public List<BeanInfo<T>> getBeanListOfType(@NonNull Class<T> requiredType) {
+  public <T> List<BeanInfo<T>> getBeanListOfType(@NonNull Class<T> requiredType) {
     Map<String, T> map = getBeanMapOfType(requiredType);
     if (map == null) {
       return Collections.emptyList();

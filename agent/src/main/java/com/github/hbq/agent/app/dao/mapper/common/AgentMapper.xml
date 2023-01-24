@@ -21,7 +21,25 @@
     delete
     from hbq_agent_instance
     where data_center = #{data_center}
+      and app_name = #{app_name}
       and ip = #{ip}
       and port = #{port}
+  </delete>
+
+  <insert id="saveQuotaInfo" parameterType="map">
+    insert into hbq_agent_quota(data_center, app_name, ip, port, quota_name, quota_desc, quota_unit,
+                                quota_type, cycle_time, cycle_unit)
+    values (#{data_center}, #{app_name}, #{ip}, #{port}, #{quota_name}, #{quota_desc}, #{quota_unit},
+            #{quota_type}, #{cycle_time}, #{cycle_unit})
+  </insert>
+
+  <delete id="deleteQuotaInfo">
+    delete
+    from hbq_agent_quota
+    where data_center = #{data_center}
+      and app_name = #{app_name}
+      and ip = #{ip}
+      and port = #{port}
+      and quota_name = #{quota_name}
   </delete>
 </mapper>
