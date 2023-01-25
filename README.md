@@ -1057,11 +1057,23 @@ hbq.agent.data-center=dc
 spring.application.desc=
 ```
 
+## 应用kafka指标采集
+```properties
+# 开启指标采集
+hbq.agent.enable=true
+# 启用应用kafka指标采集
+hbq.agent.kafka.enable=true
+
+# 额外配置项
+# 是否自动采集
+hbq.agent.kafka.auto-collect.enable=true
+```
+
 
 
 ## 自定义指标扩展 
 
-继承 `com.github.hbq.agent.app.service.AbstractQuotaDataGet` 实现以下四个方法即可
+继承 `com.github.hbq.agent.app.serv.AbstractQuotaDataGet` 实现以下四个方法即可
 
 ```java
 @Component
@@ -1109,6 +1121,7 @@ public class DemoQuotaDataGet extends AbstractQuotaDataGet {
 
 
 ## 采集指标上报的报文
+主题：`HBQ-AGENT-QUOTA-DATA`
 
 ```json
 [{

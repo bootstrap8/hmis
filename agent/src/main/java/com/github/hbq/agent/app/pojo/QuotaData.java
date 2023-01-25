@@ -1,15 +1,20 @@
 package com.github.hbq.agent.app.pojo;
 
 import com.github.hbq.common.utils.FormatTime;
+import lombok.Data;
 
 /**
  * @author hbq
  */
+@Data
 public class QuotaData {
 
   private QuotaInfo quota;
   private long collectTime;
   private DataInfo data;
+
+  public QuotaData() {
+  }
 
   public QuotaData(QuotaInfo quota) {
     this.quota = quota;
@@ -30,19 +35,8 @@ public class QuotaData {
     this.collectTime = collectTime;
   }
 
-  public QuotaInfo getQuota() {
-    return quota;
-  }
-
-  public long getCollectTime() {
-    return collectTime;
-  }
-
   public String getFmtCollectTime() {
     return FormatTime.YYYYMMDDHHMISS.withSecs(getCollectTime());
   }
 
-  public DataInfo getData() {
-    return data;
-  }
 }

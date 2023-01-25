@@ -1,4 +1,4 @@
-package com.github.hbq.agent.app.service.impl;
+package com.github.hbq.agent.app.serv.impl;
 
 import static com.github.hbq.agent.app.pojo.MemInfo.MEGA_BYTE;
 import static com.github.hbq.agent.app.pojo.MemInfo.format;
@@ -11,7 +11,7 @@ import com.github.hbq.agent.app.pojo.MemInfo;
 import com.github.hbq.agent.app.pojo.QuotaData;
 import com.github.hbq.agent.app.pojo.QuotaInfo;
 import com.github.hbq.agent.app.pojo.QuotaInfo.Type;
-import com.github.hbq.agent.app.service.AbstractQuotaDataGet;
+import com.github.hbq.agent.app.serv.AbstractQuotaDataGet;
 import com.github.hbq.common.spring.context.SpringContext;
 import com.github.hbq.common.utils.FormatNumber;
 import com.github.hbq.common.utils.FormatTime;
@@ -56,6 +56,9 @@ public class DefaultQuotaDataGet extends AbstractQuotaDataGet {
     qds.addAll(cpu.collectData(instance, collectTime));
     qds.addAll(gc.collectData(instance, collectTime));
 
+    if (log.isDebugEnabled()) {
+      log.debug("采集到应用jvm指标数据: {} 个", qds.size());
+    }
     return qds;
   }
 

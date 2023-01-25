@@ -1,4 +1,4 @@
-package com.github.hbq.agent.app.service.impl;
+package com.github.hbq.agent.app.serv.impl;
 
 import com.github.hbq.agent.app.pojo.CycleInfo;
 import com.github.hbq.agent.app.pojo.DataInfo;
@@ -6,7 +6,7 @@ import com.github.hbq.agent.app.pojo.InstInfo;
 import com.github.hbq.agent.app.pojo.QuotaData;
 import com.github.hbq.agent.app.pojo.QuotaInfo;
 import com.github.hbq.agent.app.pojo.QuotaInfo.Type;
-import com.github.hbq.agent.app.service.AbstractQuotaDataGet;
+import com.github.hbq.agent.app.serv.AbstractQuotaDataGet;
 import com.github.hbq.common.utils.FormatTime;
 import com.google.common.collect.Lists;
 import java.util.Collection;

@@ -1,16 +1,16 @@
-package com.github.hbq.agent.app.service.impl;
+package com.github.hbq.agent.app.serv.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hbq.agent.app.pojo.QuotaData;
-import com.github.hbq.agent.app.service.InstanceRegistry;
-import com.github.hbq.agent.app.service.QuotaDataGet;
+import com.github.hbq.agent.app.serv.InstanceRegistry;
+import com.github.hbq.agent.app.serv.QuotaDataGet;
+import com.github.hbq.agent.app.serv.impl.kafka.QuotaKafkaTemplate;
 import com.github.hbq.common.spring.context.SpringContext;
 import java.util.Collection;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 
 /**
  * @author hbq
@@ -58,20 +58,15 @@ public class QuotaDelay implements Delayed {
   }
 
   public void collect() {
-    KafkaTemplate kafka = context.getBean(KafkaTemplate.class);
+    QuotaKafkaTemplate kafka = context.getBean(QuotaKafkaTemplate.class);
     InstanceRegistry instanceRegistry = context.getBean(InstanceRegistry.class);
     if (kafka != null) {
       Collection<QuotaData> data = get.collectData();
-      String msg = JSON.toJSONString(data);
-      if (log.isDebugEnabled()) {
-        log.debug("推送指标数据至kafka: {}", msg);
+      String key = null;
+      if (instanceRegistry != null) {
+        key = instanceRegistry.getInstance().getKey();
       }
-      if (instanceRegistry == null) {
-        kafka.send("HBQ-AGENT-QUOTA-DATA", msg);
-      } else {
-        String key = instanceRegistry.getInstance().getKey();
-        kafka.send("HBQ-AGENT-QUOTA-DATA", key, msg);
-      }
+      kafka.push("HBQ-AGENT-QUOTA-DATA", key, data);
     }
   }
 }

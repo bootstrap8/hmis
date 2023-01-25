@@ -1,6 +1,6 @@
 package com.github.hbq.agent.app.pojo;
 
-import com.github.hbq.agent.app.service.Collect;
+import com.github.hbq.agent.app.serv.Collect;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

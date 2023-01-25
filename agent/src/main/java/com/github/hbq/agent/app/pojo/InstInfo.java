@@ -5,10 +5,12 @@ import com.github.hbq.common.utils.FormatTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Data;
 
 /**
  * @author hbq
  */
+@Data
 public class InstInfo {
 
   private AppInfo app;
@@ -21,6 +23,9 @@ public class InstInfo {
   private long regTime;
   private String key;
 
+  public InstInfo() {
+  }
+
   public InstInfo(AppInfo app, String dataCenter, String ip, String hostName, int port, String processNo) {
     this.app = app;
     this.dataCenter = dataCenter;
@@ -32,40 +37,8 @@ public class InstInfo {
     this.key = String.join(",", app.getKey(), dataCenter, ip, String.valueOf(port));
   }
 
-  public AppInfo getApp() {
-    return app;
-  }
-
-  public String getDataCenter() {
-    return dataCenter;
-  }
-
-  public String getIp() {
-    return ip;
-  }
-
-  public String getHostName() {
-    return hostName;
-  }
-
-  public int getPort() {
-    return port;
-  }
-
-  public String getProcessNo() {
-    return processNo;
-  }
-
-  public long getRegTime() {
-    return regTime;
-  }
-
   public String getFmtRegTime() {
     return FormatTime.YYYYMMDDHHMISS.withSecs(getRegTime());
-  }
-
-  public String getKey() {
-    return key;
   }
 
   public Map<String, Object> getTags() {

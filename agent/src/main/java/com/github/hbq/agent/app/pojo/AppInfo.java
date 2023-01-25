@@ -5,11 +5,12 @@ import com.github.hbq.common.utils.FormatTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.collections.MapUtils;
+import lombok.Data;
 
 /**
  * @author hbq
  */
+@Data
 public class AppInfo {
 
   private String name;
@@ -17,6 +18,9 @@ public class AppInfo {
   private Map<String, Object> tags = new HashMap<>(4);
   private long regTime;
   private String key;
+
+  public AppInfo() {
+  }
 
   public AppInfo(String name, String desc) {
     this.name = name;
@@ -36,22 +40,8 @@ public class AppInfo {
     this.tags.putAll(map);
   }
 
-
-  public String getName() {
-    return name;
-  }
-
-  public String getDesc() {
-    return desc;
-  }
-
-
   public Map<String, Object> getTags() {
     return Collections.unmodifiableMap(this.tags);
-  }
-
-  public long getRegTime() {
-    return regTime;
   }
 
   public String getFmtRegTime() {

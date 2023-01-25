@@ -1,8 +1,8 @@
-package com.github.hbq.agent.app.service.impl;
+package com.github.hbq.agent.app.serv.impl;
 
 import com.github.hbq.agent.app.pojo.CycleInfo;
-import com.github.hbq.agent.app.service.QuotaDataGet;
-import com.github.hbq.agent.app.service.QuotaSchedule;
+import com.github.hbq.agent.app.serv.QuotaDataGet;
+import com.github.hbq.agent.app.serv.QuotaSchedule;
 import com.github.hbq.common.spring.context.SpringContext;
 import com.github.hbq.common.utils.ThreadPoolUtils;
 import java.util.concurrent.DelayQueue;
@@ -47,13 +47,18 @@ public class QuotaScheduleImpl implements QuotaSchedule, InitializingBean, Dispo
     CycleInfo c = g.cycle();
     long delayMills = TimeUnit.MILLISECONDS.convert(c.getTime(), c.getUnit());
     QuotaDelay d = new QuotaDelay(delayMills, context, g);
-    return q.offer(d);
+    boolean reg = q.offer(d);
+    if (reg) {
+      log.info("注册应用指标采集器: {}", g.identify());
+    }
+    return reg;
   }
 
   class Task extends Thread {
 
     @Override
     public void run() {
+      log.info("启动应用指标采集器调度任务");
       while (true) {
         QuotaDelay delay = q.poll();
         if (delay == null) {
@@ -67,7 +72,11 @@ public class QuotaScheduleImpl implements QuotaSchedule, InitializingBean, Dispo
         }
         pool.submit(() -> {
           log.info("调度采集器: {}", delay.identify());
-          delay.collect();
+          try {
+            delay.collect();
+          } catch (Exception e) {
+            log.error(String.format("调度采集器%s异常", delay.identify()), e);
+          }
           delay.reset();
           q.offer(delay);
         });

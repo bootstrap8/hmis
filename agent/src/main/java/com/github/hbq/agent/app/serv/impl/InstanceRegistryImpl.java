@@ -1,9 +1,9 @@
-package com.github.hbq.agent.app.service.impl;
+package com.github.hbq.agent.app.serv.impl;
 
 import com.github.hbq.agent.app.dao.impl.AgentDaoOptional;
 import com.github.hbq.agent.app.pojo.InstInfo;
-import com.github.hbq.agent.app.service.AppInfoRegistry;
-import com.github.hbq.agent.app.service.InstanceRegistry;
+import com.github.hbq.agent.app.serv.AppInfoRegistry;
+import com.github.hbq.agent.app.serv.InstanceRegistry;
 import com.github.hbq.common.spring.context.SpringContext;
 import com.github.hbq.common.utils.CmdUtils;
 import com.github.hbq.common.utils.HostInfo;
