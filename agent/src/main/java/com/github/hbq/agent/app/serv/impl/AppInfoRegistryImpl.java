@@ -1,8 +1,8 @@
-package com.github.hbq.agent.app.service.impl;
+package com.github.hbq.agent.app.serv.impl;
 
 import com.github.hbq.agent.app.dao.impl.AgentDaoOptional;
 import com.github.hbq.agent.app.pojo.AppInfo;
-import com.github.hbq.agent.app.service.AppInfoRegistry;
+import com.github.hbq.agent.app.serv.AppInfoRegistry;
 import com.github.hbq.common.spring.context.SpringContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;

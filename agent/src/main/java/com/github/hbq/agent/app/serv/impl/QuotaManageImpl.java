@@ -1,8 +1,8 @@
-package com.github.hbq.agent.app.service.impl;
+package com.github.hbq.agent.app.serv.impl;
 
 import com.github.hbq.agent.app.dao.impl.AgentDaoOptional;
 import com.github.hbq.agent.app.pojo.QuotaInfo;
-import com.github.hbq.agent.app.service.QuotaManage;
+import com.github.hbq.agent.app.serv.QuotaManage;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;

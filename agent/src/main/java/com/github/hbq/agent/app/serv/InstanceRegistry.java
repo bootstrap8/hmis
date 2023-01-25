@@ -1,4 +1,4 @@
-package com.github.hbq.agent.app.service;
+package com.github.hbq.agent.app.serv;
 
 import com.github.hbq.agent.app.pojo.InstInfo;
 

@@ -1,12 +1,13 @@
 package com.github.hbq.agent.app.pojo;
 
-import com.alibaba.fastjson.JSON;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Data;
 
 /**
  * @author hbq
  */
+@Data
 public class QuotaInfo {
 
   private InstInfo instInfo;
@@ -16,6 +17,9 @@ public class QuotaInfo {
   private CycleInfo cycleInfo = CycleInfo.SECOND30;
   private Type type = Type.Data;
   private String key;
+
+  public QuotaInfo() {
+  }
 
   public QuotaInfo(InstInfo instInfo, String name, String desc, String unit) {
     this.instInfo = instInfo;
@@ -39,30 +43,6 @@ public class QuotaInfo {
     public boolean isMe(Type t) {
       return t == this;
     }
-  }
-
-  public InstInfo getInstInfo() {
-    return instInfo;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getDesc() {
-    return desc;
-  }
-
-  public CycleInfo getCycleInfo() {
-    return cycleInfo;
-  }
-
-  public Type getType() {
-    return type;
-  }
-
-  public String getKey() {
-    return this.key;
   }
 
   public Map toMybatisMap() {

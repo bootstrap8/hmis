@@ -24,7 +24,9 @@ public class CheckCtrl {
   @RequestMapping(path = "/check-me", method = RequestMethod.GET)
   @ResponseBody
   public String check() {
-    log.info("注册中心 -> {}, 心跳。", name);
+    if (log.isDebugEnabled()) {
+      log.debug("注册中心 -> {}, 心跳。", name);
+    }
     return "^_^";
   }
 }

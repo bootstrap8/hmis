@@ -1,18 +1,22 @@
 package com.github.hbq.agent.app.pojo;
 
-import com.alibaba.fastjson.JSON;
 import java.util.concurrent.TimeUnit;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author hbq
  */
 @Slf4j
+@Data
 public class CycleInfo {
 
   private TimeUnit unit;
   private long time;
   private String key;
+
+  public CycleInfo() {
+  }
 
   public CycleInfo(TimeUnit unit, long time) {
     this.unit = unit;
@@ -40,23 +44,4 @@ public class CycleInfo {
 
   public final static CycleInfo DAY1 = new CycleInfo(TimeUnit.DAYS, 1);
 
-  public TimeUnit getUnit() {
-    return unit;
-  }
-
-  public long getTime() {
-    return time;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public static void main(String[] args) throws Exception {
-    CycleInfo c = CycleInfo.SECOND1;
-    String str = JSON.toJSONString(c);
-    log.info(str);
-    c = JSON.parseObject(str, CycleInfo.class);
-    log.info("{},{}", c.getTime(), c.getUnit());
-  }
 }

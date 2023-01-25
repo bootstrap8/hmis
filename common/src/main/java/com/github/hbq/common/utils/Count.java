@@ -15,6 +15,8 @@ public abstract class Count {
     return new UnSafeCount();
   }
 
+  public abstract void reset();
+
   /**
    * 是否初始值
    *
@@ -96,6 +98,11 @@ public abstract class Count {
     private AtomicLong count = new AtomicLong(0);
 
     @Override
+    public void reset() {
+      count.set(0);
+    }
+
+    @Override
     public boolean isInitValue() {
       return count.get() == 0;
     }
@@ -107,7 +114,7 @@ public abstract class Count {
 
     @Override
     public long incrementAndGet(long c) {
-      throw new UnsupportedOperationException();
+      return count.addAndGet(c);
     }
 
     @Override
@@ -117,7 +124,7 @@ public abstract class Count {
 
     @Override
     public long decrementAndGet(long c) {
-      throw new UnsupportedOperationException();
+      return count.addAndGet(-c);
     }
 
     @Override
@@ -150,6 +157,11 @@ public abstract class Count {
   private static class UnSafeCount extends Count {
 
     private long count = 0;
+
+    @Override
+    public void reset() {
+      count = 0;
+    }
 
     @Override
     public boolean isInitValue() {
