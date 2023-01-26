@@ -66,8 +66,8 @@ public class InstanceRegistryImpl implements InstanceRegistry, InitializingBean,
   public void destroy() throws Exception {
     optional.getAgentDao().ifPresent(agentDao -> {
       try {
-        agentDao.deleteInstInfo(instance.getDataCenter(), instance.getApp().getName(),
-            this.instance.getIp(), instance.getPort());
+        agentDao.cleanInstance(instance);
+        agentDao.cleanKafkaInInstance(instance);
         log.info("应用实例注销成功: {}", instance);
       } catch (Exception e) {
         log.error("应用实例注销失败", e);
