@@ -12,6 +12,6 @@ if [[ -n "${ProcessNo}" ]]; then
   echo "Process Directory: `pwdx ${ProcessNo}|awk '{print $2}'`"
   echo -e "Waiting Process Kill ...\n"
   sleep 1
-  kill -9 ${ProcessNo}
+  kill ${ProcessNo}
   echo -e "gateway,${ProcessNo} was killed.\n"
 fi
