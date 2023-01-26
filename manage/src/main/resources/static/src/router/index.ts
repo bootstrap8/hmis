@@ -25,6 +25,16 @@ const routes = [
     path: '/dict/info',
     name: '字典详情',
     component: () => import('@/views/dict/DictInfo.vue')
+  },
+  {
+    path: '/agent/kafkaIn/appList',
+    name: 'kafka入口消息应用列表',
+    component: () => import('@/views/agent/kafkaIn/AppList.vue')
+  },
+  {
+    path: '/agent/kafkaIn/instanceList',
+    name: '应用实例列表',
+    component: () => import('@/views/agent/kafkaIn/InstanceList.vue')
   }
 ]
 

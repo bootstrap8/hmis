@@ -5,6 +5,7 @@ import com.github.hbq.agent.app.serv.AppInfoRegistry;
 import com.github.hbq.agent.app.serv.InstanceRegistry;
 import com.github.hbq.agent.app.serv.QuotaManage;
 import com.github.hbq.agent.app.serv.QuotaSchedule;
+import com.github.hbq.agent.app.serv.impl.AgentServiceImpl;
 import com.github.hbq.agent.app.serv.impl.AppInfoRegistryImpl;
 import com.github.hbq.agent.app.serv.impl.DefaultQuotaDataGet;
 import com.github.hbq.agent.app.serv.impl.InstanceRegistryImpl;
@@ -12,6 +13,8 @@ import com.github.hbq.agent.app.serv.impl.KafkaQuotaGetImpl;
 import com.github.hbq.agent.app.serv.impl.QuotaManageImpl;
 import com.github.hbq.agent.app.serv.impl.QuotaScheduleImpl;
 import com.github.hbq.agent.app.serv.impl.kafka.KafkaInAspect;
+import com.github.hbq.agent.app.serv.impl.kafka.KafkaInRateLimit;
+import com.github.hbq.agent.app.serv.impl.kafka.KafkaInRateLimiterObserveImpl;
 import com.github.hbq.agent.app.serv.impl.kafka.KafkaOutAspect;
 import com.github.hbq.agent.app.serv.impl.kafka.QuotaKafkaTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,12 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @ComponentScan(basePackageClasses = {})
 public class AgentConfiguration {
+
+  @ConditionalOnProperty(prefix = "hbq.agent", name = "enable", havingValue = "true")
+  @Bean("agent-service-AgentServiceImpl")
+  AgentServiceImpl agentService() {
+    return new AgentServiceImpl();
+  }
 
   @ConditionalOnProperty(prefix = "hbq.agent", name = "enable", havingValue = "true")
   @Bean("agent-service-QuotaKafkaTemplate")
@@ -87,6 +96,18 @@ public class AgentConfiguration {
   @Bean("agent-service-KafkaQuotaGetImpl")
   KafkaQuotaGetImpl kafkaQuotaGet() {
     return new KafkaQuotaGetImpl();
+  }
+
+  @ConditionalOnExpression("${hbq.agent.enable:false} && ${hbq.agent.kafka.enable:false}")
+  @Bean("agent-service-KafkaInRateLimit")
+  KafkaInRateLimit kafkaInRateLimit() {
+    return new KafkaInRateLimit();
+  }
+
+  @ConditionalOnExpression("${hbq.common.event.enable:false} && ${hbq.agent.enable:false} && ${hbq.agent.kafka.enable:false}")
+  @Bean("agent-service-KafkaInRateLimiterObserveImpl")
+  KafkaInRateLimiterObserveImpl kafkaInRateLimiterObserve() {
+    return new KafkaInRateLimiterObserveImpl();
   }
 
 }

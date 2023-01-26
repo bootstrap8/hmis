@@ -22,7 +22,7 @@
       `tags`        varchar(500),
       `reg_time`    numeric(20),
       `app_name`    varchar(255),
-      primary key (data_center, ip, port, app_name)
+      primary key (`data_center`, `ip`, `port`, `app_name`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   </update>
 
@@ -39,7 +39,27 @@
       `quota_type`  varchar(30),
       `cycle_time`  numeric(20),
       `cycle_unit`  varchar(50),
-      primary key (data_center, app_name, ip, port, quota_name)
+      primary key (`data_center`, `app_name`, `ip`, `port`, `quota_name`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  </update>
+
+  <update id="createKafkaInAppRateLimiter">
+    create table `hbq_agent_kafkain_app_rl`(
+        `app_name` varchar(255) primary key,
+        `permits` numeric(20),
+        `update_time` numeric(20)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  </update>
+
+  <update id="createKafkaInInstanceRateLimiter">
+    create table `hbq_agent_kafkain_inst_rl`(
+      `data_center` varchar(255),
+      `app_name` varchar(255),
+      `ip` varchar(255),
+      `port` numeric(10),
+      `permits` numeric(20),
+      `update_time` numeric(20),
+      primary key(`data_center`,`app_name`,`ip`,`port`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   </update>
 </mapper>

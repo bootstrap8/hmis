@@ -6,11 +6,13 @@ import com.github.hbq.agent.app.serv.AppInfoRegistry;
 import com.github.hbq.agent.app.serv.InstanceRegistry;
 import com.github.hbq.common.spring.context.SpringContext;
 import com.github.hbq.common.utils.CmdUtils;
+import com.github.hbq.common.utils.FormatTime;
 import com.github.hbq.common.utils.HostInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 
 /**
  * @author hbq
@@ -54,7 +56,10 @@ public class InstanceRegistryImpl implements InstanceRegistry, InitializingBean,
     this.instance = new InstInfo(registry.getApp(), dc, host.getIp(),
         host.getHostName(), port, CmdUtils.getProcessNo());
     log.info("注册的应用实例信息: {}", this.instance);
-    optional.getAgentDao().ifPresent(agentDao -> agentDao.saveInstInfo(this.instance.toMybatisMap()));
+    optional.getAgentDao().ifPresent(agentDao -> {
+      agentDao.deleteInstInfo(dc, instance.getApp().getName(), this.instance.getIp(), port);
+      agentDao.saveInstInfo(this.instance.toMybatisMap());
+    });
   }
 
   @Override
@@ -73,5 +78,18 @@ public class InstanceRegistryImpl implements InstanceRegistry, InitializingBean,
   @Override
   public InstInfo getInstance() {
     return this.instance;
+  }
+
+  @Scheduled(cron = "${hbq.agent.instance-alive-check.cron:0 */5 * * * *}")
+  void instanceAliveUpdate() {
+    optional.getAgentDao().ifPresent(dao -> {
+      try {
+        getInstance().setRegTime(FormatTime.nowSecs());
+        dao.updateInstRegTime(getInstance());
+        log.debug("更新实例 [{}] 最新注册时间", getInstance().getKey());
+      } catch (Exception e) {
+        log.error(String.format("更新实例 [%s] 最新注册时间异常", getInstance().getKey()), e);
+      }
+    });
   }
 }

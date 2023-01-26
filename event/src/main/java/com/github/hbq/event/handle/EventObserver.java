@@ -1,6 +1,7 @@
 package com.github.hbq.event.handle;
 
 import com.github.hbq.event.handle.event.DictEvent;
+import com.github.hbq.event.handle.event.KafkaInRateLimiterEvent;
 import com.github.hbq.event.handle.event.RouteEvent;
 
 /**
@@ -22,6 +23,15 @@ public interface EventObserver {
    * @param event
    */
   default void dictNotify(DictEvent event) {
+
+  }
+
+  /**
+   * kafka入口消息限速事件
+   *
+   * @param event
+   */
+  default void kafkaRateLimiterNotify(KafkaInRateLimiterEvent event) {
 
   }
 }

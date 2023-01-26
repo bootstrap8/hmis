@@ -2,6 +2,7 @@ package com.github.hbq.event.kafka;
 
 import com.github.hbq.event.handle.EventObserver;
 import com.github.hbq.event.handle.event.DictEvent;
+import com.github.hbq.event.handle.event.KafkaInRateLimiterEvent;
 import com.github.hbq.event.handle.event.RouteEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +36,7 @@ public class EventSingleListener implements ApplicationEventPublisherAware, Appl
   @Override
   public void afterPropertiesSet() throws Exception {
     Map<String, EventObserver> map = context.getBeansOfType(EventObserver.class);
+    log.info("注册的观察者: {}", map);
     if (Objects.nonNull(map)) {
       Collection<EventObserver> c = map.values();
       if (c != null) {
@@ -65,6 +67,20 @@ public class EventSingleListener implements ApplicationEventPublisherAware, Appl
       log.info("接收到字典变更kafka消息: {}", msg);
       DictEvent event = new DictEvent(msg);
       observers.forEach(observer -> observer.dictNotify(event));
+      pub.publishEvent(event);
+    } catch (Exception e) {
+      log.error("", e);
+    }
+  }
+
+  @KafkaListener(topics = {"HBQ-AGENT-KAFKA-IN-RATE-LIMITER-CHANGE"},
+      groupId = "#{'${spring.application.name}-' + T(com.github.hbq.event.kafka.IDBox).GID}")
+  void kafkaRateLimiterNotify(ConsumerRecord<String, String> rd) {
+    try {
+      String msg = rd.value();
+      log.info("接收到kafka入口消息速率变更消息: {}", msg);
+      KafkaInRateLimiterEvent event = new KafkaInRateLimiterEvent(msg);
+      observers.forEach(observer -> observer.kafkaRateLimiterNotify(event));
       pub.publishEvent(event);
     } catch (Exception e) {
       log.error("", e);

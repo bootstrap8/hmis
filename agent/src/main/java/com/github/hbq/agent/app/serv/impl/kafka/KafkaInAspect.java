@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class KafkaInAspect {
 
   @Autowired
+  private KafkaInRateLimit kafkaInRateLimit;
+
+  @Autowired
   private KafkaQuotaGetImpl kafkaQuotaGet;
 
   @Pointcut("@annotation(org.springframework.kafka.annotation.KafkaListener)")
@@ -31,8 +34,11 @@ public class KafkaInAspect {
     }
     Object rec = args[0];
     if (rec instanceof List) {
-      kafkaQuotaGet.incrementAndGetIn(((List) rec).size());
+      int size = ((List) rec).size();
+      kafkaInRateLimit.acquire(size);
+      kafkaQuotaGet.incrementAndGetIn(size);
     } else if (rec instanceof QuotaData) {
+      kafkaInRateLimit.acquire(1);
       kafkaQuotaGet.incrementAndGetIn(1);
     }
     return point.proceed();
