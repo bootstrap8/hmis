@@ -27,7 +27,7 @@ public class QuotaScheduleImpl implements QuotaSchedule, InitializingBean, Dispo
   private Task task = new Task();
 
   private ThreadPoolExecutor pool = ThreadPoolUtils.pool("指标采集任务线程池",
-      Runtime.getRuntime().availableProcessors() * 4, 5000);
+      Runtime.getRuntime().availableProcessors() * 4, 5000, null);
 
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -71,7 +71,7 @@ public class QuotaScheduleImpl implements QuotaSchedule, InitializingBean, Dispo
           continue;
         }
         pool.submit(() -> {
-          log.info("调度采集器: {}", delay.identify());
+          log.debug("调度采集器: {}", delay.identify());
           try {
             delay.collect();
           } catch (Exception e) {

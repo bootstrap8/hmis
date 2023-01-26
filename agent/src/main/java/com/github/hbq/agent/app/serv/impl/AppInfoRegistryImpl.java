@@ -46,7 +46,14 @@ public class AppInfoRegistryImpl implements AppInfoRegistry, InitializingBean {
     String desc = context.getProperty("spring.application.desc", name);
     this.app = new AppInfo(name, desc);
     log.info("注册的应用信息；{}", this.app);
-    optional.getAgentDao().ifPresent(agentDao -> agentDao.saveAppInfo(this.app.toMybatisMap()));
+    optional.getAgentDao().ifPresent(agentDao -> {
+      try {
+        agentDao.deleteAppInfo(name);
+        agentDao.saveAppInfo(this.app.toMybatisMap());
+      } catch (Exception e) {
+        log.error("注册应用信息异常", e);
+      }
+    });
   }
 
   @Override

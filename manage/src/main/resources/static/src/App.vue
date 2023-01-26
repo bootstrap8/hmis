@@ -16,6 +16,10 @@
       <template #title>字典管理</template>
       <el-menu-item index="/dict/list">字典配置</el-menu-item>
     </el-sub-menu>
+    <el-sub-menu index="/agent">
+      <template #title>指标监控</template>
+      <el-menu-item index="/agent/kafkaIn/appList">kafka入口消息流控管理</el-menu-item>
+    </el-sub-menu>
   </el-menu>
   <div class="frame">
     <router-view/>

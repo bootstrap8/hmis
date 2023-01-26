@@ -44,6 +44,12 @@ public class EventBatchListener implements ApplicationEventPublisherAware, Appli
     rds.forEach(rd -> single.dictNotify(rd));
   }
 
+  @KafkaListener(topics = {"HBQ-AGENT-KAFKA-IN-RATE-LIMITER-CHANGE"},
+      groupId = "#{'${spring.application.name}-' + T(com.github.hbq.event.kafka.IDBox).GID}")
+  void kafkaRateLimiterNotify(ConsumerRecords<String, String> rds) {
+    rds.forEach(rd -> single.kafkaRateLimiterNotify(rd));
+  }
+
   @Override
   public void setApplicationEventPublisher(ApplicationEventPublisher pub) {
     this.pub = pub;

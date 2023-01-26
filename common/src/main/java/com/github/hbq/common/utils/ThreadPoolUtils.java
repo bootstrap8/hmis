@@ -1,6 +1,7 @@
 package com.github.hbq.common.utils;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -20,12 +21,15 @@ public class ThreadPoolUtils {
    * @param qc       队列最大深度
    * @return
    */
-  public static ThreadPoolExecutor pool(String poolName, int pooSize, int qc) {
-    return new ThreadPoolExecutor(pooSize, pooSize, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(qc),
-        (r) -> new Thread(r, poolName), (r, executor) ->
-    {
-      log.error("调度任务失败, 当前队列深度: {}", executor.getQueue().size());
-    });
+  public static ThreadPoolExecutor pool(String poolName, int pooSize, int qc, RejectedExecutionHandler reject) {
+    return reject == null ?
+        new ThreadPoolExecutor(pooSize, pooSize, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(qc),
+            (r) -> new Thread(r, poolName), (r, executor) ->
+        {
+          log.error("线程池队列溢出了，丢弃该任务，请检查！当前队列深度: {}", executor.getQueue().size());
+        }) :
+        new ThreadPoolExecutor(pooSize, pooSize, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(qc),
+            (r) -> new Thread(r, poolName), reject);
   }
 
   /**

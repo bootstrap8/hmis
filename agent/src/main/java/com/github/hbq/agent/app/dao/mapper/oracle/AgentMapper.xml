@@ -42,4 +42,26 @@
       primary key (data_center, app_name, ip, port, quota_name)
     )
   </update>
+
+  <update id="createKafkaInAppRateLimiter">
+    create table hbq_agent_kafkain_app_rl
+    (
+      app_name    varchar2(255) primary key,
+      permits     number(20),
+      update_time number(20)
+    )
+  </update>
+
+  <update id="createKafkaInInstanceRateLimiter">
+    create table hbq_agent_kafkain_inst_rl
+    (
+      data_center varchar2(255),
+      app_name    varchar2(255),
+      ip          varchar2(255),
+      port        number(10),
+      permits     number(20),
+      update_time number(20),
+      primary key (data_center, app_name, ip, port)
+    )
+  </update>
 </mapper>

@@ -43,7 +43,7 @@ public class MapDictImpl implements Dict<Map> {
   @PostConstruct
   @Override
   public synchronized void reloadImmediately() {
-    log.info("开始加载字典信息");
+    log.debug("开始加载字典信息");
     dictMap.clear();
     fns = null;
     try {
@@ -56,7 +56,7 @@ public class MapDictImpl implements Dict<Map> {
         try {
           if (dict.isSQLEnumType()) {
             String sql = "select enum_sql AS \"sql\" from hbq_dic_ext_sql where field_name=?";
-            log.info("加载[{}], [{}]字典信息", dict.getFieldName(), sql);
+            log.debug("加载[{}], [{}]字典信息", dict.getFieldName(), sql);
             try {
               Map sqlMap = jt.queryForMap(sql, new Object[]{dict.getFieldName()}, new int[]{Types.VARCHAR});
               jt.query(MapUtils.getString(sqlMap, "sql"), (resultSet) -> {
@@ -70,7 +70,7 @@ public class MapDictImpl implements Dict<Map> {
             }
           } else if (dict.isOrdinaryEnumType()) {
             String sql = "select enum_key,enum_value from hbq_dic_ext_kv where field_name=?";
-            log.info("加载[{}], [{}]字典信息", dict.getFieldName(), sql);
+            log.debug("加载[{}], [{}]字典信息", dict.getFieldName(), sql);
             jt.query(sql, ps -> {
               ps.setString(1, dict.getFieldName());
             }, resultSet -> {
@@ -80,7 +80,7 @@ public class MapDictImpl implements Dict<Map> {
               dict.addPair(pair);
             });
           }
-          log.info("加载[{}]字典信息, 枚举数量: {}", dict.getFieldName(), dict.getPairSize());
+          log.debug("加载[{}]字典信息, 枚举数量: {}", dict.getFieldName(), dict.getPairSize());
         } catch (Exception e) {
           log.error("加载字典[{}]异常: {}", dict.getFieldName(), e.getMessage());
         }
@@ -88,7 +88,7 @@ public class MapDictImpl implements Dict<Map> {
     } catch (Exception e) {
       log.error("加载字典异常", e);
     }
-    log.info("加载字典信息结束");
+    log.debug("加载字典信息结束");
     fns = dictMap.keySet().stream().collect(Collectors.toList());
     if (log.isDebugEnabled()) {
       log.debug("加载到的字典信息: {}", JSON.toJSONString(dictMap));

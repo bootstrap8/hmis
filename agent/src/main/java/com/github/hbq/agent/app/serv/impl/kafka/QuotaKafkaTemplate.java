@@ -18,12 +18,12 @@ public class QuotaKafkaTemplate implements InitializingBean {
 
   private KafkaTemplate proxy;
 
-  @Autowired
+  @Autowired(required = false)
   private KafkaTemplate kafka;
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (kafka != null) {
+    if (Objects.nonNull(kafka)) {
       Map<String, Object> copy = kafka.getProducerFactory().getConfigurationProperties();
       Serializer<List<QuotaData>> valueSerializer = new QuotaDataSerializer();
       DefaultKafkaProducerFactory factory = new DefaultKafkaProducerFactory(copy, new StringSerializer(), valueSerializer);

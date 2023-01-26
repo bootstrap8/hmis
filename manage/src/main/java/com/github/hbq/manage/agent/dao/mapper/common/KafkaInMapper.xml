@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.manage.agent.dao.KafkaInDao">
+  <select id="queryAppInfos" resultType="map" parameterType="map">
+    select a.name AS "name",
+    a.a_desc AS "desc",
+    a.tags AS "tags",
+    a.reg_time AS "regTime",
+    count(1) AS "instanceSize",
+    c.permits AS "permits"
+    from hbq_agent_app a left join hbq_agent_instance b
+    on a.name=b.app_name
+    left join hbq_agent_kafkain_app_rl c on a.name=c.app_name
+    <where>
+      <if test="appSelect=='name'">
+        <if test="appKey!=null and appKey!=''">
+          <bind name="appKeyLike" value="'%' + appKey + '%'"/>
+          and a.name like #{appKeyLike}
+        </if>
+      </if>
+      <if test="appSelect=='desc'">
+        <if test="appKey!=null and appKey!=''">
+          <bind name="appKeyLike" value="'%' + appKey + '%'"/>
+          and a.a_desc like #{appKeyLike}
+        </if>
+      </if>
+    </where>
+    group by a.name,a.a_desc,a.tags,a.reg_time,c.permits
+    order by a.name asc, a.reg_time desc
+  </select>
+
+  <select id="queryInstanceList" parameterType="map" resultType="map">
+    select b.name        AS "appName",
+           a.data_center AS "dataCenter",
+           a.ip          AS "ip",
+           a.host_name   AS "hostName",
+           a.port        AS "port",
+           a.process_no  AS "processNo",
+           a.tags        AS "tags",
+           a.reg_time    AS "regTime",
+           c.permits     AS "permits"
+    from hbq_agent_instance a
+           left join hbq_agent_kafkain_inst_rl c
+                     on a.app_name = c.app_name
+                       and a.data_center = c.data_center
+                       and a.ip = c.ip
+                       and a.port = c.port,
+         hbq_agent_app b
+    where a.app_name = b.name
+      and a.app_name = #{appName}
+    order by a.reg_time desc
+  </select>
+</mapper>

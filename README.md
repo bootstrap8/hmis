@@ -1067,6 +1067,8 @@ hbq.agent.kafka.enable=true
 # 额外配置项
 # 是否自动采集
 hbq.agent.kafka.auto-collect.enable=true
+# 入口消息限速
+hbq.agent.kafka.in.rate-limiter=50000
 ```
 
 
@@ -1165,6 +1167,63 @@ public class DemoQuotaDataGet extends AbstractQuotaDataGet {
 
 
 
+
+
+# kafka事件管理
+
+主要管理系统中控制类的消息，比如变更、通知之类的消息。此模块主要是将字符串格式的kafka消息转换成可读性 更强的`java` `pojo`对象。
+
+
+
+## 事件消息辅助处理接口
+
+业务代码只需实现此接口即可 `com.github.hbq.event.handle.EventObserver`
+
+```
+public interface EventObserver {
+
+  /**
+   * 路由变化事件
+   *
+   * @param event
+   */
+  default void routeNotify(RouteEvent event) {
+  }
+
+  /**
+   * 字典变化事件
+   *
+   * @param event
+   */
+  default void dictNotify(DictEvent event) {
+
+  }
+
+  /**
+   * kafka入口消息限速事件
+   *
+   * @param event
+   */
+  default void kafkaRateLimiterNotify(KafkaInRateLimiterEvent event) {
+
+  }
+}
+```
+
+
+
+## 事件主题
+
+| 主题                                     | 作用                    | 传播路径                     |
+| ---------------------------------------- | ----------------------- | ---------------------------- |
+| `HBQ-GATEWAY-ROUTE-CHANGE`               | 路由变更                | manage => gateway            |
+| `HBQ-COMMON-DICT-CHANGE`                 | 字典变更                | manage => 需要关注的应用实例 |
+| `HBQ-AGENT-KAFKA-IN-RATE-LIMITER-CHANGE` | `kafka`入口消息速率变更 | manage => 所有应用实例       |
+
+
+
+
+
 # 门户网关
 
 ## 安装使用
@@ -1260,6 +1319,8 @@ mvn -DskipTests=true clean package
 
 ### 路由管理
 
+![image-20230126152739505](README/image/README/image-20230126152739505.png)
+
 - 路由查询
 
 ![image-20230113153709574](README/image/README/image-20230113153709574.png)
@@ -1274,6 +1335,8 @@ mvn -DskipTests=true clean package
 
 ### 字典管理
 
+![image-20230126152803618](README/image/README/image-20230126152803618.png)
+
 - 字典查询
 
 ![image-20230113154040475](README/image/README/image-20230113154040475.png)
@@ -1287,3 +1350,29 @@ mvn -DskipTests=true clean package
 
 
 ![image-20230113154055870](README/image/README/image-20230113154055870.png)
+
+
+
+### 应用kafka入口消息速率管理
+
+可针对应用或实例两个纬度进行限速配置。
+
+![image-20230126152824597](README/image/README/image-20230126152824597.png)
+
+- 应用限速管理
+
+![image-20230126152916081](README/image/README/image-20230126152916081.png)
+
+
+
+![image-20230126152930908](README/image/README/image-20230126152930908.png)
+
+
+
+- 实例限速管理
+
+![image-20230126152959376](README/image/README/image-20230126152959376.png)
+
+
+
+![image-20230126153102716](README/image/README/image-20230126153102716.png)
