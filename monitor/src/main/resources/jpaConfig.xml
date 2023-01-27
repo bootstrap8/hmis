@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--<settings>-->
+    <!--<setting name="useColumnLabel" value="false"/>-->
+    <!--</settings>-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="helperDialect" value="mysql"/>
+            <property name="offsetAsPageNum" value="true"/>
+            <property name="params" value="pageNum,pageSize,count,pageSizeZero,reasonable"/>
+            <property name="supportMethodsArguments" value="true"/>
+        </plugin>
+    </plugins>
+    <environments default="production">
+        <environment id="h2db">
+            <transactionManager type="JDBC">
+            </transactionManager>
+            <dataSource type="POOLED">
+                <property name="driver" value="org.h2.Driver"/>
+                <property name="url" value="jdbc:h2:mem:quotadata"/>
+                <property name="username" value="quota"/>
+                <property name="password" value="quota"/>
+                <property name="driver.encoding" value="UTF8"/>
+                <property name="poolMaximumActiveConnections" value="20"/>
+                <property name="poolMaximumIdleConnections" value="15"/>
+            </dataSource>
+        </environment>
+    </environments>
+</configuration>

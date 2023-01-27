@@ -1085,6 +1085,8 @@ hbq.agent.kafka.enable=true
 hbq.agent.kafka.auto-collect.enable=true
 # 入口消息限速
 hbq.agent.kafka.in.rate-limiter=50000
+# 指定指标数据推送的kafka集群配置
+hbq.agent.kafka.configs={"bootstrap.servers":["192.168.56.2:9092"],"value.serializer":"com.github.hbq.agent.app.serv.impl.kafka.QuotaDataSerializer"}
 ```
 
 

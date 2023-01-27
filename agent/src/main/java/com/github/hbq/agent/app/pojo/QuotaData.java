@@ -38,5 +38,4 @@ public class QuotaData {
   public String getFmtCollectTime() {
     return FormatTime.YYYYMMDDHHMISS.withSecs(getCollectTime());
   }
-
 }

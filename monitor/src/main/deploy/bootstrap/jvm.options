@@ -1,0 +1,11 @@
+-Dspring.profiles.active=${spring_profiles_active}
+-Dspring.main.allow-bean-definition-overriding=true
+
+-Dfile.encoding=utf-8
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=100
+
+-Xms512m
+-Xmx512m
+
+-DAPP_SN=monitor

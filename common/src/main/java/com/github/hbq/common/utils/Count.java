@@ -63,12 +63,30 @@ public abstract class Count {
   public abstract boolean compareAndInit(long actual);
 
   /**
+   * 比较并且重置初始值
+   *
+   * @param actual
+   * @param elapsedMills
+   * @return
+   */
+  public abstract boolean compareAndInit(long actual, long elapsedMills);
+
+  /**
    * 比较余数是否为0
    *
    * @param actual
    * @return
    */
   public abstract boolean compare(long actual);
+
+  /**
+   * 比较余数是否为0
+   *
+   * @param actual
+   * @param elapsedMills
+   * @return
+   */
+  public abstract boolean compare(long actual, long elapsedMills);
 
   /**
    * 返回当前值
@@ -97,9 +115,20 @@ public abstract class Count {
 
     private AtomicLong count = new AtomicLong(0);
 
+    private long time = FormatTime.nowMills();
+
+    private synchronized void updateTime() {
+      this.time = FormatTime.nowMills();
+    }
+
+    private synchronized long elapsed() {
+      return FormatTime.nowMills() - this.time;
+    }
+
     @Override
     public void reset() {
       count.set(0);
+      updateTime();
     }
 
     @Override
@@ -133,8 +162,22 @@ public abstract class Count {
     }
 
     @Override
+    public boolean compareAndInit(long actual, long elapsed) {
+      boolean r = (elapsed() >= elapsed);
+      if (r) {
+        updateTime();
+      }
+      return r || compareAndInit(actual);
+    }
+
+    @Override
     public boolean compare(long actual) {
       return count.get() % actual == 0;
+    }
+
+    @Override
+    public boolean compare(long actual, long elapsed) {
+      return (count.get() % actual == 0) || (elapsed() == elapsed);
     }
 
     @Override
@@ -158,9 +201,20 @@ public abstract class Count {
 
     private long count = 0;
 
+    private long time = FormatTime.nowMills();
+
+    private void updateTime() {
+      this.time = FormatTime.nowMills();
+    }
+
+    private long elapsed() {
+      return FormatTime.nowMills() - this.time;
+    }
+
     @Override
     public void reset() {
       count = 0;
+      updateTime();
     }
 
     @Override
@@ -200,8 +254,22 @@ public abstract class Count {
     }
 
     @Override
+    public boolean compareAndInit(long actual, long elapsed) {
+      boolean r = (elapsed() >= elapsed);
+      if (r) {
+        updateTime();
+      }
+      return r || compareAndInit(actual);
+    }
+
+    @Override
     public boolean compare(long actual) {
       return count % actual == 0;
+    }
+
+    @Override
+    public boolean compare(long actual, long elapsed) {
+      return false;
     }
 
     @Override

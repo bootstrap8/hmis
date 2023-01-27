@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.monitor.dao.dialect.QuotaDataDao">
+  <insert id="saveQuotaData">
+    insert into hbq_quota_data(data_center, app_name, ip, host_name, port, process_no,quota_name, data_value, data_desc,
+    collect_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.quota.instInfo.dataCenter},
+      #{item.quota.instInfo.app.name},
+      #{item.quota.instInfo.ip},
+      #{item.quota.instInfo.hostName},
+      #{item.quota.instInfo.port},
+      #{item.quota.instInfo.processNo},
+      #{item.quota.name},
+      #{item.data.fmtValue},
+      #{item.data.desc},
+      #{item.collectTime})
+    </foreach>
+
+  </insert>
+
+  <delete id="cleanQuotaData">
+    delete
+    from hbq_quota_data
+    where collect_time <![CDATA[ <= ]]> #{collectTime}
+  </delete>
+
+  <select id="queryQuotaDatas" parameterType="map" resultType="map">
+    select data_center AS "dataCenter",
+    app_name AS "appName",
+    ip AS "ip",
+    host_name AS "hostName",
+    port AS "port",
+    process_no AS "processNo",
+    quota_name AS "quotaName",
+    data_value AS "dataValue",
+    data_desc AS "dataDesc",
+    collect_time AS "collectTime"
+    from hbq_quota_data
+    <where>
+      and data_center=#{dataCenter}
+      and ip=#{ip}
+      and port=#{port}
+      and collect_time <![CDATA[ >= ]]> #{startTime}
+      and collect_time <![CDATA[ < ]]> #{endTime}
+    </where>
+    order by collectTime asc
+  </select>
+</mapper>
