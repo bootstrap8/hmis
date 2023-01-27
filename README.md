@@ -882,14 +882,18 @@ management.endpoints.web.exposure.include=net
 
 端点接口
 
-|         链接         |               作用                |
-| :------------------: | :-------------------------------: |
-|  /actuator/net/all   |     查询应用网络连接总体概况      |
-| /actuator/net/count  |     查询应用网络连接分类汇总      |
-|  /actuator/net/top   | 查询应用网络连接按目的地址汇总top |
-| /actuator/net/detail |       查询应用网络连接明细        |
+|           链接           |               作用                |
+| :----------------------: | :-------------------------------: |
+|  /hbq-actuator/net/all   |     查询应用网络连接总体概况      |
+| /hbq-actuator/net/count  |     查询应用网络连接分类汇总      |
+|  /hbq-actuator/net/top   | 查询应用网络连接按目的地址汇总top |
+| /hbq-actuator/net/detail |       查询应用网络连接明细        |
 
 
+
+`/hbq-actuator/net/all`端点效果
+
+![image-20230127103324879](README/image/README/image-20230127103324879.png)
 
 
 
@@ -905,11 +909,23 @@ management.endpoints.web.exposure.include=threadtop
 
 端点接口
 
-|          链接          |           作用            |
-| :--------------------: | :-----------------------: |
-| /actuator/threadtop/10 | 查询应用线程CPU的占用情况 |
+|            链接             |           作用            |
+| :-------------------------: | :-----------------------: |
+| /hbq-actuator/thread-top/20 | 查询应用线程CPU的占用情况 |
 
 
+
+`/hbq-actuator/thread-top/20`端点效果
+
+![image-20230127103524080](README/image/README/image-20230127103524080.png)
+
+
+
+![image-20230127103552137](README/image/README/image-20230127103552137.png)
+
+
+
+![image-20230127103700569](README/image/README/image-20230127103700569.png)
 
 
 
