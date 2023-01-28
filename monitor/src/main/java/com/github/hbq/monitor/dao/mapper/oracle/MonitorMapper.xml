@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.monitor.dao.MonitorDao">
+  <update id="createQuotaWarnRule">
+    create table hbq_monitor_warnrule
+    (
+      app_name           varchar2(255),
+      quota_name         varchar2(255),
+      rule               varchar2(1000),
+      check_count        number(10),
+      notify_timeout_sec number(10),
+      phone_nums         varchar2(500),
+      is_enable          number(2),
+      update_time        number(20),
+      PRIMARY KEY (app_name, quota_name)
+    )
+  </update>
+</mapper>

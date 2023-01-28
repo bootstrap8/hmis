@@ -1,15 +1,19 @@
-package com.github.hbq.monitor.dao.dialect;
+package com.github.hbq.monitor.dao;
 
 import com.github.hbq.agent.app.pojo.QuotaData;
+import com.github.hbq.common.spring.datasource.HDS;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author hbq
  */
+@Repository
 @Mapper
+@HDS("quota")
 public interface QuotaDataDao {
 
   /**

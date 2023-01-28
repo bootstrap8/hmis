@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.github.hbq.monitor.dao.dialect.QuotaDataDao">
+<mapper namespace="com.github.hbq.monitor.dao.QuotaDataDao">
   <insert id="saveQuotaData">
     insert into hbq_quota_data(data_center, app_name, ip, host_name, port, process_no,quota_name, data_value, data_desc,
     collect_time)

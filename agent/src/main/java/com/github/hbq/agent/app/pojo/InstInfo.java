@@ -5,6 +5,7 @@ import com.github.hbq.common.utils.FormatTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import lombok.Data;
 
 /**
@@ -34,7 +35,18 @@ public class InstInfo {
     this.port = port;
     this.processNo = processNo;
     this.regTime = FormatTime.nowSecs();
+    initKey();
+  }
+
+  private void initKey() {
     this.key = String.join(",", app.getKey(), dataCenter, ip, String.valueOf(port));
+  }
+
+  public String getKey() {
+    if (Objects.isNull(key)) {
+      initKey();
+    }
+    return key;
   }
 
   public String getFmtRegTime() {

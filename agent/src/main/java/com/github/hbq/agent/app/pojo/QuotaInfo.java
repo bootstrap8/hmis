@@ -2,6 +2,7 @@ package com.github.hbq.agent.app.pojo;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import lombok.Data;
 
 /**
@@ -16,7 +17,8 @@ public class QuotaInfo {
   private String unit;
   private CycleInfo cycleInfo = CycleInfo.SECOND30;
   private Type type = Type.Data;
-  private String key;
+  private String instQuotaKey;
+  private String quotaKey;
 
   public QuotaInfo() {
   }
@@ -32,7 +34,30 @@ public class QuotaInfo {
     this(instInfo, name, desc, unit);
     this.cycleInfo = cycleInfo;
     this.type = type;
-    this.key = String.join(",", instInfo.getKey(), name, cycleInfo.getKey(), type.name());
+    initInstQuotaKey();
+    initQuotaKey();
+  }
+
+  private void initQuotaKey() {
+    this.quotaKey = String.join(",", this.name, cycleInfo.getKey(), type.name());
+  }
+
+  private void initInstQuotaKey() {
+    this.instQuotaKey = String.join(",", instInfo.getKey(), name, cycleInfo.getKey(), type.name());
+  }
+
+  public String getInstQuotaKey() {
+    if (Objects.isNull(instQuotaKey)) {
+      initInstQuotaKey();
+    }
+    return instQuotaKey;
+  }
+
+  public String getQuotaKey() {
+    if (Objects.isNull(quotaKey)) {
+      initQuotaKey();
+    }
+    return quotaKey;
   }
 
   public enum Type {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.monitor.dao.MonitorDao">
+  <update id="createQuotaWarnRule">
+    create table `hbq_monitor_warnrule`
+    (
+      `app_name`    varchar(255),
+      `quota_name`  varchar(255),
+      `rule`        varchar(1000),
+      `check_count` numeric(10),
+      `notify_timeout_sec` numeric(10),
+      `phone_nums`  varchar(500),
+      `is_enable`   numeric(2),
+      `update_time` numeric(20),
+      PRIMARY KEY (app_name, quota_name)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  </update>
+</mapper>

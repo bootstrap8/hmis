@@ -210,6 +210,11 @@
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis-spring</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.apistd.uni</groupId>
+      <artifactId>uni-sdk</artifactId>
+      <version>0.0.4</version>
+    </dependency>
   </dependencies>
 
   <build>
