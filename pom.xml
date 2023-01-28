@@ -53,6 +53,7 @@
     <module>event</module>
     <module>manage</module>
     <module>agent</module>
+    <module>monitor</module>
   </modules>
 
   <dependencyManagement>

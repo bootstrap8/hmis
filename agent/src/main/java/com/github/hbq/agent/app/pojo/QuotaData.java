@@ -1,6 +1,8 @@
 package com.github.hbq.agent.app.pojo;
 
 import com.github.hbq.common.utils.FormatTime;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 
 /**
@@ -39,4 +41,18 @@ public class QuotaData {
     return FormatTime.YYYYMMDDHHMISS.withSecs(getCollectTime());
   }
 
+  public String queryAppName() {
+    return quota.getInstInfo().getApp().getName();
+  }
+
+  public String queryQuotaName() {
+    return quota.getName();
+  }
+
+  public Map map() {
+    Map map = new HashMap(8);
+    map.put("value", data.getFmtValue());
+    map.put("desc", data.getDesc());
+    return map;
+  }
 }

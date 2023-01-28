@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.monitor.dao.MonitorDao">
+  <select id="queryQuotaWarnRules" parameterType="map" resultType="com.github.hbq.monitor.pojo.QuotaWarnRuleInfo">
+    select app_name AS "appName",
+    quota_name AS "quotaName",
+    rule AS "rule",
+    check_count AS "checkCount",
+    notify_timeout_sec AS "notifyTimeoutSec",
+    phone_nums AS "phoneNums",
+    is_enable AS "enable",
+    update_time AS "updateTime"
+    from hbq_monitor_warnrule
+    <where>
+      <if test="appName!=null and appName!=''">
+        and app_name = #{appName}
+      </if>
+      <if test="quotaName!=null and quotaName!=''">
+        and quota_name = #{quotaName}
+      </if>
+      <if test="enable!=-1">
+        and is_enable = #{enable}
+      </if>
+    </where>
+  </select>
+
+  <insert id="saveQuotaWarnRule" parameterType="map">
+    insert into hbq_monitor_warnrule(app_name, quota_name, rule, check_count, notify_timeout_sec, phone_nums, is_enable,
+                                     update_time)
+    values (#{appName}, #{quotaName}, #{rule}, #{checkCount}, #{notifyTimeoutSec}, #{phoneNums}, #{enable},
+            #{updateTime})
+  </insert>
+
+  <delete id="deleteQuotaWarnRule" parameterType="map">
+    delete
+    from hbq_monitor_warnrule
+    where app_name = #{appName}
+      and quota_name = #{quotaName}
+  </delete>
+
+  <delete id="deleteAppAllQuotaWarnRule">
+    delete
+    from hbq_monitor_warnrule
+    where app_name = #{appName}
+  </delete>
+
+  <update id="updatePhoneNumsOnApp">
+    update hbq_monitor_warnrule
+    set phone_nums=#{phoneNums},
+        update_time=#{updateTime}
+    where app_name = #{appName}
+  </update>
+
+  <update id="updatePhoneNumsOnAll">
+    update hbq_monitor_warnrule
+    set phone_nums=#{phoneNums},
+        update_time=#{updateTime}
+  </update>
+</mapper>

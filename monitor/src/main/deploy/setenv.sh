@@ -1,0 +1,13 @@
+#!/bin/sh
+export docker_registry="localhost:9443"
+export docker_ns=""
+export docker_prefix="${docker_registry}${docker_ns}"
+export docker_registry_user=""
+export docker_registry_pwd=""
+export k8s_ns="default"
+export k8s_api_version="apps/v1"
+export spring_cloud_zookeeper_enabled="true"
+export spring_cloud_zookeeper_connectString="localhost:2181"
+export spring_cloud_zookeeper_auth_info="huangbq:123456"
+export spring_cloud_zookeeper_auth_secky=""
+export spring_profiles_active="dev"

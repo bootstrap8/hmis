@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.monitor.dao.QuotaDataDao">
+  <select id="test" resultType="java.util.Map">
+    select 1
+  </select>
+
+  <update id="createQuotaData">
+    create table `hbq_quota_data`
+    (
+      `data_center`  varchar(255),
+      `app_name`     varchar(255),
+      `ip`           varchar(255),
+      `host_name`    varchar(255),
+      `port`         numeric(6),
+      `quota_name`   varchar(255),
+      `process_no`   numeric(20),
+      `data_value`   numeric(20, 2),
+      `data_desc`    varchar(255),
+      `collect_time` numeric(20),
+      PRIMARY KEY (`data_center`, `app_name`, `ip`, `port`, `quota_name`, `collect_time`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  </update>
+</mapper>

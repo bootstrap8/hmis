@@ -45,7 +45,7 @@ public class QuotaManageImpl implements QuotaManage, InitializingBean {
               quota.getName());
           agentDao.saveQuotaInfo(quota.toMybatisMap());
         } catch (Exception e) {
-          log.error(String.format("保存注册指标[%s]失败", quota.getKey()), e);
+          log.error(String.format("保存注册指标[%s]失败", quota.getInstQuotaKey()), e);
         }
       });
     });

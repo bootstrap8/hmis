@@ -1,5 +1,6 @@
 package com.github.hbq.agent.app.pojo;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,18 @@ public class CycleInfo {
   public CycleInfo(TimeUnit unit, long time) {
     this.unit = unit;
     this.time = time;
+    initKey();
+  }
+
+  private void initKey() {
     this.key = String.join(":", unit.name(), String.valueOf(time));
+  }
+
+  public String getKey() {
+    if (Objects.isNull(key)) {
+      initKey();
+    }
+    return key;
   }
 
   public final static CycleInfo SECOND1 = new CycleInfo(TimeUnit.SECONDS, 1);
