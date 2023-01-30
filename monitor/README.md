@@ -8,7 +8,7 @@
 
 ### 指标阈值配置
 
-![image-20230130145601191](README/image/README/image-20230130145601191.png)
+![image-20230130152241188](README/image/README/image-20230130152241188.png)
 
 
 

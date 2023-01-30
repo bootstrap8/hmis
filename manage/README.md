@@ -89,9 +89,7 @@ mvn -DskipTests=true clean package
 
 #### 指标阈值配置
 
-![image-20230130145601191](README/image/README/image-20230130145601191.png)
-
-
+![image-20230130152138390](README/image/README/image-20230130152138390.png)
 
 #### 应用指标趋势
 
