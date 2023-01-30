@@ -5,6 +5,9 @@
 包含`ui`代码和`微服务`代码的打包
 
 ```shell
+# 首次安装需要安装npm包依赖
+cd manage/src/main/resources/static/
+npm install
 cd manage
 mvn -DskipTests=true clean package
 ```
