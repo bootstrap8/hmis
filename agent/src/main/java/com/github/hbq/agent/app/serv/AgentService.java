@@ -1,5 +1,6 @@
 package com.github.hbq.agent.app.serv;
 
+import java.util.List;
 import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,4 +24,14 @@ public interface AgentService {
    */
   @Transactional(rollbackFor = Exception.class)
   void saveKafkaInInstanceRateLimiter(Map map);
+
+  /**
+   * 查询注册指标数据
+   *
+   * @param map
+   * @param pageNum
+   * @param pageSize
+   * @return
+   */
+  List<Map> queryQuotaInfos(Map map, int pageNum, int pageSize);
 }

@@ -1,5 +1,6 @@
 package com.github.hbq.monitor.serv.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.hbq.agent.app.pojo.QuotaData;
 import com.github.hbq.common.spring.context.SpringContext;
 import com.github.hbq.common.utils.Count;
@@ -13,6 +14,7 @@ import com.github.hbq.monitor.pojo.QuotaWarnRuleInfo;
 import com.github.hbq.monitor.serv.MonitorService;
 import com.google.common.collect.ImmutableMap;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.h2.tools.Server;
 import org.springframework.beans.factory.DisposableBean;
@@ -40,6 +44,7 @@ import org.springframework.stereotype.Service;
 public class MonitorServiceImpl implements MonitorService, InitializingBean, DisposableBean {
 
   public static final String H2_DRIVER = "org.h2.Driver";
+  public static final String[] TIME_FORMAT = {"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"};
 
   @Value("${hbq.monitor.dialect.store.max-batch-size:200}")
   public int storeMaxBatchSize;
@@ -210,6 +215,38 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean, Dis
     } catch (Exception e) {
       log.error("清理异常", e);
     }
+  }
+
+  @Override
+  public List<Map> queryQuotaDatas(Map params) {
+    String timeType = MapUtils.getString(params, "timeType");
+    long endTimeSec = 0;
+    long startTimeSec = 0;
+    if (StringUtils.equals("custom", timeType)) {
+      List time = (List) MapUtils.getObject(params, "time");
+      String startTime = time.get(0).toString();
+      String endTime = time.get(1).toString();
+      try {
+        startTimeSec = DateUtils.parseDate(startTime, TIME_FORMAT).getTime() / 1000L + 8 * 3600;
+        endTimeSec = DateUtils.parseDate(endTime, TIME_FORMAT).getTime() / 1000L + 8 * 3600;
+      } catch (ParseException e) {
+      }
+    } else {
+      int hour = Integer.valueOf(timeType);
+      endTimeSec = FormatTime.nowSecs();
+      startTimeSec = endTimeSec - hour * 3600L;
+    }
+    // FIXED 解决element-ui日期组件晚8个小时的问题
+    params.put("startTime", startTimeSec);
+    params.put("endTime", endTimeSec);
+    log.info("查询指标趋势参数: {}", JSON.toJSONString(params));
+    List<Map> list = quotaDataDao.queryQuotaDatas(params);
+    long collectTime;
+    for (Map map : list) {
+      collectTime = MapUtils.getLongValue(map, "collectTime");
+      map.put("fmtCollectTime", FormatTime.HHMI.withSecs(collectTime));
+    }
+    return list;
   }
 
   private void createQuotaWarnRule() {

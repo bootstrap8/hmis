@@ -104,4 +104,12 @@ public interface MonitorService {
    * 清理过期指标数据
    */
   void cleanQuotaData();
+
+  /**
+   * 查询指标数据
+   *
+   * @param params
+   * @return
+   */
+  List<Map> queryQuotaDatas(Map params);
 }

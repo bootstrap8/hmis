@@ -15,7 +15,19 @@
             <includes>
                 <include>**/*</include>
             </includes>
+            <excludes>
+                <exclude>bootstrap/h2-1.4.200.jar</exclude>
+            </excludes>
             <lineEnding>unix</lineEnding>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/deploy</directory>
+            <outputDirectory>deploy</outputDirectory>
+            <directoryMode>0755</directoryMode>
+            <fileMode>0755</fileMode>
+            <includes>
+                <include>bootstrap/h2-1.4.200.jar</include>
+            </includes>
         </fileSet>
         <fileSet>
             <directory>src/main/deploy/docker</directory>

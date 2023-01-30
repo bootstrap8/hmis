@@ -26,7 +26,7 @@
               :stripe="true"
               size="small"
               :highlight-current-row="true">
-      <el-table-column fixed="left" label="操作" width="120" header-align="center">
+      <el-table-column fixed="left" label="操作" width="120" header-align="center" align="center">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="editRoute(scope)">编辑</el-button>
           <el-popconfirm title="你确定要删除本条路由吗?" @confirm="delConfirm(scope)">

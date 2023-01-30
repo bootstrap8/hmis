@@ -23,7 +23,7 @@ public class QuotaKafkaTemplate implements InitializingBean {
   @Autowired(required = false)
   private KafkaTemplate kafka;
 
-  @Value("${hbq.agent.kafka.configs:{}}")
+  @Value("${hbq.agent.kafka.producer.configs:{}}")
   private String quotaKafkaConfig;
 
   @Override

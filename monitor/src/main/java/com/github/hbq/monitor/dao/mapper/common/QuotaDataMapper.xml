@@ -40,11 +40,13 @@
     from hbq_quota_data
     <where>
       and data_center=#{dataCenter}
+      and app_name=#{appName}
       and ip=#{ip}
       and port=#{port}
+      and quota_name=#{quotaName}
       and collect_time <![CDATA[ >= ]]> #{startTime}
       and collect_time <![CDATA[ < ]]> #{endTime}
     </where>
-    order by collectTime asc
+    order by collect_time asc
   </select>
 </mapper>

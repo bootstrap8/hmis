@@ -5,7 +5,7 @@
 -XX:+UseG1GC
 -XX:MaxGCPauseMillis=100
 
--Xms512m
--Xmx512m
+-Xms2g
+-Xmx2g
 
 -DAPP_SN=monitor

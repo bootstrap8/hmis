@@ -19,6 +19,7 @@
     <el-sub-menu index="/agent">
       <template #title>指标监控</template>
       <el-menu-item index="/agent/kafkaIn/appList">kafka入口消息流控管理</el-menu-item>
+      <el-menu-item index="/monitor/quotaList">指标列表</el-menu-item>
     </el-sub-menu>
   </el-menu>
   <div class="frame">

@@ -1,14 +1,19 @@
 package com.github.hbq.agent.app.serv.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hbq.agent.app.dao.AgentDao;
 import com.github.hbq.agent.app.dao.impl.AgentDaoOptional;
 import com.github.hbq.agent.app.serv.AgentService;
 import com.github.hbq.event.handle.pojo.KafkaInRateLimiterAppInfo;
 import com.github.hbq.event.handle.pojo.KafkaInRateLimiterInstInfo;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -66,6 +71,16 @@ public class AgentServiceImpl implements AgentService, InitializingBean {
       String msg = JSON.toJSONString(appInfo);
       log.info("发送kafka入口消息应用实例速率变更通知消息: {}", msg);
       kafka.send("HBQ-AGENT-KAFKA-IN-RATE-LIMITER-CHANGE", msg);
+    }
+  }
+
+  @Override
+  public List<Map> queryQuotaInfos(Map map, int pageNum, int pageSize) {
+    Optional<AgentDao> op = optional.getAgentDao();
+    if (op.isPresent()) {
+      return op.get().queryQuotaInfos(map, new RowBounds(pageNum, pageSize));
+    } else {
+      return Collections.emptyList();
     }
   }
 

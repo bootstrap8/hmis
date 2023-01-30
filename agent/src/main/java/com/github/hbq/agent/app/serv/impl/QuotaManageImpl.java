@@ -38,11 +38,7 @@ public class QuotaManageImpl implements QuotaManage, InitializingBean {
     optional.getAgentDao().ifPresent(agentDao -> {
       qis.forEach(quota -> {
         try {
-          agentDao.deleteQuotaInfo(quota.getInstInfo().getDataCenter(),
-              quota.getInstInfo().getApp().getName(),
-              quota.getInstInfo().getIp(),
-              quota.getInstInfo().getPort(),
-              quota.getName());
+          agentDao.deleteQuotaInfo(quota.getInstInfo().getApp().getName(), quota.getName());
           agentDao.saveQuotaInfo(quota.toMybatisMap());
         } catch (Exception e) {
           log.error(String.format("保存注册指标[%s]失败", quota.getInstQuotaKey()), e);

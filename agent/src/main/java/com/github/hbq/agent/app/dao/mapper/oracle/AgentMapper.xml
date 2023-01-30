@@ -29,9 +29,6 @@
   <update id="createQuotaInfo">
     create table hbq_agent_quota
     (
-      data_center varchar2(255),
-      ip          varchar2(255),
-      port        number(20),
       app_name    varchar2(255),
       quota_name  varchar2(255),
       quota_desc  varchar2(255),
@@ -39,7 +36,7 @@
       quota_type  varchar2(30),
       cycle_time  number(20),
       cycle_unit  varchar2(50),
-      primary key (data_center, app_name, ip, port, quota_name)
+      primary key (app_name, quota_name)
     )
   </update>
 

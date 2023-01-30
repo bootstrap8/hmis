@@ -6,11 +6,12 @@
               :stripe="true"
               size="small"
               :highlight-current-row="true">
-      <el-table-column fixed="left" label="操作" width="120" header-align="center">
+      <el-table-column fixed="left" label="操作" width="120" header-align="center" align="center">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="showDialog(scope)">速率</el-button>
         </template>
       </el-table-column>
+      <el-table-column prop="appName" label="应用名称" :show-overflow-tooltip="true" header-align="center"/>
       <el-table-column prop="dataCenter" label="数据中心" :show-overflow-tooltip="true" header-align="center"/>
       <el-table-column prop="ip" label="ip地址" :show-overflow-tooltip="true" header-align="center"/>
       <el-table-column prop="hostName" label="主机名" :show-overflow-tooltip="true" header-align="center"/>
