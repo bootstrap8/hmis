@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 /**
  * @author hbq
@@ -76,14 +77,20 @@ public interface AgentDao {
   /**
    * 删除指标信息
    *
-   * @param data_center
    * @param app_name
-   * @param ip
-   * @param port
    * @param quota_name
    */
-  void deleteQuotaInfo(@Param("data_center") String data_center, @Param("app_name") String app_name,
-      @Param("ip") String ip, @Param("port") int port, @Param("quota_name") String quota_name);
+  void deleteQuotaInfo(@Param("app_name") String app_name,
+      @Param("quota_name") String quota_name);
+
+  /**
+   * 查询注册指标数据
+   *
+   * @param map
+   * @param rb
+   * @return
+   */
+  List<Map> queryQuotaInfos(Map map, RowBounds rb);
 
   /**
    * 创建kafka入口消息速率应用配置表

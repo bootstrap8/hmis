@@ -33,8 +33,18 @@ const routes = [
   },
   {
     path: '/agent/kafkaIn/instanceList',
-    name: '应用实例列表',
+    name: 'kafka入口消息应用实例列表',
     component: () => import('@/views/agent/kafkaIn/InstanceList.vue')
+  },
+  {
+    path: '/monitor/quotaList',
+    name: '指标列表',
+    component: () => import('@/views/monitor/QuotaList.vue')
+  },
+  {
+    path: '/monitor/instanceList',
+    name: '指标应用实例列表',
+    component: () => import('@/views/monitor/InstanceList.vue')
   }
 ]
 

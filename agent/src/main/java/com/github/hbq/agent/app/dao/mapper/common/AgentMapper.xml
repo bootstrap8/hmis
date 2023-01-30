@@ -36,21 +36,46 @@
   </update>
 
   <insert id="saveQuotaInfo" parameterType="map">
-    insert into hbq_agent_quota(data_center, app_name, ip, port, quota_name, quota_desc, quota_unit,
+    insert into hbq_agent_quota(app_name, quota_name, quota_desc, quota_unit,
                                 quota_type, cycle_time, cycle_unit)
-    values (#{data_center}, #{app_name}, #{ip}, #{port}, #{quota_name}, #{quota_desc}, #{quota_unit},
+    values (#{app_name}, #{quota_name}, #{quota_desc}, #{quota_unit},
             #{quota_type}, #{cycle_time}, #{cycle_unit})
   </insert>
 
   <delete id="deleteQuotaInfo">
     delete
     from hbq_agent_quota
-    where data_center = #{data_center}
-      and app_name = #{app_name}
-      and ip = #{ip}
-      and port = #{port}
+    where app_name = #{app_name}
       and quota_name = #{quota_name}
   </delete>
+
+  <select id="queryQuotaInfos" parameterType="map" resultType="map">
+    select app_name AS "appName",
+    quota_name AS "quotaName",
+    quota_desc AS "quotaDesc",
+    quota_unit AS "quotaUnit",
+    quota_type AS "quotaType",
+    cycle_time AS "cycleTime",
+    cycle_unit AS "cycleUnit"
+    from hbq_agent_quota
+    <where>
+      <if test="appName!=null and appName!=''">
+        <bind name="appNameLike" value="'%' + appName + '%'"/>
+        and app_name like #{appNameLike}
+      </if>
+      <if test="quotaName!=null and quotaName!=''">
+        <bind name="quotaNameLike" value="'%' + quotaName + '%'"/>
+        and quota_name like #{quotaNameLike}
+      </if>
+      <if test="quotaDesc!=null and quotaDesc!=''">
+        <bind name="quotaDescLike" value="'%' + quotaDesc + '%'"/>
+        and quota_desc like #{quotaDescLike}
+      </if>
+      <if test="quotaType!=null and quotaType!=''">
+        and quota_type = #{quotaType}
+      </if>
+    </where>
+  </select>
 
   <insert id="saveKafkaInAppRateLimiter" parameterType="map">
     insert into hbq_agent_kafkain_app_rl(app_name, permits, update_time)

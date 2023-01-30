@@ -23,7 +23,7 @@ public class QuotaDataConsumer implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
   }
 
-  @KafkaListener(topics = {"HBQ-AGENT-QUOTA-DATA"})
+  @KafkaListener(topics = {"HBQ-AGENT-QUOTA-DATA"}, properties = {"#{'${hbq.agent.kafka.consumer.configs}'.split(';')}"})
   void consume(List<QuotaData> list) {
     log.info("接收到指标数据: {} 条", list.size());
     try {

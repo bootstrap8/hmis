@@ -24,7 +24,7 @@
               :stripe="true"
               size="small"
               :highlight-current-row="true">
-      <el-table-column fixed="left" label="操作" width="120" header-align="center">
+      <el-table-column fixed="left" label="操作" width="120" header-align="center" align="center">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="queryInstances(scope)">实例</el-button>
           <el-button link type="primary" size="small" @click="showDialog(scope)">速率</el-button>
@@ -103,7 +103,7 @@
 
   const queryAppList = (): void => {
     request({
-      url: 'hmis/manage/agent/kafkaIn/queryAppList/v1.0',
+      url: '/hmis/manage/agent/kafkaIn/queryAppList/v1.0',
       method: 'post',
       params: ruleForm.page,
       data: {
