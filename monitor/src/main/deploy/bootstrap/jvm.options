@@ -8,4 +8,5 @@
 -Xms2g
 -Xmx2g
 
--DAPP_SN=monitor
+-DAPP_SN=hmis-monitor
+-Duser.timezone=GMT+08

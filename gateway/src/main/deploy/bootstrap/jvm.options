@@ -8,4 +8,5 @@
 -Xms512m
 -Xmx512m
 
--DAPP_SN=gateway
+-DAPP_SN=hmis-gateway
+-Duser.timezone=GMT+08
