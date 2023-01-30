@@ -9,3 +9,4 @@
 -Xmx512m
 
 -DAPP_SN=hmis-manage
+-Duser.timezone=GMT+08
