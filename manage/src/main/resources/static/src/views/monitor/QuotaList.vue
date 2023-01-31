@@ -74,7 +74,7 @@
         />
       </div>
     </el-form>
-    <div v-for="(item,index) in instances" :id="item.ip +':'+ item.port" class="trend"></div>
+    <div v-for="(item,index) in instances" :id="item.ip +':'+ item.port" :class="trendClass"></div>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="queryQuotaData" type="primary">查询</el-button>
@@ -128,11 +128,11 @@
   import router from '@/router/index'
   import {Instance} from '@/type/Instance'
 
-  const dialogTableVisible = ref(false)
   const dialogFormVisible = ref(false)
-  const formLabelWidth = '140px'
   const fullscreen = ref(false)
   const fullscreenTxt = ref('全屏')
+  const trendClass = ref('trend')
+  const instances = reactive<Instance[]>([])
 
   const fullscreenHandle = () => {
     fullscreen.value = !fullscreen.value
@@ -141,6 +141,9 @@
     } else {
       fullscreenTxt.value = '全屏'
     }
+    window.setTimeout(() => {
+      instances.forEach(inst => inst.resize())
+    }, 500)
   }
 
   const data = reactive({
@@ -270,7 +273,6 @@
     appName: '',
     quotaName: ''
   })
-  const instances = reactive<Instance[]>([])
 
   // 打开趋势面板
   const showTrend = (scope: any): void => {
@@ -331,9 +333,10 @@
   }
 
   .trend {
-    width: 600px;
+    /*width: 600px;*/
+    width: calc(100% - 100px);
     height: 300px;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   .warning-row {

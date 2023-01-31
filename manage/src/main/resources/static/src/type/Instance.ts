@@ -84,4 +84,7 @@ export class Instance {
     })
   }
 
+  resize = () => {
+    this.myChart.resize()
+  }
 }

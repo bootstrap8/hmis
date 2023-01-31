@@ -34,7 +34,7 @@
                    :page-sizes="[5, 10, 20, 50,100]"
     />
 
-    <el-dialog v-model="dialogFormVisible" :title="trendForm.quotaName">
+    <el-dialog v-model="dialogFormVisible" :title="trendForm.quotaName" :fullscreen="fullscreen">
       <el-form :model="trendForm">
         <el-radio-group v-model="trendForm.timeType" @change="changeTimeType">
           <el-radio-button label="1" size="small" border>最近1小时</el-radio-button>
@@ -59,8 +59,9 @@
       <div id="trend" class="trend"></div>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="queryQuotaData">查询</el-button>
-        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button @click="queryQuotaData" type="primary">查询</el-button>
+        <el-button @click="fullscreenHandle" type="success">{{fullscreenTxt}}</el-button>
+        <el-button @click="dialogFormVisible = false" type="info">取消</el-button>
       </span>
       </template>
     </el-dialog>
@@ -79,6 +80,19 @@
   const dialogTableVisible = ref(false)
   const dialogFormVisible = ref(false)
   const formLabelWidth = '140px'
+  const fullscreen = ref(false)
+  const fullscreenTxt = ref('全屏')
+  let myChart: any = null
+
+  const fullscreenHandle = () => {
+    fullscreen.value = !fullscreen.value
+    if (fullscreenTxt.value == '全屏') {
+      fullscreenTxt.value = '缩小'
+    } else {
+      fullscreenTxt.value = '全屏'
+    }
+    window.setTimeout(() => myChart.resize(), 500)
+  }
 
   const ruleForm = reactive({
     page: {
@@ -149,7 +163,6 @@
     queryQuotaData()
   }
 
-  let myChart: any = null
   const queryQuotaData = () => {
     request({
       url: '/hmis/monitor/qd/queryQuotaDatas/v1.0',
@@ -214,8 +227,9 @@
   }
 
   .trend {
-    width: 600px;
+    /*width: 600px;*/
+    width: calc(100% - 100px);
     height: 300px;
-    overflow: auto;
+    overflow: hidden;
   }
 </style>
