@@ -51,6 +51,9 @@
           </el-scrollbar>
         </el-aside>
         <el-main>
+          <el-breadcrumb :separator-icon="ArrowRight" class="breadcrumb">
+            <el-breadcrumb-item v-for="(item,index) in router.currentRoute.value.meta.breadcrumb">{{item}}</el-breadcrumb-item>
+          </el-breadcrumb>
           <div class="frame">
             <router-view/>
           </div>
@@ -61,10 +64,13 @@
 </template>
 
 <script lang="ts" setup>
-  import {ref} from 'vue'
-  import {Guide, Grid, PieChart, Menu, More, SwitchButton} from '@element-plus/icons-vue'
+  import {ref, reactive} from 'vue'
+  import {Guide, Grid, PieChart, Menu, More, SwitchButton, ArrowRight} from '@element-plus/icons-vue'
+  import router from '@/router/index'
 
   const activeIndex = ref('/route')
+
+  // const breadcrumb = reactive<any>(router.currentRoute.value.meta.breadcrumb)
 
   const handleSelect = (key: string, keyPath: string[]) => {
 
@@ -74,6 +80,11 @@
 <style lang="scss">
   .frame {
     padding: 5px 5px 10px 5px;
+    margin-top: 20px;
+  }
+
+  .breadcrumb{
+    margin-left: 5px;
   }
 
   .el-menu-vertical-demo:not(.el-menu--collapse) {
