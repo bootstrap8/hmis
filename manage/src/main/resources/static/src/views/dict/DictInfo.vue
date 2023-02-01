@@ -56,14 +56,14 @@
   import {ref, reactive, onMounted} from 'vue'
   import {Edit, DocumentAdd, CirclePlusFilled, Delete} from '@element-plus/icons-vue'
   import type {FormInstance, FormRules} from 'element-plus'
-  import {vAlert, objectEmpty} from '@/utils/Utils'
+  import {msg, objectEmpty} from '@/utils/Utils'
   import router from '@/router/index'
   import {DictEdit, Pair} from "@/type/Dict";
   import axios from "@/network";
 
   const formSize = ref('default')
   const row = ref(6);
-  const fieldNameDisabled=ref(false)
+  const fieldNameDisabled = ref(false)
   const ruleFormRef = ref<FormInstance>()
   const ruleForm = reactive(new DictEdit('', '', '', '', []))
   const rules = reactive<FormRules>({
@@ -110,11 +110,11 @@
           data: ruleForm
         }).then((res: any) => {
           if (res.data.code == 1) {
-            vAlert('操作结果', '保存成功','success')
+            msg('保存成功', 'success')
             router.push('/dict/list')
           }
         }).catch((e: Error) => {
-          vAlert('操作结果', '保存失败', 'error')
+          msg('保存失败', 'error')
         })
       } else {
         console.log('表单校验错误: ', fields)
@@ -127,7 +127,7 @@
     if (!objectEmpty(query)) {
       console.log('编辑参数：', query)
       ruleForm.copyWithRouteQuery(query)
-      fieldNameDisabled.value=true
+      fieldNameDisabled.value = true
       if (ruleForm.isSqlEnum()) {
         request({
           url: '/hmis/manage/dict/queryDictSqlExt/v1.0',

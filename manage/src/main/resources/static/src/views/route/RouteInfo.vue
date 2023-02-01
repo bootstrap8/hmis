@@ -39,11 +39,11 @@
   import axios from '@/network'
   import type {FormInstance, FormRules} from 'element-plus'
   import {RouteTemplate, RouteInfo} from '@/type/Route'
-  import {vAlert} from '@/utils/Utils'
+  import {msg} from '@/utils/Utils'
   import router from '@/router/index'
 
   // 表单校验规则
-  const ridDisabled=ref(false)
+  const ridDisabled = ref(false)
   const formSize = ref('default')
   const ruleFormRef = ref<FormInstance>()
   const ruleForm = reactive<RouteInfo>(new RouteInfo('', '', '', '', 0))
@@ -78,11 +78,11 @@
           data: ruleForm.toRestfulObj()
         }).then((res: any) => {
           if (res.data.code == 1) {
-            vAlert('保存结果', res.data.body,'success');
+            msg(res.data.body, 'success');
             router.push('/route/list')
           }
         }).catch((e: Error) => {
-          vAlert('操作结果', '保存失败','error')
+          msg('保存失败', 'error')
         })
       } else {
         console.log('error submit!', fields)
@@ -108,7 +108,7 @@
         if (Object.keys(router.currentRoute.value.query).length > 0) {
           console.log('编辑功能')
           ruleForm.copy(router.currentRoute.value.query)
-          ridDisabled.value=true
+          ridDisabled.value = true
         } else {
           tempChange(tempSelect.tid);
         }

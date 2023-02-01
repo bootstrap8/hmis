@@ -124,7 +124,7 @@
 
   import request from '@/network'
   import {onMounted, reactive, ref} from 'vue'
-  import {vAlert} from '@/utils/Utils'
+  import {msg} from '@/utils/Utils'
   import router from '@/router/index'
   import {Instance} from '@/type/Instance'
 
@@ -186,7 +186,7 @@
       }
     }).catch((e: Error) => {
       console.error(e);
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 
@@ -242,12 +242,12 @@
       data: thresholdForm
     }).then((res: any) => {
       if (res.data.code == 1) {
-        vAlert('操作结果', '操作成功', 'success')
+        msg('操作成功', 'success')
       } else {
-        vAlert('操作结果', '操作失败', 'error')
+        msg('操作失败', 'error')
       }
     }).catch((e: any) => {
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 
@@ -298,7 +298,7 @@
         queryQuotaData()
       }
     }).catch((error: any) => {
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 

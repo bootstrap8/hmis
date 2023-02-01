@@ -42,17 +42,17 @@
       <el-table-column prop="filters" label="路由过滤器" :show-overflow-tooltip="true" header-align="center"/>
     </el-table>
     <el-pagination class="page"
-        v-model:page-size="fq.pageSize"
-        v-model:current-page="fq.pageNum"
-        layout="->, total, sizes, prev, pager, next, jumper"
-        v-model:total="fq.total"
-        @size-change="queryRoutes"
-        @current-change="queryRoutes"
-        @prev-click="queryRoutes"
-        @next-click="queryRoutes"
-        :small="true"
-        :background="true"
-        :page-sizes="[5, 10, 20, 50,100]"
+                   v-model:page-size="fq.pageSize"
+                   v-model:current-page="fq.pageNum"
+                   layout="->, total, sizes, prev, pager, next, jumper"
+                   v-model:total="fq.total"
+                   @size-change="queryRoutes"
+                   @current-change="queryRoutes"
+                   @prev-click="queryRoutes"
+                   @next-click="queryRoutes"
+                   :small="true"
+                   :background="true"
+                   :page-sizes="[5, 10, 20, 50,100]"
     />
 
   </div>
@@ -60,9 +60,9 @@
 
 <script>
   import request from '@/network'
-  import {ref, reactive} from 'vue'
+  import {reactive} from 'vue'
   import {Edit} from '@element-plus/icons-vue'
-  import {vAlert} from '@/utils/Utils'
+  import {msg} from '@/utils/Utils'
   import router from '@/router/index'
 
   export default {
@@ -132,7 +132,7 @@
           params: {id: routeId}
         }).then(res => {
           if (res.data.code == 1) {
-            vAlert('操作结果', '操作成功','success')
+            msg('操作成功', 'success')
             this.queryRoutes()
           }
         }).catch(e => {
@@ -154,7 +154,7 @@
           method: 'post'
         }).then(res => {
           if (res.data.code == 1) {
-            vAlert('操作结果', '操作成功','success')
+            msg('操作成功', 'success')
           }
         }).catch(e => {
           alert('刷新失败');

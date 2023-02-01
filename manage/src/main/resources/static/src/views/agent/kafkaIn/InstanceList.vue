@@ -58,7 +58,7 @@
   import request from '@/network'
   import {ref, reactive, onMounted} from 'vue'
   import {Edit} from '@element-plus/icons-vue'
-  import {vAlert, Page} from '@/utils/Utils'
+  import {msg, Page} from '@/utils/Utils'
   import router from '@/router/index'
 
   const dialogTableVisible = ref(false)
@@ -100,7 +100,7 @@
         data.instanceList = res.data.body.list
       }
     }).catch((error: any) => {
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 
@@ -121,12 +121,12 @@
       data: kafkaInRuleForm
     }).then((res: any) => {
       if (res.data.code == 1) {
-        vAlert('操作结果', '保存成功', 'success')
+        msg('保存成功', 'success')
         queryInstanceList()
       }
     }).catch((e: any) => {
       console.error(e);
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 

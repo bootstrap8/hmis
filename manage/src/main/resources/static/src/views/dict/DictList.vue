@@ -39,28 +39,28 @@
     <el-table-column prop="enumType" label="枚举值来源" :show-overflow-tooltip="true" header-align="center"/>
   </el-table>
   <el-pagination class="page"
-      v-model:page-size="pg.pageSize"
-      v-model:current-page="pg.pageNum"
-      layout="->, total, sizes, prev, pager, next, jumper"
-      v-model:total="pg.total"
-      @size-change="submitForm"
-      @current-change="submitForm"
-      @prev-click="submitForm"
-      @next-click="submitForm"
-      :small="true"
-      :background="true"
-      :page-sizes="[5, 10, 20, 50,100]"
+                 v-model:page-size="pg.pageSize"
+                 v-model:current-page="pg.pageNum"
+                 layout="->, total, sizes, prev, pager, next, jumper"
+                 v-model:total="pg.total"
+                 @size-change="submitForm"
+                 @current-change="submitForm"
+                 @prev-click="submitForm"
+                 @next-click="submitForm"
+                 :small="true"
+                 :background="true"
+                 :page-sizes="[5, 10, 20, 50,100]"
   />
 </template>
 
 <script lang="ts" setup>
 
   import request from '@/network'
-  import {ref, reactive, onMounted} from 'vue'
-  import {Edit} from '@element-plus/icons-vue'
-  import {vAlert, Page} from '@/utils/Utils'
+  import {onMounted, reactive} from 'vue'
+  import {msg, Page} from '@/utils/Utils'
   import router from '@/router/index'
-  import {DictForm, DictInfo} from '@/type/Dict'
+  import {DictForm} from '@/type/Dict'
+  import {Edit} from '@element-plus/icons-vue'
 
   const dictOptions = reactive([
     {value: 'field_name', label: '字段名称'},
@@ -127,13 +127,13 @@
       params: {fn: fn}
     }).then((res: any) => {
       if (res.data.code == 1) {
-        vAlert('操作结果', '删除成功','success')
+        msg('删除成功', 'success')
         submitForm()
       } else {
-        vAlert('操作结果', res.data.body, 'error')
+        msg(res.data.body, 'error')
       }
     }).catch((e: Error) => {
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 

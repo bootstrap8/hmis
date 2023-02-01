@@ -4,9 +4,24 @@
       <el-header height="30px">
         <span>HMIS微服务管理平台</span>
         <div>
-          <el-icon>
-            <More/>
-          </el-icon>
+          <el-popover
+              ref="popover"
+              placement="bottom"
+              :title="userInfo"
+              :width="200"
+              trigger="hover"
+          >
+            <template #reference>
+              <el-icon style="cursor: pointer">
+                <More/>
+              </el-icon>
+            </template>
+            <div style="display: flex">
+              <el-button type="info" :icon="SwitchButton" circle title="注销"/>
+            </div>
+
+
+          </el-popover>
         </div>
       </el-header>
       <el-container>
@@ -53,11 +68,9 @@
         <el-main>
           <el-page-header @back="goBack">
             <template #content>
-              <span class="text-large font-600 mr-3">
-                <el-breadcrumb :separator-icon="ArrowRight" class="breadcrumb">
-                  <el-breadcrumb-item v-for="(item,index) in router.currentRoute.value.meta.breadcrumb">{{item}}</el-breadcrumb-item>
-                </el-breadcrumb>
-              </span>
+              <el-breadcrumb :separator-icon="ArrowRight" class="breadcrumb">
+                <el-breadcrumb-item v-for="(item,index) in router.currentRoute.value.meta.breadcrumb">{{item}}</el-breadcrumb-item>
+              </el-breadcrumb>
             </template>
           </el-page-header>
           <div class="frame">
@@ -75,6 +88,7 @@
   import router from '@/router/index'
 
   const activeIndex = ref('/route')
+  const userInfo=ref('当前登录用户: admin')
 
   // const breadcrumb = reactive<any>(router.currentRoute.value.meta.breadcrumb)
 
