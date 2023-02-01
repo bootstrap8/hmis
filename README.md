@@ -1,3 +1,5 @@
+![image-20230201113128302](README/image/README/image-20230201113128302.png)
+
 ## 说明
 
 是一个微服务的基础代码库，可用于日常快速开发，主要包含以下内容：
@@ -43,16 +45,12 @@
 
 
 
-## 依赖
+## 技术栈
 
-部署需要依赖一下环境(勾选的必须)
+- 微服务相关 `k8s`、`docker`、`SpringCloud Gateway`(网关)、`Zookeeper/ZKUI`(配置中心)
 
-+ [x] 服务注册依赖`Consul`
-+ [x] kafka、zk
-+ [x] 数据库(mysql 或 oracle)
-+ [ ] docker
-+ [ ] kubernetes
-+ [ ] redis
+- 开发框架 `SpringBoot`、`Vue3`、`Element-UI`、`webpack`、`typescript`
+- 中间件 `Kafka`、`Mysql`、`Oracle`、`redis`、`zk`
 
 
 
@@ -70,6 +68,7 @@
 
 ## 计划
 
++ [ ] 配置管理集成ZKUI的管理页面
 + [ ] 常用中间件、数据库、主机等指标采集实现
 + [ ] 网关实现灰度发布功能
 + [ ] 统一认证服务，网关统一鉴权
