@@ -51,9 +51,15 @@
           </el-scrollbar>
         </el-aside>
         <el-main>
-          <el-breadcrumb :separator-icon="ArrowRight" class="breadcrumb">
-            <el-breadcrumb-item v-for="(item,index) in router.currentRoute.value.meta.breadcrumb">{{item}}</el-breadcrumb-item>
-          </el-breadcrumb>
+          <el-page-header @back="goBack">
+            <template #content>
+              <span class="text-large font-600 mr-3">
+                <el-breadcrumb :separator-icon="ArrowRight" class="breadcrumb">
+                  <el-breadcrumb-item v-for="(item,index) in router.currentRoute.value.meta.breadcrumb">{{item}}</el-breadcrumb-item>
+                </el-breadcrumb>
+              </span>
+            </template>
+          </el-page-header>
           <div class="frame">
             <router-view/>
           </div>
@@ -75,6 +81,10 @@
   const handleSelect = (key: string, keyPath: string[]) => {
 
   }
+
+  const goBack = () => {
+    window.history.back()
+  }
 </script>
 
 <style lang="scss">
@@ -83,7 +93,7 @@
     margin-top: 20px;
   }
 
-  .breadcrumb{
+  .breadcrumb {
     margin-left: 5px;
   }
 
