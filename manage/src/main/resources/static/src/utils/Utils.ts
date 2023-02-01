@@ -1,4 +1,4 @@
-import {ElNotification} from 'element-plus'
+import {ElNotification, ElMessage} from 'element-plus'
 import type {EpPropMergeType} from "element-plus/es/utils/vue/props/types"
 
 export function jsonPretty(str: string, tab?: number | undefined): string {
@@ -8,7 +8,7 @@ export function jsonPretty(str: string, tab?: number | undefined): string {
       JSON.stringify(obj, null, tab);
 }
 
-export function vAlert(title: string, message: string,
+export function notify(title: string, message: string,
                        type: EpPropMergeType<StringConstructor,
                            "success" | "warning" | "info" | "error", unknown>): void {
   ElNotification({
@@ -16,6 +16,15 @@ export function vAlert(title: string, message: string,
     message: '操作成功',
     type: type,
     position: "bottom-right"
+  })
+}
+
+export function msg(message: string,
+                    type: EpPropMergeType<StringConstructor,
+                        "success" | "warning" | "info" | "error", unknown>): void {
+  ElMessage({
+    message: message,
+    type: type,
   })
 }
 

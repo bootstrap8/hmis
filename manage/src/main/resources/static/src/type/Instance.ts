@@ -1,6 +1,6 @@
 import request from '@/network'
 import * as echarts from 'echarts'
-import {vAlert} from "@/utils/Utils";
+import {msg} from "@/utils/Utils";
 
 export class Instance {
   appName: string;
@@ -80,7 +80,7 @@ export class Instance {
         })
       }
     }).catch((error: any) => {
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 

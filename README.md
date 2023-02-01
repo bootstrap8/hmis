@@ -47,10 +47,10 @@
 
 ## 技术栈
 
-- 微服务相关 `k8s`、`docker`、`SpringCloud Gateway`(网关)、`Zookeeper/ZKUI`(配置中心)
-
 - 开发框架 `SpringBoot`、`Vue3`、`Element-UI`、`webpack`、`typescript`
 - 中间件 `Kafka`、`Mysql`、`Oracle`、`redis`、`zk`
+- 微服务相关 `k8s`、`docker`、`SpringCloud Gateway`(网关)、`Zookeeper/ZKUI`(配置中心)、`Consul`(服务注册、发现)
+
 
 
 

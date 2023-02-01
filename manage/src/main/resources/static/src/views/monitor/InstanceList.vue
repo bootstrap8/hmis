@@ -72,8 +72,8 @@
 
 <script lang="ts" setup>
   import request from '@/network'
-  import {ref, reactive, onMounted} from 'vue'
-  import {vAlert, Page} from '@/utils/Utils'
+  import {onMounted, reactive, ref} from 'vue'
+  import {msg} from '@/utils/Utils'
   import router from '@/router/index'
   import * as echarts from 'echarts'
 
@@ -122,7 +122,7 @@
         data.instanceList = res.data.body.list
       }
     }).catch((error: any) => {
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 
@@ -214,7 +214,7 @@
         })
       }
     }).catch((error: any) => {
-      vAlert('操作结果', '请求异常', 'error')
+      msg('请求异常', 'error')
     })
   }
 
