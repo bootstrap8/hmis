@@ -42,6 +42,7 @@
   - 路由管理页面
   - 指标阈值配置页面
   - `kafka`入口消息流控速率配置管理页面
+  - OpenAI接入页面
 
 
 
@@ -63,6 +64,59 @@
 - [gateway](gateway/README.md)
 - [manage](manage/README.md)
 - [monitor](monitor/README.md)
+
+
+
+## 新特性
+
+2023/2/14
+
++ [x] 完成chatgpt的接入，开发聊天界面，需要具备**科学网络环境**
+
+![image-20230214131336532](README/image/README/image-20230214131336532.png)
+
+基于 [transitive-bullshit/chatgpt-api](https://github.com/transitive-bullshit/chatgpt-api) 二次开发，需要调整以下内容 (改版本基于node服务端开发，无法在浏览器中跑)
+
+`webpack`增加配置
+
+```json
+plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+    }),
+  ],
+  resolve: {
+    fallback: {
+      "path": require.resolve("path-browserify"),
+      "https": require.resolve("https-browserify"),
+      "http": require.resolve("stream-http"),
+      "buffer": require.resolve("buffer"),
+      fs: false
+    },
+  },
+```
+
+`package.json`增加配置
+
+```json
+"browser": {
+  "fs": false
+}
+```
+
+
+
+安装部分依赖
+
+```bash
+npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-buffer@3.0.1
+```
+
+
+
+替换 [node_modules/gpt-3-encoder/Encoder.js](README/file/Encoder.js)
+
+
 
 
 

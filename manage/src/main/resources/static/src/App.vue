@@ -62,6 +62,13 @@
                 <el-menu-item index="/agent/kafkaIn/appList">流控管理</el-menu-item>
                 <el-menu-item index="/monitor/quotaList">指标列表</el-menu-item>
               </el-sub-menu>
+              <el-sub-menu index="/open-ai">
+                <template #title>
+                  <el-icon><ChatDotRound /></el-icon>
+                  OpenAI
+                </template>
+                <el-menu-item index="/open-ai/chatgpt">Chat-GPT</el-menu-item>
+              </el-sub-menu>
             </el-menu>
           </el-scrollbar>
         </el-aside>
@@ -84,7 +91,7 @@
 
 <script lang="ts" setup>
   import {ref, reactive} from 'vue'
-  import {Guide, Grid, PieChart, Menu, More, SwitchButton, ArrowRight} from '@element-plus/icons-vue'
+  import {Guide, Grid, PieChart, Menu, More, SwitchButton, ArrowRight,ChatDotRound} from '@element-plus/icons-vue'
   import router from '@/router/index'
 
   const activeIndex = ref('/route')

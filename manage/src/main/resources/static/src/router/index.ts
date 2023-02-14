@@ -54,6 +54,12 @@ const routes = [
     name: '指标应用实例列表',
     meta: {breadcrumb: ['指标监控', '指标列表', '实例列表']},
     component: () => import('@/views/monitor/InstanceList.vue')
+  },
+  {
+    path: '/open-ai/chatgpt',
+    name: 'ChatGBT人工智能',
+    meta: {breadcrumb: ['Open AI','Chat-GPT']},
+    component: () => import('@/views/chatgpt/ChatGPT.vue')
   }
 ]
 
