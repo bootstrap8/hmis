@@ -97,11 +97,11 @@ hbq.common.lock.redis.port=6379
 # redis哨兵模式
 #hbq.common.lock.redis.sentinel.master=mymaster
 #hbq.common.lock.redis.sentinel.password=passwd
-#hbq.common.lock.redis.sentinel.nodes=localhost:16379,10.21.16.101:26379,10.21.16.101:36379
+#hbq.common.lock.redis.sentinel.nodes=localhost:16379
 
 # redis集群模式
 #hbq.common.lock.redis.password=passwd
-#hbq.common.lock.redis.cluster.nodes=localhost:6379,10.21.16.101:6380,10.21.16.101:6381
+#hbq.common.lock.redis.cluster.nodes=localhost:6379
 ```
 
 以上三种模式根据实际环境redis部署模式进行配置。
