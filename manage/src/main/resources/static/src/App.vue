@@ -62,6 +62,15 @@
                 <el-menu-item index="/agent/kafkaIn/appList">流控管理</el-menu-item>
                 <el-menu-item index="/monitor/quotaList">指标列表</el-menu-item>
               </el-sub-menu>
+              <el-sub-menu index="/config">
+                <template #title>
+                  <el-icon>
+                    <PieChart/>
+                  </el-icon>
+                  配置中心
+                </template>
+                <el-menu-item index="/config/home">UI控制台</el-menu-item>
+              </el-sub-menu>
               <el-sub-menu index="/open-ai">
                 <template #title>
                   <el-icon><ChatDotRound /></el-icon>

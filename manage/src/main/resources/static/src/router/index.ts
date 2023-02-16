@@ -56,9 +56,15 @@ const routes = [
     component: () => import('@/views/monitor/InstanceList.vue')
   },
   {
+    path: '/config/home',
+    name: '配置中心UI控制台',
+    meta: {breadcrumb: ['配置管理', 'UI控制台']},
+    component: () => import('@/views/config/main.vue')
+  },
+  {
     path: '/open-ai/chatgpt',
     name: 'ChatGBT人工智能',
-    meta: {breadcrumb: ['Open AI','Chat-GPT']},
+    meta: {breadcrumb: ['Open AI', 'Chat-GPT']},
     component: () => import('@/views/chatgpt/ChatGPT.vue')
   }
 ]

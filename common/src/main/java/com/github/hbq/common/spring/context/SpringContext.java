@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,10 @@ public class SpringContext {
     List<BeanInfo<T>> list = new ArrayList<>(map.size());
     map.entrySet().forEach(e -> list.add(new BeanInfo<>(e.getKey(), e.getValue())));
     return list;
+  }
+
+  public <T> Optional<T> optional(String key, Class<T> valueType) {
+    return Optional.ofNullable(this.environment.getProperty(key, valueType));
   }
 
   public String getProperty(String key) {
