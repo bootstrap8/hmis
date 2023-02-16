@@ -1,4 +1,6 @@
-![image-20230201163039196](README/image/README/image-20230201163039196.png)
+![image-20230216194503912](README/image/README/image-20230216194503912.png)
+
+
 
 ## 说明
 
@@ -117,6 +119,10 @@ npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-
 
 
 
+
+
+
+
 + [x] 添加配置中心控制台`UI`管理功能
 
 ![image-20230216193824980](README/image/README/image-20230216193824980.png)
@@ -125,9 +131,13 @@ npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-
 
 
 
+
+
+
+
 ## 计划
 
-+ [x] 配置管理集成ZKUI的管理页面
++ [x] ~~配置管理集成ZKUI的管理页面~~
 + [ ] 常用中间件、数据库、主机等指标采集实现
 + [ ] 网关实现灰度发布功能
 + [ ] 统一认证服务，网关统一鉴权
