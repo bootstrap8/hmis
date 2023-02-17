@@ -10,7 +10,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
@@ -71,8 +74,7 @@ public class ZookeeperServiceImpl implements ZookeeperService, InitializingBean,
   }
 
   @Override
-  public ZKNode listNodeEntries(String path, String authRole) throws
-      KeeperException, InterruptedException {
+  public ZKNode listNodeEntries(String path, String authRole) throws Exception {
     List<String> folders = new ArrayList<>();
     List<LeafBean> leaves = new ArrayList<>();
 
@@ -108,6 +110,217 @@ public class ZookeeperServiceImpl implements ZookeeperService, InitializingBean,
     zkNode.setLeafBeanLSt(leaves);
     zkNode.setNodeLst(folders);
     return zkNode;
+  }
+
+  @Override
+  public void setPropertyValue(String path, String name, String value) throws Exception {
+    String nodePath = path + (path.endsWith("/") ? "" : '/') + name;
+    if (log.isDebugEnabled()) {
+      log.debug("Setting property {} to {}", nodePath, value);
+    }
+    zk.setData(nodePath, value.getBytes(), -1);
+  }
+
+  @Override
+  public void deleteLeaves(List<String> leafNames) throws Exception {
+
+    for (String leafPath : leafNames) {
+      if (log.isDebugEnabled()) {
+        log.debug("Deleting leaf {}", leafPath);
+      }
+      zk.delete(leafPath, -1);
+    }
+  }
+
+  @Override
+  public void createFolder(String folderPath, String propertyName, String propertyValue) throws Exception {
+    ArrayList<ACL> acls = ZooDefs.Ids.OPEN_ACL_UNSAFE;
+    zk.create(folderPath, "".getBytes(), acls, CreateMode.PERSISTENT);
+    zk.create(folderPath + "/" + propertyName, propertyValue == null ? null : propertyValue
+        .getBytes(), acls, CreateMode.PERSISTENT);
+  }
+
+  @Override
+  public void createNode(String path, String name, String value) throws Exception {
+    String nodePath = path.endsWith("/") ? path + name : path + "/" + name;
+    ArrayList<ACL> acls = ZooDefs.Ids.OPEN_ACL_UNSAFE;
+    zk.create(nodePath, value == null ? null : value.getBytes(), acls, CreateMode.PERSISTENT);
+  }
+
+  @Override
+  public void deleteFolders(List<String> folderNames) throws Exception {
+    for (String folderPath : folderNames) {
+      deleteFolderInternal(folderPath, zk);
+    }
+  }
+
+  @Override
+  public Set<LeafBean> exportTree(String zkPath) throws Exception {
+    // 1. Collect nodes
+    long startTime = System.currentTimeMillis();
+    Set<LeafBean> leaves = new TreeSet<>();
+    exportTreeInternal(leaves, zkPath);
+    long estimatedTime = System.currentTimeMillis() - startTime;
+    log.info("导出目录: {} 下的配置耗时: {} ms", zkPath, (estimatedTime));
+    return leaves;
+  }
+
+  @Override
+  public void importData(List<String> importFile, boolean overwrite) throws Exception {
+    for (String line : importFile) {
+      // Delete Operation
+      if (line.startsWith("-")) {
+        String nodeToDelete = line.substring(1);
+        deleteNodeIfExists(nodeToDelete, zk);
+      } else {
+        int firstEq = line.indexOf('=');
+        int secEq = line.indexOf('=', firstEq + 1);
+
+        String path = line.substring(0, firstEq);
+        if ("/".equals(path)) {
+          path = "";
+        }
+        String name = line.substring(firstEq + 1, secEq);
+        String value = readExternalizedNodeValue(line.substring(secEq + 1));
+        String fullNodePath = path + "/" + name;
+
+        // Skip import of system node
+        if (fullNodePath.startsWith(ZK_SYSTEM_NODE)) {
+          continue;
+        }
+        boolean nodeExists = nodeExists(fullNodePath);
+
+        if (!nodeExists) {
+          //If node doesnt exist then create it.
+          createPathAndNode(path, name, value.getBytes(), true);
+        } else {
+          //If node exists then update only if overwrite flag is set.
+          if (overwrite) {
+            setPropertyValue(path + "/", name, value);
+          } else {
+            log.info("Skipping update for existing property " + path + "/" + name + " as overwrite is not enabled!");
+          }
+        }
+
+      }
+
+    }
+  }
+
+  private void createPathAndNode(String path, String name, byte[] data, boolean force) throws InterruptedException, KeeperException {
+    // 1. Create path nodes if necessary
+    StringBuilder currPath = new StringBuilder();
+    for (String folder : path.split("/")) {
+      if (folder.length() == 0) {
+        continue;
+      }
+      currPath.append('/');
+      currPath.append(folder);
+
+      if (!nodeExists(currPath.toString())) {
+        createIfDoesntExist(currPath.toString(), new byte[0], true);
+      }
+    }
+
+    // 2. Create leaf node
+    createIfDoesntExist(path + '/' + name, data, force);
+  }
+
+  private void createIfDoesntExist(String path, byte[] data, boolean force) throws InterruptedException, KeeperException {
+    ArrayList<ACL> acls = ZooDefs.Ids.OPEN_ACL_UNSAFE;
+    try {
+      zk.create(path, data, acls, CreateMode.PERSISTENT);
+    } catch (KeeperException ke) {
+      //Explicit Overwrite
+      if (KeeperException.Code.NODEEXISTS.equals(ke.code())) {
+        if (force) {
+          zk.delete(path, -1);
+          zk.create(path, data, acls, CreateMode.PERSISTENT);
+        }
+      } else {
+        throw ke;
+      }
+    }
+  }
+
+  public boolean nodeExists(String nodeFullPath) throws KeeperException,
+      InterruptedException {
+    return zk.exists(nodeFullPath, false) != null;
+  }
+
+  private String readExternalizedNodeValue(String raw) {
+    return raw.replaceAll("\\\\n", "\n");
+  }
+
+  private void deleteNodeIfExists(String path, ZooKeeper zk) throws InterruptedException,
+      KeeperException {
+    zk.delete(path, -1);
+  }
+
+  private void exportTreeInternal(Set<LeafBean> entries, String path) throws InterruptedException, KeeperException {
+    // 1. List leaves
+    entries.addAll(this.listLeaves(path));
+    // 2. Process folders
+    for (String folder : this.listFolders(path)) {
+      exportTreeInternal(entries, this.getNodePath(path, folder));
+    }
+  }
+
+  private List<String> listFolders(String path) throws KeeperException,
+      InterruptedException {
+    List<String> folders = new ArrayList<>();
+    List<String> children = zk.getChildren(path, false);
+    if (children != null) {
+      for (String child : children) {
+        if (!child.equals(ZK_SYSTEM_NODE)) {
+          List<String> subChildren =
+              zk.getChildren(path + ("/".equals(path) ? "" : "/") + child, false);
+          boolean isFolder = subChildren != null && !subChildren.isEmpty();
+          if (isFolder) {
+            folders.add(child);
+          }
+        }
+
+      }
+    }
+
+    Collections.sort(folders);
+    return folders;
+  }
+
+  private List<LeafBean> listLeaves(String path) throws
+      InterruptedException, KeeperException {
+    List<LeafBean> leaves = new ArrayList<>();
+
+    List<String> children = zk.getChildren(path, false);
+    if (children != null) {
+      for (String child : children) {
+        String childPath = getNodePath(path, child);
+        List<String> subChildren = Collections.emptyList();
+        subChildren = zk.getChildren(childPath, false);
+        boolean isFolder = subChildren != null && !subChildren.isEmpty();
+        if (!isFolder) {
+          leaves.add(this.getNodeValue(zk, path, childPath, child, "ADMIN"));
+        }
+      }
+    }
+
+    Collections.sort(leaves, new Comparator<LeafBean>() {
+      @Override
+      public int compare(LeafBean o1, LeafBean o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
+
+    return leaves;
+  }
+
+  private void deleteFolderInternal(String folderPath, ZooKeeper zk) throws KeeperException,
+      InterruptedException {
+    for (String child : zk.getChildren(folderPath, false)) {
+      deleteFolderInternal(getNodePath(folderPath, child), zk);
+    }
+    zk.delete(folderPath, -1);
   }
 
   private void connectionZookeeper() throws IOException, InterruptedException {
