@@ -1,4 +1,4 @@
-![image-20230216194503912](README/image/README/image-20230216194503912.png)
+![image-20230216194503912](README/image/README/image-20230216194503912.png
 
 
 
@@ -72,7 +72,7 @@
 
 ## 新特性
 
-+ [x] 完成chatgpt的接入，开发聊天界面，需要具备**科学网络环境**
+1. 完成chatgpt的接入，开发聊天界面，需要具备**科学网络环境**
 
 ![image-20230214131336532](README/image/README/image-20230214131336532.png)
 
@@ -123,11 +123,13 @@ npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-
 
 
 
-+ [x] 添加配置中心控制台`UI`管理功能
-
-![image-20230216193824980](README/image/README/image-20230216193824980.png)
+2. 添加配置中心控制台`UI`管理功能
 
 此功能为对`Zookeeper`作为配置中心，提供配置数据页面管理维护功能，结合`Zookeeper`使用。
+
+![image-20230217200316696](README/image/README/image-20230217200316696.png)
+
+![image-20230217200449815](README/image/README/image-20230217200449815.png)
 
 
 
@@ -138,11 +140,23 @@ npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-
 ## 计划
 
 + [x] ~~配置管理集成ZKUI的管理页面~~
+
+  + [x] ~~配置管理（目录、属性新增、修改、删除）~~
+
+  + [x] ~~配置导出(可导出任意目录下所有配置)~~
+
+  + [x] ~~配置导入(支持批量文件导入)~~
+
 + [ ] 常用中间件、数据库、主机等指标采集实现
+
 + [ ] 网关实现灰度发布功能
+
 + [ ] 统一认证服务，网关统一鉴权
+
 + [ ] 权限管理（菜单、api等纬度）、防垂直越权
+
 + [ ] 可配置化页面快速开发功能（类似低代码，纯配置）
+
 + [ ] ......
 
 

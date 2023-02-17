@@ -12,13 +12,13 @@ export default (config: any) => {
       "development" == process.env.NODE_ENV ?
           // dev环境
           {
-            baseURL: 'http://192.168.56.2:20000',
+            baseURL: process.env.VUE_APP_DEV_BASE_URL,
             timeout: 5000,
             headers: {defaultAuthentication}
           } :
           // prod环境
           {
-            baseURL: 'http://192.168.56.2:20000',
+            baseURL: process.env.VUE_APP_PROD_BASE_URL,
             timeout: 5000,
             headers: {Authentication: store.getters.getAuthentication || defaultAuthentication}
           });
