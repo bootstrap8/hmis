@@ -1,10 +1,10 @@
-![image-20230216194503912](README/image/README/image-20230216194503912.png
+![image-20230217201811885](README/image/README/image-20230217201811885.png)
 
 
 
 ## 说明
 
-是一个微服务的基础代码库，可用于日常快速开发，主要包含以下内容：
+是一个微服务的基础代码库，可用于日常快速开发，包括后台维护功能：
 
 - 基础依赖包 `common`
   - `RESTful`接口版本控制（基于注解）、返回包装器
@@ -31,7 +31,7 @@
   - 警告通知适配（默认支持`UNISMS`第三方短信平台，可自行扩展其他）
 - 配置管理扩展包 `config`
   - 适配`zk`配置中心，支持配置加密存储读取
-  - 扩展`ZKUI`开源组件作为默认配置中心（扩展实现了配置数据的可用性处理、查询、批量批量等功能）
+  - 适配`SpringCloud-Zookeeper`
 - `kafka`事件管理扩展包 `event`
   - 适配`kafka`消息，对字符串消息做`javabean`映射处理，增强`kafka`消息的可读性处理
   - 可根据业务自行扩展消息
@@ -127,7 +127,7 @@ npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-
 
 此功能为对`Zookeeper`作为配置中心，提供配置数据页面管理维护功能，结合`Zookeeper`使用。
 
-![image-20230217200316696](README/image/README/image-20230217200316696.png)
+![image-20230217201706933](README/image/README/image-20230217201706933.png)
 
 ![image-20230217200449815](README/image/README/image-20230217200449815.png)
 
