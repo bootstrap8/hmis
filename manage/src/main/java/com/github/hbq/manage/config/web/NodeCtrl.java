@@ -2,19 +2,21 @@ package com.github.hbq.manage.config.web;
 
 import com.github.hbq.common.spring.boot.ctrl.Result;
 import com.github.hbq.common.spring.boot.ctrl.Version;
+import com.github.hbq.common.spring.context.UserInfo;
+import com.github.hbq.manage.config.pojo.HistoryOperate;
 import com.github.hbq.manage.config.pojo.LeafBean;
 import com.github.hbq.manage.config.serv.NodeService;
 import com.github.hbq.manage.config.serv.ZookeeperService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +53,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("查询节点树信息: {}", map);
     try {
-      return Result.suc(nodeService.queryNodes(map));
+      return Result.suc(nodeService.queryNodes(UserInfo.of(userInfo), map));
     } catch (Exception e) {
       log.error("查询节点树信息异常", e);
       return (e instanceof RuntimeException) ?
@@ -70,7 +72,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("更新配置: {}", map);
     try {
-      nodeService.setPropertyValue(map);
+      nodeService.setPropertyValue(UserInfo.of(userInfo), map);
       return Result.suc("更新成功");
     } catch (Exception e) {
       log.error("更新配置异常", e);
@@ -90,7 +92,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("删除属性: {}", map);
     try {
-      nodeService.deleteLeaves(map);
+      nodeService.deleteLeaves(UserInfo.of(userInfo), map);
       return Result.suc("删除成功");
     } catch (Exception e) {
       log.error("删除属性异常", e);
@@ -110,7 +112,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("创建目录节点: {}", map);
     try {
-      nodeService.createFolder(map);
+      nodeService.createFolder(UserInfo.of(userInfo), map);
       return Result.suc("创建成功");
     } catch (Exception e) {
       log.error("创建目录节点异常", e);
@@ -130,7 +132,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("新增配置: {}", map);
     try {
-      nodeService.createNode(map);
+      nodeService.createNode(UserInfo.of(userInfo), map);
       return Result.suc("保存成功");
     } catch (Exception e) {
       log.error("新增配置异常", e);
@@ -150,7 +152,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("删除选中的目录和配置: {}", map);
     try {
-      nodeService.delete(map);
+      nodeService.delete(UserInfo.of(userInfo), map);
       return Result.suc("删除成功");
     } catch (Exception e) {
       log.error("删除选中的目录和配置异常", e);
@@ -170,7 +172,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("创建目录: {}", map);
     try {
-      nodeService.createFolder(map);
+      nodeService.createFolder(UserInfo.of(userInfo), map);
       return Result.suc("创建成功");
     } catch (Exception e) {
       log.error("创建目录异常", e);
@@ -190,7 +192,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("创建配置: {}", map);
     try {
-      nodeService.createNode(map);
+      nodeService.createNode(UserInfo.of(userInfo), map);
       return Result.suc("创建成功");
     } catch (Exception e) {
       log.error("创建配置异常", e);
@@ -211,7 +213,7 @@ public class NodeCtrl {
       @RequestBody Map map) {
     log.info("导出配置: {}", map);
     try {
-      Set<LeafBean> leaves = nodeService.exportTree(map);
+      Set<LeafBean> leaves = nodeService.exportTree(UserInfo.of(userInfo), map);
       StringBuilder output = new StringBuilder(2000);
       for (LeafBean leaf : leaves) {
         output.append(leaf.getPath()).append('=')
@@ -238,13 +240,56 @@ public class NodeCtrl {
       @RequestParam("file") MultipartFile file, @RequestParam("cover") boolean cover) {
     try {
       log.info("导入文件:{}, 大小:{}, 是否覆盖:{}", file.getOriginalFilename(), file.getSize(), cover);
-      nodeService.importData(file, cover);
+      nodeService.importData(UserInfo.of(userInfo), file, cover);
       return Result.suc("导入成功");
     } catch (Exception e) {
       log.error("导入配置异常", e);
       return (e instanceof RuntimeException) ?
           Result.fail(e.getMessage()) :
           Result.fail("导入配置异常");
+    }
+  }
+
+  @ApiOperation("查询配置列表")
+  @Version("v1.0")
+  @RequestMapping(path = "/queryAllProperty/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<?> queryAllProperty(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestBody Map map) {
+    log.info("查询配置列表: {}", map);
+    try {
+      return Result.suc(nodeService.searchTree(UserInfo.of(userInfo), map));
+    } catch (Exception e) {
+      log.error("查询配置列表异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("查询配置列表异常");
+    }
+  }
+
+  @ApiOperation("查询历史记录")
+  @Version("v1.0")
+  @RequestMapping(path = "/queryHistoryOperates/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<PageInfo> queryHistoryOperates(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+      @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+      @RequestBody Map map) {
+    log.info("查询历史记录: {}, ({},{})", map, pageNum, pageSize);
+    try {
+      Page page = PageHelper.startPage(pageNum, pageSize);
+      PageInfo<HistoryOperate> pageInfo = new PageInfo<>(nodeService.queryHistoryOperates(map, pageNum, pageSize));
+      pageInfo.setTotal(page.getTotal());
+      return Result.suc(pageInfo);
+    } catch (Exception e) {
+      log.error("查询历史记录异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("查询历史记录异常");
     }
   }
 }

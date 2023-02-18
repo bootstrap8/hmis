@@ -1,9 +1,12 @@
 package com.github.hbq.manage.config.serv;
 
+import com.github.hbq.common.spring.context.UserInfo;
+import com.github.hbq.manage.config.pojo.HistoryOperate;
 import com.github.hbq.manage.config.pojo.LeafBean;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -11,19 +14,25 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface NodeService {
 
-  Map queryNodes(Map map);
+  Map queryNodes(UserInfo ui, Map map);
 
-  void setPropertyValue(Map map);
+  void setPropertyValue(UserInfo ui, Map map);
 
-  void deleteLeaves(Map map);
+  void deleteLeaves(UserInfo ui, Map map);
 
-  void createFolder(Map map);
+  void createFolder(UserInfo ui, Map map);
 
-  void createNode(Map map);
+  void createNode(UserInfo ui, Map map);
 
-  void delete(Map map);
+  void delete(UserInfo ui, Map map);
 
-  Set<LeafBean> exportTree(Map map);
+  Set<LeafBean> exportTree(UserInfo ui, Map map);
 
-  void importData(MultipartFile file, boolean overwrite);
+  void importData(UserInfo ui, MultipartFile file, boolean overwrite);
+
+  Set<LeafBean> searchTree(UserInfo ui, Map map);
+
+  void cleanHistoryOperate();
+
+  List<HistoryOperate> queryHistoryOperates(Map map, int pageNum, int pageSize);
 }

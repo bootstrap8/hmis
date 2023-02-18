@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.manage.config.dao.ConfigDao">
+  <insert id="saveHistoryOperate" parameterType="com.github.hbq.manage.config.pojo.HistoryOperate">
+    insert into hbq_config_history(user_name, operate, op_time)
+    values (#{user}, #{operate}, #{opTime})
+  </insert>
+
+  <delete id="deleteHistoryOperate">
+    delete
+    from hbq_config_history
+    where op_time <![CDATA[ >= ]]> #{opTime}
+  </delete>
+
+  <resultMap id="historyOperateMap" type="com.github.hbq.manage.config.pojo.HistoryOperate">
+    <result property="user" column="user_name" javaType="java.lang.String"/>
+    <result property="operate" column="operate" javaType="java.lang.String"/>
+    <result property="opTime" column="op_time" javaType="java.lang.Long"/>
+  </resultMap>
+
+  <select id="queryHistoryOperates" parameterType="map"
+    resultMap="historyOperateMap">
+    select user_name AS "user_name",
+    operate AS "operate",
+    op_time AS "op_time"
+    from hbq_config_history
+    <where>
+      <if test="user!=null and user!=''">
+        <bind name="userLike" value="'%' + user + '%'"/>
+        and user_name like #{userLike}
+      </if>
+      <if test="operate!=null and operate!=''">
+        and operate = #{operate}
+      </if>
+      and op_time <![CDATA[ >= ]]> #{startTime}
+      and op_time <![CDATA[ < ]]> #{endTime}
+    </where>
+  </select>
+</mapper>

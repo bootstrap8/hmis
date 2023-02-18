@@ -201,10 +201,27 @@ public class ZookeeperServiceImpl implements ZookeeperService, InitializingBean,
             log.info("Skipping update for existing property " + path + "/" + name + " as overwrite is not enabled!");
           }
         }
-
       }
-
     }
+  }
+
+  @Override
+  public Set<LeafBean> searchTree(String path, String name, String value) throws Exception {
+    //Export all nodes and then search.
+    Set<LeafBean> searchResult = new TreeSet<>();
+    Set<LeafBean> leaves = new TreeSet<>();
+    exportTreeInternal(leaves, ZK_ROOT_NODE);
+    for (LeafBean leaf : leaves) {
+      if (leaf.containKey(path, name, value)) {
+        searchResult.add(leaf);
+      }
+    }
+    return searchResult;
+  }
+
+  private String externalizeNodeValue(byte[] value) {
+    return value == null ? "" : new String(value).replaceAll("\\n", "\\\\n").replaceAll("\\r", "");
+    // We might want to BASE64 encode it
   }
 
   private void createPathAndNode(String path, String name, byte[] data, boolean force) throws InterruptedException, KeeperException {

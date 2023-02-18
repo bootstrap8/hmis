@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.manage.config.dao.ConfigDao">
+  <update id="createConfigHistory">
+    create table hbq_config_history
+    (
+      user_name    varchar2(50),
+      operate varchar2(50),
+      op_time number(20)
+    )
+  </update>
+</mapper>

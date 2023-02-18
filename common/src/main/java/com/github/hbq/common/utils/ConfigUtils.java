@@ -24,11 +24,26 @@ public class ConfigUtils {
 
   public static final String SPRING_PROFILE_ACTIVE_DEFAULT = "default";
 
-  public static void build() throws Exception {
+  private String module = "";
+
+  public ConfigUtils() {
+  }
+
+  public static ConfigUtils of() {
+    return new ConfigUtils();
+  }
+
+  public static ConfigUtils of(String module) {
+    ConfigUtils utils = new ConfigUtils();
+    utils.module = module;
+    return utils;
+  }
+
+  public void build() throws Exception {
     build("default");
   }
 
-  public static void build(String profile) throws Exception {
+  public void build(String profile) throws Exception {
     String appName = null;
     try {
       ResourceUtils.getFile(String.format("classpath:bootstrap-%s.properties", profile));
@@ -44,13 +59,14 @@ public class ConfigUtils {
     }
   }
 
-  public static void build(String profile, String appName) throws Exception {
+  public void build(String profile, String appName) throws Exception {
     build(profile, appName, null);
   }
 
 
-  public static void build(String profile, String appName, Map<String, String> covers) throws Exception {
-    String path = System.getProperty("user.dir") + String.format("/src/main/resources/%s%s.txt", appName, ("default".equals(profile) ? "" : "-" + profile));
+  public void build(String profile, String appName, Map<String, String> covers) throws Exception {
+    String path = System.getProperty("user.dir") + "/" + module
+        + String.format("/src/main/resources/%s%s.txt", appName, ("default".equals(profile) ? "" : "-" + profile));
     String decodedPath = URLDecoder.decode(path, Charset.defaultCharset().displayName());
     FileOutputStream out = new FileOutputStream(decodedPath);
     boolean isDefault = "default".equals(profile);
