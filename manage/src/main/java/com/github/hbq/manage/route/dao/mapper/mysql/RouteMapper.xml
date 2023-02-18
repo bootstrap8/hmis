@@ -8,7 +8,7 @@
       `predicates` varchar(1000),
       `filters` varchar(1000),
       `route_order` numeric(10)
-      )
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   </update>
   <update id="createRouteTemplate">
     create table `hbq_route_template`
@@ -19,6 +19,6 @@
       `predicates`  varchar(1000),
       `filters`     varchar(1000),
       `t_order` numeric(10)
-    )
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   </update>
 </mapper>

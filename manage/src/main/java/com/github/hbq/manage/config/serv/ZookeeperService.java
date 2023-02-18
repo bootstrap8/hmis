@@ -32,4 +32,6 @@ public interface ZookeeperService {
   Set<LeafBean> exportTree(String zkPath) throws Exception;
 
   void importData(List<String> importFile, boolean overwrite) throws Exception;
+
+  Set<LeafBean> searchTree(String path, String name, String value) throws Exception;
 }

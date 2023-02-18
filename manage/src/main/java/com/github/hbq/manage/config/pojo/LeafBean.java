@@ -1,7 +1,9 @@
 package com.github.hbq.manage.config.pojo;
 
+import com.github.hbq.common.utils.StrUtils;
 import java.io.UnsupportedEncodingException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
 @Slf4j
 public class LeafBean implements Comparable<LeafBean> {
@@ -16,6 +18,21 @@ public class LeafBean implements Comparable<LeafBean> {
     this.path = path;
     this.name = name;
     this.value = value;
+  }
+
+  public boolean containKey(String path, String name, String value) {
+    boolean check = true;
+    if (StrUtils.strNotEmpty(this.path) && !StringUtils.contains(this.path, path)) {
+      check = false;
+    }
+    if (StrUtils.strNotEmpty(this.name) && !StringUtils.contains(this.name, name)) {
+      check = false;
+    }
+    String strValue = getStrValue();
+    if (StrUtils.strNotEmpty(strValue) && !StringUtils.contains(strValue, value)) {
+      check = false;
+    }
+    return check;
   }
 
   public String getPath() {

@@ -6,7 +6,7 @@
       `field_name` varchar(200) primary key,
       `field_desc` varchar(500),
       `enum_type` varchar(100)
-      )
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   </update>
 
   <update id="createDictExtKv">
@@ -15,13 +15,13 @@
       `enum_key` varchar(500),
       `enum_value` varchar(500),
       primary key (field_name, enum_key)
-      )
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   </update>
 
   <update id="createDictExtSql">
     create table `hbq_dic_ext_sql`(
       `field_name` varchar(200) primary key,
       `enum_sql` varchar(500)
-      )
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   </update>
 </mapper>
