@@ -4,6 +4,9 @@
       <el-header>
         <el-menu class="el-menu-demo" mode="horizontal" :ellipsis="false" @select="handleSelect">
           <el-menu-item index="0">
+            <el-icon>
+              <HomeFilled />
+            </el-icon>
             配置中心
           </el-menu-item>
           <div class="flex-grow" />
@@ -321,10 +324,6 @@ import type Node from 'element-plus/es/components/tree/src/model/node'
 import { ArrowRight } from '@element-plus/icons-vue'
 import {
   Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-  House,
   Expand,
   Download,
   Upload,
@@ -335,8 +334,7 @@ import {
   Delete,
   WarningFilled,
   UploadFilled,
-  Refresh,
-  CircleCheck
+  HomeFilled
 } from '@element-plus/icons-vue'
 import { UploadInstance, FormInstance, FormRules } from 'element-plus'
 import { ref, reactive, computed } from 'vue'
