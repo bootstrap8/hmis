@@ -3,6 +3,8 @@ package com.github.hbq.manage.config.web;
 import com.github.hbq.common.spring.boot.ctrl.Result;
 import com.github.hbq.common.spring.boot.ctrl.Version;
 import com.github.hbq.common.spring.context.UserInfo;
+import com.github.hbq.manage.config.pojo.Backup;
+import com.github.hbq.manage.config.pojo.BackupDetail;
 import com.github.hbq.manage.config.pojo.HistoryOperate;
 import com.github.hbq.manage.config.pojo.LeafBean;
 import com.github.hbq.manage.config.serv.NodeService;
@@ -290,6 +292,89 @@ public class NodeCtrl {
       return (e instanceof RuntimeException) ?
           Result.fail(e.getMessage()) :
           Result.fail("查询历史记录异常");
+    }
+  }
+
+  @ApiOperation("手工备份")
+  @Version("v1.0")
+  @RequestMapping(path = "/backup/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<?> backup(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v) {
+    log.info("执行手工备份.");
+    try {
+      nodeService.backup();
+      return Result.suc("备份成功");
+    } catch (Exception e) {
+      log.error("手工备份异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("手工备份异常");
+    }
+  }
+
+  @ApiOperation("查询备份记录")
+  @Version("v1.0")
+  @RequestMapping(path = "/queryBackups/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<?> queryBackups(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+      @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+      @RequestBody Map map) {
+    log.info("查询备份记录: {}, ({},{})", map, pageNum, pageSize);
+    try {
+      Page page = PageHelper.startPage(pageNum, pageSize);
+      PageInfo<Backup> pageInfo = new PageInfo<>(nodeService.queryBackups(map, pageNum, pageSize));
+      pageInfo.setTotal(page.getTotal());
+      return Result.suc(pageInfo);
+    } catch (Exception e) {
+      log.error("查询备份记录异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("查询备份记录异常");
+    }
+  }
+
+  @ApiOperation("删除备份记录")
+  @Version("v1.0")
+  @RequestMapping(path = "/deleteBackup/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<?> deleteBackup(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestBody Map map) {
+    log.info("删除备份记录: {}", map);
+    try {
+      nodeService.deleteBackupById(map);
+      return Result.suc("删除成功");
+    } catch (Exception e) {
+      log.error("删除备份记录异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("删除备份记录异常");
+    }
+  }
+
+  @ApiOperation("恢复备份数据")
+  @Version("v1.0")
+  @RequestMapping(path = "/recovery/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<?> recovery(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestBody Map map) {
+    log.info("恢复备份数据: {}", map);
+    try {
+      nodeService.recovery(map);
+      return Result.suc("恢复成功");
+    } catch (Exception e) {
+      log.error("恢复备份数据异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("恢复备份数据异常");
     }
   }
 }

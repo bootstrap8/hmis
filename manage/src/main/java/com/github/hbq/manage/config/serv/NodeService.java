@@ -1,12 +1,15 @@
 package com.github.hbq.manage.config.serv;
 
 import com.github.hbq.common.spring.context.UserInfo;
+import com.github.hbq.manage.config.pojo.Backup;
 import com.github.hbq.manage.config.pojo.HistoryOperate;
 import com.github.hbq.manage.config.pojo.LeafBean;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -35,4 +38,16 @@ public interface NodeService {
   void cleanHistoryOperate();
 
   List<HistoryOperate> queryHistoryOperates(Map map, int pageNum, int pageSize);
+
+  void backup();
+
+  void recovery(Map map);
+
+  List<Backup> queryBackups(Map map, int pageNum, int pageSize);
+
+  @Transactional(rollbackFor = Exception.class)
+  void deleteBackupById(Map map);
+
+  @Transactional(rollbackFor = Exception.class)
+  void cleanBackups();
 }

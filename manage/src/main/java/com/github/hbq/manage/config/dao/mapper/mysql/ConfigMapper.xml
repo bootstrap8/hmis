@@ -9,4 +9,25 @@
       `op_time` BIGINT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8
   </update>
+
+  <update id="createBackupMain">
+    create table `hbq_config_bk_main`
+    (
+      `id`      varchar(255) primary key,
+      `bk_time` BIGINT,
+      `size`    BIGINT
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+  </update>
+
+  <update id="createBackupDetail">
+    create table `hbq_config_bk_detail`
+    (
+      `id`    varchar(255),
+      `path`  varchar(255),
+      `name`  varchar(255),
+      `value` varchar(2000),
+      `bk_time` BIGINT,
+      primary key (id, path, name)
+    )
+  </update>
 </mapper>
