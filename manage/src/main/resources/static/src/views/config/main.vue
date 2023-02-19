@@ -46,7 +46,7 @@
           </el-menu-item>
           <el-menu-item index="import" @click="showImportDialog">
             <el-icon>
-              <Download />
+              <Upload />
             </el-icon>
             导入
           </el-menu-item>
@@ -67,7 +67,7 @@
             <el-icon>
               <UploadFilled />
             </el-icon>
-            高可用
+            备份/恢复
           </el-menu-item>
 
 
@@ -180,7 +180,7 @@
             </div>
           </template>
         </el-upload>
-        <el-switch v-model="importForm.cover" inline-prompt active-text="覆盖原配置" inactive-text="不覆盖原配置" />
+        <el-switch v-model="importForm.cover" inline-prompt active-text="覆盖" inactive-text="不覆盖" />
       </el-form>
       <template #footer>
         <span class="dialog-footer">
