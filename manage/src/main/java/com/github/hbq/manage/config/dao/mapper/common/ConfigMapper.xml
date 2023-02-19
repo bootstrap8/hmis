@@ -46,6 +46,7 @@
       and a.bk_time <![CDATA[ >= ]]> #{startTime}
       and a.bk_time <![CDATA[ < ]]> #{endTime}
     </where>
+    order by a.bk_time desc
   </select>
 
   <select id="queryBackupDetails" resultType="com.github.hbq.manage.config.pojo.BackupDetail">
