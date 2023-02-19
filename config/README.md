@@ -47,17 +47,15 @@ spring.cloud.zookeeper.auth.info=${spring_cloud_zookeeper_auth_info}
 
 
 
-### 配置中心管理界面
+### 管理界面
 
-- 配置显示
+#### 配置显示
 
 ![image-20230218190638211](README/image/README/image-20230218190638211.png)
 
 
 
-
-
-- 创建目录
+#### 创建目录
 
 ![image-20230218190734442](README/image/README/image-20230218190734442.png)
 
@@ -65,13 +63,13 @@ spring.cloud.zookeeper.auth.info=${spring_cloud_zookeeper_auth_info}
 
 
 
-- 新增配置
+#### 新增配置
 
 ![image-20230218190810792](README/image/README/image-20230218190810792.png)
 
 
 
-- 批量删除配置
+#### 批量删除配置
 
 ![image-20230218190856164](README/image/README/image-20230218190856164.png)
 
@@ -79,13 +77,21 @@ spring.cloud.zookeeper.auth.info=${spring_cloud_zookeeper_auth_info}
 
 
 
-- 删除单条配置
+#### 删除单条配置
 
 ![image-20230218190923666](README/image/README/image-20230218190923666.png)
 
 
 
-- 导入配置
+#### 导出配置
+
+![image-20230219153156385](README/image/README/image-20230219153156385.png)
+
+![image-20230219153232040](README/image/README/image-20230219153232040.png)
+
+
+
+#### 导入配置
 
 ![image-20230218190953924](README/image/README/image-20230218190953924.png)
 
@@ -108,7 +114,7 @@ ConfigUtils.of("manage").build("prod");
 
 
 
-- 配置查询
+#### 配置查询
 
 ![image-20230218191240444](README/image/README/image-20230218191240444.png)
 
@@ -116,7 +122,7 @@ ConfigUtils.of("manage").build("prod");
 
 
 
-- 操作日志查询
+#### 操作日志查询
 
 ![image-20230218191321592](README/image/README/image-20230218191321592.png)
 
@@ -124,10 +130,18 @@ ConfigUtils.of("manage").build("prod");
 
 
 
+#### 备份恢复
+
+![image-20230219153413216](README/image/README/image-20230219153413216.png)
+
+
+
+
+
 ## 后续计划
 
-+ [ ] 增加配置数据高可用保存功能，快照数据保存
-+ [ ] 根据快照数据进行恢复
++ [x] ~~增加配置数据高可用保存功能，快照数据保存~~
++ [x] ~~根据快照数据进行恢复~~
 + [ ] 配置数据批量替换
 + [ ] 角色权限控制
 + [ ] 配置刷新（全量、针对服务、针对实例各种纬度）

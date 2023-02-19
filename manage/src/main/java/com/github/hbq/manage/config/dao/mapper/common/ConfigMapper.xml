@@ -36,4 +36,49 @@
       and op_time <![CDATA[ < ]]> #{endTime}
     </where>
   </select>
+
+  <select id="queryBackups" resultType="com.github.hbq.manage.config.pojo.Backup">
+    select a.id AS "id",
+    a.bk_time AS "backTime",
+    a.size AS "size"
+    from hbq_config_bk_main a
+    <where>
+      and a.bk_time <![CDATA[ >= ]]> #{startTime}
+      and a.bk_time <![CDATA[ < ]]> #{endTime}
+    </where>
+  </select>
+
+  <select id="queryBackupDetails" resultType="com.github.hbq.manage.config.pojo.BackupDetail">
+    select id      AS "id",
+           path    AS "path",
+           name    AS "name",
+           value   AS "value",
+           bk_time AS "backTime"
+    from hbq_config_bk_detail
+    where id = #{id}
+  </select>
+
+  <delete id="deleteBackupById">
+    delete
+    from hbq_config_bk_main
+    where id = #{id}
+  </delete>
+
+  <delete id="deleteBackupDetailById">
+    delete
+    from hbq_config_bk_detail
+    where id = #{id}
+  </delete>
+
+  <delete id="deleteBackupByTime">
+    delete
+    from hbq_config_bk_main
+    where bk_time <![CDATA[ <= ]]> #{backTime}
+  </delete>
+
+  <delete id="deleteBackupDetailByTime">
+    delete
+    from hbq_config_bk_detail
+    where bk_time <![CDATA[ <= ]]> #{backTime}
+  </delete>
 </mapper>

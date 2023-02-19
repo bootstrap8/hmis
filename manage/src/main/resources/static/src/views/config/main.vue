@@ -62,6 +62,15 @@
             </el-icon>
             历史
           </el-menu-item>
+
+          <el-menu-item index="highAvailability" @click="haDialogFormVisible = true">
+            <el-icon>
+              <UploadFilled />
+            </el-icon>
+            高可用
+          </el-menu-item>
+
+
         </el-menu>
       </el-header>
       <el-container class="container">
@@ -246,10 +255,63 @@
         <el-table-column prop="operate" label="操作" :show-overflow-tooltip="true" header-align="center" align="center" />
         <el-table-column prop="fmtOpTime" label="时间" :show-overflow-tooltip="true" header-align="center" align="center" />
       </el-table>
-      <el-pagination class="page" v-model:page-size="historyForm.pageSize" v-model:current-page="historyForm.pageNum"
-        layout="->, total, sizes, prev, pager, next, jumper" v-model:total="historyForm.total"
-        @size-change="searchHistory" @current-change="searchHistory" @prev-click="searchHistory"
-        @next-click="searchHistory" :small="true" :background="true" :page-sizes="[5, 10, 20, 50, 100]" />
+      <el-pagination class="page" v-model:page-size="page.pageSize" v-model:current-page="page.pageNum"
+        layout="->, total, sizes, prev, pager, next, jumper" v-model:total="page.total"
+        @size-change="searchHistory(historyFormRef)" @current-change="searchHistory(historyFormRef)"
+        @prev-click="searchHistory(historyFormRef)" @next-click="searchHistory(historyFormRef)" :small="true"
+        :background="true" :page-sizes="[5, 10, 20, 50, 100]" />
+    </el-dialog>
+
+
+
+    <el-dialog v-model="haDialogFormVisible" title="备份记录" :fullscreen="false" width="65%">
+      <el-form :model="haForm" :inline="true" ref="haFormRef" :rules="haRules">
+        <el-form-item label="时间：" :label-width="formLabelWidth" prop="time">
+          <el-date-picker v-model="haForm.time" type="daterange" unlink-panels range-separator="至"
+            start-placeholder="开始时间" end-placeholder="结束时间" size="default" format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="searchBackup(haFormRef)">查询</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="success" @click="backup">
+            备份<el-icon class="el-icon--right">
+              <Download />
+            </el-icon>
+          </el-button>
+        </el-form-item>
+      </el-form>
+
+      <el-table :data="backupData" style="width: 100%;" height="250px" :border="true" table-layout="fixed" :stripe="true"
+        size="small" :highlight-current-row="true">
+        <el-table-column fixed="left" label="操作" width="120" header-align="center" align="center">
+          <template #default="scope">
+            <el-popconfirm title="是否使用本快照进行恢复?" @confirm="recovery(scope)" :icon="WarningFilled"
+              confirm-button-type="success" cancel-button-type="info" icon-color="green">
+              <template #reference>
+                <el-button :icon="Upload" size="small" circle title="恢复" type="success" />
+              </template>
+            </el-popconfirm>
+            <el-popconfirm title="是否确认删除此快照数据?" @confirm="deleteBackup(scope)" :icon="WarningFilled"
+              confirm-button-type="danger" cancel-button-type="info" icon-color="red">
+              <template #reference>
+                <el-button :icon="Delete" size="small" circle title="删除" type="danger" />
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+        <el-table-column prop="id" label="快照名称" width="400" :show-overflow-tooltip="true" header-align="center"
+          align="center" />
+        <el-table-column prop="fmtBackupTime" label="备份时间" :show-overflow-tooltip="true" header-align="center"
+          align="center" />
+        <el-table-column prop="size" label="记录数" :show-overflow-tooltip="true" header-align="center" align="center" />
+      </el-table>
+      <el-pagination class="page" v-model:page-size="haPage.pageSize" v-model:current-page="haPage.pageNum"
+        layout="->, total, sizes, prev, pager, next, jumper" v-model:total="haPage.total"
+        @size-change="searchBackup(haFormRef)" @current-change="searchBackup(haFormRef)"
+        @prev-click="searchBackup(haFormRef)" @next-click="searchBackup(haFormRef)" :small="true" :background="true"
+        :page-sizes="[5, 10, 20, 50, 100]" />
     </el-dialog>
   </div>
 </template>
@@ -265,13 +327,16 @@ import {
   House,
   Expand,
   Download,
+  Upload,
   Search,
   Clock,
   Plus,
   Folder,
   Delete,
   WarningFilled,
-  UploadFilled
+  UploadFilled,
+  Refresh,
+  CircleCheck
 } from '@element-plus/icons-vue'
 import { UploadInstance, FormInstance, FormRules } from 'element-plus'
 import { ref, reactive, computed } from 'vue'
@@ -596,29 +661,30 @@ const historyFormRef = ref<FormInstance>()
 const historyRules = reactive<FormRules>({
   time: [{ required: true, message: '请选择时间', trigger: 'blur' },]
 })
+const page = reactive({
+  pageNum: 0,
+  pageSize: 10,
+  total: 0
+})
 const historyForm = reactive({
   time: [],
   user: '',
-  operate: '',
-  pageNum: 1,
-  pageSize: 5,
-  total: 0
+  operate: ''
 })
 const searchHistory = async (formEl: FormInstance | undefined) => {
   console.log('查询历史记录参数: ', historyForm)
-  console.log('表单对象: ', formEl)
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
       axios({
         url: '/hmis/manage/config/queryHistoryOperates/v1.0',
         method: 'post',
+        params: page,
         data: historyForm
       }).then((res: any) => {
         if (res.data.code == 1) {
           historyData.value = res.data.body.list
-          historyForm.total = res.data.body.total
-          console.log('查询到历史记录：', historyData.value)
+          page.total = res.data.body.total
         } else {
           msg('查询失败', 'error')
         }
@@ -628,6 +694,93 @@ const searchHistory = async (formEl: FormInstance | undefined) => {
     }
   })
 }
+
+
+interface Backup {
+  id: string
+  backTime: number
+  fmtBackTime: string
+  size: number
+}
+const haDialogFormVisible = ref(false)
+const haPage = reactive({
+  pageNum: 0,
+  pageSize: 10,
+  total: 0
+})
+const haForm = reactive({
+  time: []
+})
+const backupData = ref<Backup>()
+const haFormRef = ref<FormInstance>()
+const haRules = reactive<FormRules>({
+  time: [{ required: true, message: '请选择时间', trigger: 'blur' },]
+})
+const searchBackup = async (formEl: FormInstance | undefined) => {
+  console.log('查询备份记录参数: ', haForm)
+  if (!formEl) return
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      axios({
+        url: '/hmis/manage/config/queryBackups/v1.0',
+        method: 'post',
+        params: page,
+        data: haForm
+      }).then((res: any) => {
+        if (res.data.code == 1) {
+          backupData.value = res.data.body.list
+          page.total = res.data.body.total
+        } else {
+          msg('查询失败', 'error')
+        }
+      })
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
+const backup = () => {
+  axios({
+    url: '/hmis/manage/config/backup/v1.0',
+    method: 'post'
+  }).then((res: any) => {
+    if (res.data.code == 1) {
+      msg('备份成功', 'success')
+      searchBackup(haFormRef.value)
+    } else {
+      msg('备份失败', 'error')
+    }
+  })
+}
+const recovery = (scope: any) => {
+  axios({
+    url: '/hmis/manage/config/recovery/v1.0',
+    method: 'post',
+    data: { id: scope.row.id }
+  }).then((res: any) => {
+    if (res.data.code == 1) {
+      msg('恢复成功', 'success')
+    } else {
+      msg('恢复失败', 'error')
+    }
+  })
+}
+
+const deleteBackup = (scope: any) => {
+  axios({
+    url: '/hmis/manage/config/deleteBackup/v1.0',
+    method: 'post',
+    data: { id: scope.row.id }
+  }).then((res: any) => {
+    if (res.data.code == 1) {
+      msg('删除成功', 'success')
+      searchBackup(haFormRef.value)
+    } else {
+      msg('删除失败', 'error')
+    }
+  })
+}
+
 </script>
 
 <style scoped>

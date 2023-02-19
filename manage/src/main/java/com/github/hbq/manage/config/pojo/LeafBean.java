@@ -22,14 +22,14 @@ public class LeafBean implements Comparable<LeafBean> {
 
   public boolean containKey(String path, String name, String value) {
     boolean check = true;
-    if (StrUtils.strNotEmpty(this.path) && !StringUtils.contains(this.path, path)) {
+    if (!StringUtils.contains(this.path, path)) {
       check = false;
     }
-    if (StrUtils.strNotEmpty(this.name) && !StringUtils.contains(this.name, name)) {
+    if (!StringUtils.contains(this.name, name)) {
       check = false;
     }
     String strValue = getStrValue();
-    if (StrUtils.strNotEmpty(strValue) && !StringUtils.contains(strValue, value)) {
+    if (!StringUtils.contains(strValue, value)) {
       check = false;
     }
     return check;

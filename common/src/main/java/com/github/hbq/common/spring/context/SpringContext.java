@@ -30,12 +30,20 @@ public class SpringContext {
     this.environment = environment;
   }
 
+  public <T> Optional<T> getOptionalBean(@NonNull Class<T> requiredType) {
+    return Optional.ofNullable(this.context.getBean(requiredType));
+  }
+
   public <T> T getBean(@NonNull Class<T> requiredType) {
     return this.context.getBean(requiredType);
   }
 
   public <T> T getBean(@NonNull String id, @NonNull Class<T> requiredType) {
     return requiredType.cast(this.context.getBean(id));
+  }
+
+  public <T> Optional<T> getOptionalBean(@NonNull String id, @NonNull Class<T> requiredType) {
+    return Optional.ofNullable(requiredType.cast(this.context.getBean(id)));
   }
 
   public <T> Map<String, T> getBeanMapOfType(@NonNull Class<T> requiredType) {
