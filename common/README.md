@@ -69,7 +69,7 @@ public Result<?> foo(@ApiParam(required = true, defaultValue = "v1.0")
   "ver": "v1.0",
   "msg": "调用成功",
   "time": "yyyy-MM-dd HH:mm:ss",
-  "body": ...
+  "body": {}
 }
 ```
 
@@ -483,82 +483,6 @@ public class RuleTest {
 
 
 
-## 工具类
-
-### 时间快速格式化
-
-```java
-// 时间数值转指定格式的字符串
-FormatTime.YYYYMMDDHHMISS.withMills(System.currentTimeMillis());
-FormatTime.YYYYMMDDHHMISS.withTime(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
-
-// 将时间字符串转成数值
-FormatTime.YYYYMMDDHHMISS.toSecs("2009-12-09 23:34:09");
-FormatTime.YYYYMMDDHHMISS.toMills("2009-12-09 23:34:09");
-```
-
-
-
-### 分段工具
-
-#### 时间分段
-
-```java
-TimeFragment.DAYS
-    .fragment("2009-12-09 03:34:56", "2009-12-15 12:21:09", FormatTime.YYYYMMDDHHMISS);
-
-TimeFragment.DAYS.fragment(133456457234, 133456657234, FormatTime.YYYYMMDDHHMISS);
-```
-
-
-
-#### 集合分段
-
-```
-List<?> list = ....;
-List<SubList<?>> DigitSpliter.defaultStep(500).split(list);
-```
-
-
-
-### 表名获取工具
-
-#### 推荐使用
-
-```java
-List<TableInfo> ts = FormatTable.YYYY_MM.tables("2021-07-02 09:30:34", "2021-08-13 21:19:00",FormatTime.YYYYMM,"tab_foo_");
-
-List<TableInfo> ts = FormatTable.YYYY_MM.tables(133456457234L, 133456657234L,TimeUnit.SECONDS,"tab_foo_");
-```
-
-
-
-#### 不推荐(更灵活)
-
-```java
-TableUtils.createTableNames("2021-07-02 09:30:34", "2021-08-13 21:19:00",
-            FormatTime.YYYYMMDDHHMISS, TimeFragment.MONTHS, "tab_foo_","yyyy_MM");
-
-TableUtils.createTableNames(133456457234L, 133456657234L,
-            TimeUnit.SECONDS, TimeFragment.MONTHS, "tab_foo_","yyyy_MM");
-```
-
-
-
-### 字符串工具
-
-#### 替换文本中的占位变量
-
-```java
-String str = "${foo} world!";
-Map map = new HashMap();
-map.put("foo","hello");
-String result = StrUtils.replacePlaceHolders(str,map);
-// result="hello world!";
-```
-
-
-
 
 
 ## 应用配置加密
@@ -635,7 +559,7 @@ cat demo.js
 var CryptoJS = require('crypto-js');
     
 //十六位十六进制数作为密钥,和后端保持一致
-var key = CryptoJS.enc.Utf8.parse("AD42F6697B035B7580E4FEF93BE20BAD");
+var key = CryptoJS.enc.Utf8.parse("....");
 //十六位十六进制数作为密钥偏移量，取上面key前16位
 var iv = CryptoJS.enc.Utf8.parse("AD42F6697B035B75");
 
@@ -688,12 +612,11 @@ console.log('解密: '+decryptData);
 hbq.common.restful.encrypt.aes.enable=false
 hbq.common.restful.encrypt.aes.charset=utf-8
 hbq.common.restful.encrypt.aes.showLog=true
-hbq.common.restful.encrypt.aes.key=392D2FFC865C43D5B5B4988307D4C808
+hbq.common.restful.encrypt.aes.key=....
 
 # 非对称加密
 hbq.common.restful.encrypt.rsa.enable=false
-hbq.common.restful.encrypt.rsa.privateKey=MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAIvzcdJK4ZtSTq3oxQQqMa7E8ayvLiEIMnN4G0jOzxmKDOG6H5GNsb7Ayuht+8nH32H+/rL0iN/39xrDZjKb9jAFWt2f8NDn+IIfmmIfw6rKMlQ3TrYEw51iIMBsIEsimiuA0n6JloWlNrP9173dUmKWJpw+Qyao0sJ9+uhHmdetAgMBAAECgYABNoLuB6gc6IG2ECZk+tijYyGVFY+YybFmPsw9vU0eM4wZCLvtTwUTWihoC0v7W7gb6VHbyzLEfimuGbNxDNj9XkSNUx9jsSDoDhioHgNh5Rt4Eavv9xgDu19muu22BqvimldLkRYDkfo3wARBeeCc+GTROEaSqFZ1m1GM4rfPIQJBAMrjey9YgLPUeXI2KoHyOT3OSOF55bdNqgIOPJ75kkJYYpJh3yKf4C3Pez+bc5ppLHTv5vqzNC8WgbLsssYbJUcCQQCwljdRoA8RnheMnrZpww/5v3Uv+CHdsfkPVhL6BddZ/LQY2iEIgSrg9qsdyDyuI2vCqVxu7F8islzWQJiKMiVrAkBypj20MYT5GfZO7gDzUZe7L1jL4YBIJyEM7FKhW1KlHyEEqz3WaRXbjUWOWh/nf8tZgT+7J40zlrpQC6WygSB9AkEApwCpuIyDM8orw1WmdkeAKFYlYgRtItlaDmL892/mxrfzKz2/1+cwwikGk9f3a0kcdLDvNghdwNambgoROUFLmQJBAMXjRlvu63qYj3UTC4l24LtZ2qkFexcqEm5ZTMUf/IjP2hG1s+zDD0H7gfp0+vClqLldqODi76q6Y5x2cWns/z8=
-hbq.common.restful.encrypt.rsa.publicKey=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCL83HSSuGbUk6t6MUEKjGuxPGsry4hCDJzeBtIzs8Zigzhuh+RjbG+wMrobfvJx99h/v6y9Ijf9/caw2Yym/YwBVrdn/DQ5/iCH5piH8OqyjJUN062BMOdYiDAbCBLIporgNJ+iZaFpTaz/de93VJiliacPkMmqNLCffroR5nXrQIDAQAB
+hbq.common.restful.encrypt.rsa.privateKey=.....
 hbq.common.restful.encrypt.rsa.charset=utf-8
 hbq.common.restful.encrypt.rsa.showLog=true
 hbq.common.restful.encrypt.rsa.timestampCheck=false
@@ -730,7 +653,7 @@ public Result<Map> encrypt() {
 public Result<?> decrypt(@ApiParam(required = true, defaultValue = "v1.0") 
     @PathVariable String v,@RequestBody Map map) {
     
-    return Result.ok(map);
+    return Result.suc(map);
 }
 ```
 
@@ -787,16 +710,16 @@ spring.cloud.zookeeper.auth.info=${spring_cloud_zookeeper_auth_info}
 ```java
 @Version("v1.0")
 @Cacheable(value = "default", keyGenerator = "apiKeyGenerator")
-@Expiry(time = 10, unit = TimeUnit.SECONDS, methodKey = "testCache")
+@Expiry(time = 10, unit = TimeUnit.SECONDS, methodKey = "callSetKey")
 @RequestMapping(path = "/cache/greeting/{v}", method = RequestMethod.GET)
 @ResponseBody
-public Result<Map> testCache(@ApiParam(required = true, defaultValue = "v1.0") 
+public Result<Map> callSetKey(@ApiParam(required = true, defaultValue = "v1.0") 
                              @PathVariable String v,
     @RequestParam(name = "name", defaultValue = "world") String name) {
     
     log.info("测试缓存, name: {}", name);
     String time = FormatTime.YYYYMMDDHHMISS.withMills(System.currentTimeMillis());
-    return Result.ok(ImmutableMap.of("time", time));
+    return Result.suc(ImmutableMap.of("time", time));
     
 }
 ```
@@ -808,15 +731,15 @@ public Result<Map> testCache(@ApiParam(required = true, defaultValue = "v1.0")
 ```java
 @Version("v1.0")
 @CacheEvict(value = "default", keyGenerator = "apiKeyGenerator")
-@Expiry(methodKey = "testCache")
+@Expiry(methodKey = "callSetKey")
 @RequestMapping(path = "/evict/greeting/{v}", method = RequestMethod.GET)
 @ResponseBody
-public Result<?> testEvict(@ApiParam(required = true, defaultValue = "v1.0") 
+public Result<?> callEvict(@ApiParam(required = true, defaultValue = "v1.0") 
                            @PathVariable String v,
     @RequestParam(name = "name", defaultValue = "world") String name) {
     
     log.info("测试清除缓存, name: {}", name);
-    return Result.ok("清理成功");
+    return Result.suc("清理成功");
     
 }
 ```
@@ -925,24 +848,24 @@ spring.datasource.dbcp2.max-idle=1
 spring.datasource.dbcp2.validation-query=select 1 from dual
 
 # 配置数据源db1
-spring.datasource.db1.driver-class-name=oracle.jdbc.OracleDriver
-spring.datasource.db1.url=jdbc:oracle:thin:@vip2:1521/xx
-spring.datasource.db1.username=ENC(......)
-spring.datasource.db1.password=ENC(......)
-spring.datasource.db1.max-total=10
-spring.datasource.db1.max-wait-millis=300000
-spring.datasource.db1.max-idle=1
-spring.datasource.db1.validation-query=select 1 from dual
+spring.datasource.dbKey1.driver-class-name=oracle.jdbc.OracleDriver
+spring.datasource.dbKey1.url=jdbc:oracle:thin:@vip2:1521/xx
+spring.datasource.dbKey1.username=ENC(......)
+spring.datasource.dbKey1.password=ENC(......)
+spring.datasource.dbKey1.max-total=10
+spring.datasource.dbKey1.max-wait-millis=300000
+spring.datasource.dbKey1.max-idle=1
+spring.datasource.dbKey1.validation-query=select 1 from dual
 
 # 配置数据源db2
-spring.datasource.db2.driver-class-name=oracle.jdbc.OracleDriver
-spring.datasource.db2.url=jdbc:oracle:thin:@vip3:1521/xx
-spring.datasource.db2.username=xxx
-spring.datasource.db2.password=xxx
-spring.datasource.db2.max-total=10
-spring.datasource.db2.max-wait-millis=300000
-spring.datasource.db2.max-idle=1
-spring.datasource.db2.validation-query=select 1 from dual
+spring.datasource.dbKey2.driver-class-name=oracle.jdbc.OracleDriver
+spring.datasource.dbKey2.url=jdbc:oracle:thin:@vip3:1521/xx
+spring.datasource.dbKey2.username=xxx
+spring.datasource.dbKey2.password=xxx
+spring.datasource.dbKey2.max-total=10
+spring.datasource.dbKey2.max-wait-millis=300000
+spring.datasource.dbKey2.max-idle=1
+spring.datasource.dbKey2.validation-query=select 1 from dual
 ```
 
 
@@ -956,7 +879,7 @@ spring.datasource.db2.validation-query=select 1 from dual
 ```java
 @Repository
 @Mapper
-@DS("db1")
+@DS("dbKey1")
 public interface DemoDao {
 
   List<Map> queryData1(Map param);
@@ -978,10 +901,10 @@ public interface DemoDao {
 
   List<Map> queryData1(Map param);
 
-  @DS("db1")
+  @DS("dbKey1")
   List<Map> queryData2();
     
-  @DS("db2")
+  @DS("dbKey2")
   List<Map> queryData3();
 }
 ```
