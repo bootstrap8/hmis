@@ -151,6 +151,18 @@ npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-
 
 ![image-20230219153047994](README/image/README/image-20230219153047994.png)
 
+
+
+
+
+![image-20230220185354909](README/image/README/image-20230220185354909.png)
+
+
+
+
+
+
+
 ## 计划
 
 + [x] ~~配置管理集成ZKUI的管理页面~~
@@ -161,6 +173,7 @@ npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-
   + [x] ~~配置查询(支持目录、属性名、属性值条件)~~
   + [x] ~~支持操作类记录的留存、查询~~
   + [x] ~~支持配置数据的备份和恢复~~
+  + [x] ~~支持页面手工刷新应用配置~~
   
 + [ ] 常用中间件、数据库、主机等指标采集实现
 

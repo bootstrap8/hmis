@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 /**
  * @author hbq
  */
+@Repository("config-dao-ConfigDao")
 @Mapper
-@Repository
 public interface ConfigDao {
 
   void createConfigHistory();
