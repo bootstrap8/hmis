@@ -25,14 +25,15 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.cloud.consul.discovery.ConsulDiscoveryClient;
+import org.springframework.cloud.consul.ConditionalOnConsulEnabled;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * @author hbq
  */
-@ConditionalOnBean({ConsulDiscoveryClient.class})
+@ConditionalOnConsulEnabled
+@Component("agent-service-ConsulDiscoveryImpl")
 @Slf4j
 public class ConsulDiscoveryImpl implements DiscoveryAdapter {
 

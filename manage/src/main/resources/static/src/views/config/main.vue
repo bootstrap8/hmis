@@ -900,7 +900,7 @@ const refreshAppConfig = (scope: any) => {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   /* margin-top: 10px; */
   width: 100%;
-  min-height: 600px;
+  min-height: 500px;
   overflow: hidden;
 }
 
