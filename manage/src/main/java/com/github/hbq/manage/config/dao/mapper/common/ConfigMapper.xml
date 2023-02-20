@@ -9,7 +9,7 @@
   <delete id="deleteHistoryOperate">
     delete
     from hbq_config_history
-    where op_time <![CDATA[ >= ]]> #{opTime}
+    where op_time <![CDATA[ <= ]]> #{opTime}
   </delete>
 
   <resultMap id="historyOperateMap" type="com.github.hbq.manage.config.pojo.HistoryOperate">
