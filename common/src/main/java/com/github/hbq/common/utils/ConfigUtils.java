@@ -43,6 +43,14 @@ public class ConfigUtils {
     build("default");
   }
 
+  public void buildDev() throws Exception {
+    build("dev");
+  }
+
+  public void buildProd() throws Exception {
+    build("prod");
+  }
+
   public void build(String profile) throws Exception {
     String appName = null;
     try {

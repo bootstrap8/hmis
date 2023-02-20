@@ -73,6 +73,13 @@
             备份/恢复
           </el-menu-item>
 
+          <el-menu-item index="refresh" @click="refreshDialogFormVisible = true">
+            <el-icon>
+              <Refresh />
+            </el-icon>
+            配置刷新
+          </el-menu-item>
+
 
         </el-menu>
       </el-header>
@@ -90,15 +97,18 @@
           </el-scrollbar>
         </el-aside>
         <el-main class="main">
-          <el-table :data="data.leaf" style="width: 100%" :border="true" table-layout="fixed" :stripe="true" size="small"
-            :highlight-current-row="true" class="leaf">
-            <el-table-column fixed="left" label="操作" width="120" header-align="center" align="center">
+          <el-table :data="searchTableData" style="width: 100%" :border="false" table-layout="fixed" :stripe="true"
+            size="small" :highlight-current-row="true" class="leaf">
+            <el-table-column fixed="left" width="120" header-align="center" align="center">
+              <template #header>
+                <el-input v-model="searchKey" size="small" placeholder="属性名关键字..." />
+              </template>
               <template #default="scope">
-                <el-button link type="primary" size="small" @click="showEditDialog(scope)">编辑</el-button>
+                <el-button :icon="Edit" circle size="small" title="编辑" @click="showEditDialog(scope)" />
                 <el-popconfirm title="你确定要删除本条配置?" @confirm="deleteConfig(scope)" :icon="WarningFilled"
                   confirm-button-type="danger" cancel-button-type="info" icon-color="red">
                   <template #reference>
-                    <el-button link type="danger" size="small">删除</el-button>
+                    <el-button :icon="Delete" circle size="small" title="删除" />
                   </template>
                 </el-popconfirm>
               </template>
@@ -214,11 +224,11 @@
         size="small" :highlight-current-row="true">
         <el-table-column fixed="left" label="操作" width="120" header-align="center" align="center">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="updateProperty(scope)">编辑</el-button>
+            <el-button :icon="Edit" circle size="small" title="编辑" @click="updateProperty(scope)" />
             <el-popconfirm title="你确定要删除本条配置吗?" @confirm="deleteProperty(scope)" :icon="WarningFilled"
               confirm-button-type="danger" cancel-button-type="info" icon-color="red">
               <template #reference>
-                <el-button link type="danger" size="small">删除</el-button>
+                <el-button :icon="Delete" circle size="small" title="删除" />
               </template>
             </el-popconfirm>
           </template>
@@ -293,13 +303,13 @@
             <el-popconfirm title="是否使用本快照进行恢复?" @confirm="recovery(scope)" :icon="WarningFilled"
               confirm-button-type="success" cancel-button-type="info" icon-color="green">
               <template #reference>
-                <el-button :icon="Upload" size="small" circle title="恢复" type="success" />
+                <el-button :icon="Upload" size="small" circle title="恢复" />
               </template>
             </el-popconfirm>
             <el-popconfirm title="是否确认删除此快照数据?" @confirm="deleteBackup(scope)" :icon="WarningFilled"
               confirm-button-type="danger" cancel-button-type="info" icon-color="red">
               <template #reference>
-                <el-button :icon="Delete" size="small" circle title="删除" type="danger" />
+                <el-button :icon="Delete" size="small" circle title="删除" />
               </template>
             </el-popconfirm>
           </template>
@@ -315,6 +325,36 @@
         @size-change="searchBackup(haFormRef)" @current-change="searchBackup(haFormRef)"
         @prev-click="searchBackup(haFormRef)" @next-click="searchBackup(haFormRef)" :small="true" :background="true"
         :page-sizes="[5, 10, 20, 50, 100]" />
+    </el-dialog>
+
+
+
+    <el-dialog v-model="refreshDialogFormVisible" title="应用列表" :fullscreen="false" width="50%">
+      <el-form :model="refreshForm" :inline="true">
+        <el-form-item label="应用名称：" :label-width="formLabelWidth">
+          <el-input v-model="refreshForm.name" type="text" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="searchApp">查询</el-button>
+        </el-form-item>
+      </el-form>
+
+      <el-table :data="appData" style="width: 100%;" height="250px" :border="true" table-layout="fixed" :stripe="true"
+        size="small" :highlight-current-row="true">
+        <el-table-column fixed="left" label="操作" width="120" header-align="center" align="center">
+          <template #default="scope">
+            <el-popconfirm title="确定刷新此应用的配置, 可能需要等待一段时间?" @confirm="refreshAppConfig(scope)" :icon="WarningFilled"
+              confirm-button-type="danger" cancel-button-type="info" icon-color="red">
+              <template #reference>
+                <el-button :icon="Refresh" size="small" circle title="刷新" />
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="应用名称" :show-overflow-tooltip="true" header-align="center" />
+        <el-table-column prop="desc" label="应用描述" :show-overflow-tooltip="true" header-align="center" />
+        <el-table-column prop="instSize" label="实例数量(包括Down)" :show-overflow-tooltip="true" header-align="center" />
+      </el-table>
     </el-dialog>
   </div>
 </template>
@@ -334,7 +374,9 @@ import {
   Delete,
   WarningFilled,
   UploadFilled,
-  HomeFilled
+  HomeFilled,
+  Refresh,
+  Edit
 } from '@element-plus/icons-vue'
 import { UploadInstance, FormInstance, FormRules } from 'element-plus'
 import { ref, reactive, computed } from 'vue'
@@ -362,10 +404,16 @@ const props = {
 }
 
 // 右侧配置属性列表
+const searchKey = ref('')
 const data = reactive({
   leaf: <any>[],
   // 当前zk路径
   currentPathArray: <any>[]
+})
+
+const searchTableData = computed(() => {
+  return data.leaf.filter((item: any) =>
+    !searchKey.value || item.name.toLowerCase().includes(searchKey.value.toLowerCase()))
 })
 
 const joinPath = (array: Array<string>) => {
@@ -431,11 +479,13 @@ const propForm = reactive({
   name: '',
   value: ''
 })
+let tscope: any;
 const showEditDialog = (scope: any) => {
   propForm.zkPath = joinPath(data.currentPathArray)
   propForm.name = scope.row.name
   propForm.value = scope.row.strValue
   dialogFormVisible.value = true
+  tscope = scope
 }
 
 const updateConfig = () => {
@@ -447,10 +497,8 @@ const updateConfig = () => {
     if (res.data.code == 1) {
       msg('更新成功', 'success')
       dialogFormVisible.value = false
-      if (refreshSearchList.value) {
-        searchProperty()
-        refreshSearchList.value = false
-      }
+      tscope.row.name = propForm.name
+      tscope.row.strValue = propForm.value
     } else {
       msg(res.data.msg, 'error')
     }
@@ -601,13 +649,13 @@ interface PropertyInfo {
 }
 const searchDialogFormVisible = ref(false)
 const searchData = ref<PropertyInfo[]>()
-const refreshSearchList = ref(false)
 const searchForm = reactive({
   path: '',
   name: '',
   value: '',
 })
 const searchProperty = () => {
+  console.log('点击树节点查询配置列表:', searchForm)
   axios({
     url: '/hmis/manage/config/queryAllProperty/v1.0',
     method: 'post',
@@ -626,7 +674,6 @@ const updateProperty = (scope: any) => {
   propForm.name = scope.row.name
   propForm.value = scope.row.strValue
   dialogFormVisible.value = true
-  refreshSearchList.value = true
 }
 const deleteProperty = (scope: any) => {
   console.log('删除配置: %o', scope)
@@ -779,6 +826,42 @@ const deleteBackup = (scope: any) => {
   })
 }
 
+interface MicroService {
+  name: string
+  desc: string;
+  instSize: number
+}
+const refreshDialogFormVisible = ref(false)
+const refreshForm = reactive({
+  name: '',
+})
+const appData = ref<MicroService[]>()
+const searchApp = () => {
+  axios({
+    url: '/hmis/manage/agent/appInfo/queryAppInfos/v1.0',
+    method: 'post',
+    data: refreshForm
+  }).then((res: any) => {
+    if (res.data.code == 1) {
+      appData.value = res.data.body
+    } else {
+      msg('查询失败', 'error')
+    }
+  })
+}
+const refreshAppConfig = (scope: any) => {
+  axios({
+    url: '/hmis/manage/agent/appInfo/refreshConfig/v1.0',
+    method: 'post',
+    data: { name: scope.row.name }
+  }).then((res: any) => {
+    if (res.data.code == 1) {
+      msg('刷新成功', 'success')
+    } else {
+      msg('查询失败', 'error')
+    }
+  })
+}
 </script>
 
 <style scoped>

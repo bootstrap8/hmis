@@ -1,5 +1,6 @@
 package com.github.hbq.monitor;
 
+import com.github.hbq.common.utils.ConfigUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -24,5 +25,10 @@ public class MvcConfig extends WebMvcConfigurationSupport {
       registry.addResourceHandler("/**").addResourceLocations(
           CLASSPATH_RESOURCE_LOCATIONS);
     }
+  }
+
+  public static void main(String[] args) throws Exception {
+    ConfigUtils.of("monitor").build();
+    ConfigUtils.of("monitor").buildDev();
   }
 }
