@@ -5,6 +5,7 @@ import com.github.hbq.event.kafka.EventSingleListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author hbq
  */
+@RefreshScope
 @Configuration
 @Slf4j
 public class EventAutoConfiguration {

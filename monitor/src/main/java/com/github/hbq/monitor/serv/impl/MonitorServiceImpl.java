@@ -56,6 +56,8 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean, Dis
   private String identifyNotify;
   @Value("${hbq.monitor.quota.data-reserve-days:7}")
   private int quotaReserveDays;
+  @Value("${hbq.monitor.dialect.h2db.tcpPort:21003}")
+  private String tcpPort;
 
   @Autowired
   private MonitorDao monitorDao;
@@ -271,7 +273,6 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean, Dis
     }
     if (H2_DRIVER.equals(dialectDriver)) {
       CompletableFuture.runAsync(() -> {
-        String tcpPort = context.getProperty("hbq.monitor.dialect.h2db.tcpPort", "21003");
         String[] args = new String[]{"-tcpPort", tcpPort, "-tcpAllowOthers"};
         try {
           server = Server.createTcpServer(args).start();

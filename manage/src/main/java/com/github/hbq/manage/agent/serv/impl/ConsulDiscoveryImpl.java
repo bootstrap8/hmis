@@ -21,6 +21,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class ConsulDiscoveryImpl implements DiscoveryAdapter {
   private ConsulClient client;
 
   @Value("${management.endpoints.web.base-path:/hbq-actuator}")
-  private String basePath;
+  private String defaultActuatorPath;
 
   private OkHttpClient http = new OkHttpClient.Builder()
       .connectTimeout(5, TimeUnit.SECONDS)
@@ -90,11 +91,28 @@ public class ConsulDiscoveryImpl implements DiscoveryAdapter {
       log.info("查询到应用: {}, 的实例信息: {}", serviceName, JSON.toJSONString(service));
       String host = Joiner.on(":").join(service.getAddress(), service.getServicePort());
       String schema = "http://";
-      String url = String.join("", schema, host, basePath, "/refresh");
+      String actuatorPath = getServiceActuatorPath(service);
+      String url = String.join("", schema, host, actuatorPath, "/refresh");
       RequestBody body = RequestBody.create(MediaType.get("application/json;charset=utf-8"), "{}");
       Callback callback = new HttpCallback(serviceName, service.getAddress(), service.getServicePort());
       log.info("刷新应用: {}, 实例: {}", serviceName, url);
       http.newCall(new Request.Builder().url(url).post(body).build()).enqueue(callback);
     });
+  }
+
+  private String getServiceActuatorPath(CatalogService service) {
+    String path = defaultActuatorPath;
+    List<String> tags = service.getServiceTags();
+    if (CollectionUtils.isNotEmpty(tags)) {
+      for (String tag : tags) {
+        if (tag.contains("actuator-path")) {
+          String[] array = tag.split("=");
+          if (array.length == 2) {
+            path = array[1];
+          }
+        }
+      }
+    }
+    return path;
   }
 }

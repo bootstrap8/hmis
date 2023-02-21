@@ -23,9 +23,12 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.event.EventListener;
 
 /**
  * @author hbq
@@ -41,6 +44,22 @@ public class DefaultQuotaDataGet extends AbstractQuotaDataGet {
   private ThreadMXBean threadBean;
   private long preTime = System.nanoTime();
   private long preUsedTime = 0;
+
+  @EventListener
+  public void envListener(EnvironmentChangeEvent event) {
+    Set<String> set = event.getKeys();
+    for (String key : set) {
+      if (key.contains("hbq.agent.jvm")) {
+        log.info("jvm指标采集器配置发生变化，需要重新注册指标。{}", set);
+        setSubmit(false);
+        try {
+          afterPropertiesSet();
+        } catch (Exception e) {
+        }
+        return;
+      }
+    }
+  }
 
   @Override
   protected Collection<QuotaData> collectData(InstInfo instance) {

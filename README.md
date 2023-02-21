@@ -133,29 +133,9 @@ npm install path-browserify@1.0.1 https-browserify@1.0.0 stream-http@3.2.0 json-
 
 2. 添加配置中心控制台`UI`管理功能
 
-此功能为对`Zookeeper`作为配置中心，提供配置数据页面管理维护功能，结合`Zookeeper`使用。
+此功能为对`Zookeeper`作为配置中心，提供配置数据页面管理维护功能，结合`Zookeeper`使用。具体功能特性参考 [config](config/README.md)
 
-![image-20230218185102310](README/image/README/image-20230218185102310.png)
-
-![image-20230217200449815](README/image/README/image-20230217200449815.png)
-
-![image-20230218185345949](README/image/README/image-20230218185345949.png)
-
-![image-20230218185408032](README/image/README/image-20230218185408032.png)
-
-
-
-![image-20230219153014108](README/image/README/image-20230219153014108.png)
-
-
-
-![image-20230219153047994](README/image/README/image-20230219153047994.png)
-
-
-
-
-
-![image-20230220185354909](README/image/README/image-20230220185354909.png)
+![image-20230221185248170](README/image/README/image-20230221185248170.png)
 
 
 

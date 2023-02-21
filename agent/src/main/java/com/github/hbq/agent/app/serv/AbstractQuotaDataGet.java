@@ -23,15 +23,23 @@ public abstract class AbstractQuotaDataGet implements QuotaDataGet, Initializing
   @Autowired
   private QuotaSchedule schedule;
 
+  private volatile boolean submit = true;
+
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
       Collection<QuotaInfo> qis = registry();
       quotaManage.saveQuotaInfo(qis);
-      schedule.submit(this);
+      if (submit) {
+        schedule.submit(this);
+      }
     } catch (Exception e) {
       log.error("保存注册指标失败,可能导致采集不到指标数据", e);
     }
+  }
+
+  public void setSubmit(boolean submit) {
+    this.submit = submit;
   }
 
   @Override

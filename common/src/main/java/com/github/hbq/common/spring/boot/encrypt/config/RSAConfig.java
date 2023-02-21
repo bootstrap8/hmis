@@ -3,20 +3,22 @@ package com.github.hbq.common.spring.boot.encrypt.config;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**
  * @author hbq
  **/
+@RefreshScope
 @Data
 @ConfigurationProperties(prefix = "hbq.common.restful.encrypt.rsa")
 @Slf4j
 public class RSAConfig {
 
-  private String privateKey;
+  private volatile String privateKey;
 
-  private String publicKey;
+  private volatile String publicKey;
 
-  private String charset = "utf-8";
+  private volatile String charset = "utf-8";
 
   private volatile boolean enable = false;
 

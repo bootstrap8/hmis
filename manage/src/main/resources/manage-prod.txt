@@ -80,9 +80,13 @@
 /com/github/hbq/manage,prod=hbq.config.clean-history-operate.cron=0 0 0 * * *
 /com/github/hbq/manage,prod=hbq.config.clean-history-operate.expire.time=30
 /com/github/hbq/manage,prod=hbq.config.clean-history-operate.expire.unit=DAYS
+/com/github/hbq/manage,prod=hbq.config.clean-backup.cron=0 0 0 * * *
+/com/github/hbq/manage,prod=hbq.config.clean-backup.expire.time=180
+/com/github/hbq/manage,prod=hbq.config.clean-backup.expire.unit=DAYS
 /com/github/hbq/manage,prod=management.health.defaults.enabled=false
 /com/github/hbq/manage,prod=management.endpoints.enabled-by-default=false
 /com/github/hbq/manage,prod=management.endpoint.gateway.enabled=false
+/com/github/hbq/manage,prod=management.endpoint.refresh.enabled=true
 /com/github/hbq/manage,prod=management.endpoints.web.base-path=/hbq-actuator
 /com/github/hbq/manage,prod=management.endpoints.web.exposure.include=net,thread-top
 /com/github/hbq/manage,prod=management.endpoints.jmx.exposure.exclude=*

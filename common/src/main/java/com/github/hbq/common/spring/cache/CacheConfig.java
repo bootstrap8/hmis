@@ -10,16 +10,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.SimpleCacheManager;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.lang.Nullable;
 
 /**
  * @author hbq
  */
+@RefreshScope
 @Data
 public class CacheConfig implements FactoryBean<CacheManager> {
 
   @Value("${spring.cache.spi.juc.maxCapacity:10000}")
-  private Integer maxCapacity;
+  private volatile Integer maxCapacity;
 
   protected Collection<Cache> buildCaches()
       throws Exception {

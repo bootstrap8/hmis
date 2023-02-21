@@ -93,6 +93,12 @@ spring.cloud.zookeeper.auth.info=${spring_cloud_zookeeper_auth_info}
 
 #### 导入配置
 
+##### txt文件
+
+由`ConfigUtils`工具类根据`springboot`配置文件生成`txt`文件
+
+![image-20230221160409117](README/image/README/image-20230221160409117.png)
+
 ![image-20230218190953924](README/image/README/image-20230218190953924.png)
 
 ![image-20230218191011742](README/image/README/image-20230218191011742.png)
@@ -104,13 +110,36 @@ spring.cloud.zookeeper.auth.info=${spring_cloud_zookeeper_auth_info}
 ConfigUtils.of().build();
 
 // 多module工程下，需要传入module名称
-ConfigUtils.of("manage").build("dev");
-ConfigUtils.of("manage").build("prod");
+ConfigUtils.of("manage").buildDev();
+ConfigUtils.of("manage").buildProd();
+ConfigUtils.of("manage").build("xxx");
 ```
 
 
 
 
+
+##### properties文件
+
+![image-20230221160425061](README/image/README/image-20230221160425061.png)
+
+
+
+
+
+![image-20230221184540201](README/image/README/image-20230221184540201.png)
+
+
+
+
+
+##### yml文件
+
+![image-20230221184905795](README/image/README/image-20230221184905795.png)
+
+
+
+![image-20230221184735625](README/image/README/image-20230221184735625.png)
 
 
 
@@ -144,6 +173,36 @@ ConfigUtils.of("manage").build("prod");
 
 
 
+此功能需要应用端做如下改动：
+
+- 增加配置(Consul注册中心版本，其他适配后续版本支持)
+
+```properties
+# 如果向注册中心注册时不带上actuator-path这个标签，则使用默认值/hbq-actuator
+spring.cloud.consul.discovery.tags=path=/${spring.application.name},port=${server.port},secure=false,actuator-path=${management.endpoints.web.base-path}
+management.endpoints.jmx.exposure.exclude=*
+management.endpoints.web.base-path=/hbq-actuator
+management.endpoint.refresh.enabled=true
+management.endpoints.web.exposure.include=refresh
+```
+
+- 应用中需要动态加载配置的类上添加如下注解
+
+```java
+@RefreshScope
+@Service
+public class DemoService {
+
+  @Value("${foo}")
+  private String foo;
+  
+  public void greeting() {
+    log.info("foo: {}", foo);
+  }
+  
+}
+```
+
 
 
 ## 后续计划
@@ -154,4 +213,4 @@ ConfigUtils.of("manage").build("prod");
 + [ ] 角色权限控制
 + [x] ~~配置刷新（全量、针对服务、针对实例各种纬度）~~
 + [ ] 敏感数据脱敏处理
-+ [ ] 支持`properties`和`yaml`文件直接导入
++ [x] ~~支持`properties`和`yaml`文件直接导入~~

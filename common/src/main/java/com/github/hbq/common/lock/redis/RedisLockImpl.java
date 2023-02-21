@@ -9,12 +9,16 @@ import com.google.common.base.Splitter;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConfiguration;
 import org.springframework.data.redis.connection.RedisNode;
@@ -33,6 +37,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 /**
  * @author hbq
  */
+@RefreshScope
 @Slf4j
 public class RedisLockImpl implements Lock, InitializingBean {
 
@@ -64,13 +69,28 @@ public class RedisLockImpl implements Lock, InitializingBean {
     UNLOCK_LUA = sb.toString();
   }
 
-  private RedisTemplate<Object, Object> redis;
+  private volatile RedisTemplate<Object, Object> redis;
 
   @Autowired
   private SpringContext context;
 
   @Autowired
   private LockManage lockManage;
+
+  @EventListener
+  public void envListener(EnvironmentChangeEvent event) {
+    Set<String> set = event.getKeys();
+    for (String key : set) {
+      if (key.contains("hbq.common.lock.redis")) {
+        try {
+          log.info("分布式锁配置发生变化，重新初始化redis。{}", set);
+          afterPropertiesSet();
+        } catch (Exception e) {
+        }
+        break;
+      }
+    }
+  }
 
   @Override
   public void afterPropertiesSet() throws Exception {

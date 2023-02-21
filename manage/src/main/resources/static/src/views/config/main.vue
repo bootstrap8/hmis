@@ -47,12 +47,34 @@
             </el-icon>
             导出
           </el-menu-item>
-          <el-menu-item index="import" @click="showImportDialog">
-            <el-icon>
-              <Upload />
-            </el-icon>
-            导入
-          </el-menu-item>
+
+          <el-sub-menu index="import">
+            <template #title>
+              <el-icon>
+                <Upload />
+              </el-icon>
+              导入
+            </template>
+            <el-menu-item index="txt" @click="showTxtImportDialog">
+              <el-icon>
+                <DocumentCopy />
+              </el-icon>
+              .txt
+            </el-menu-item>
+            <el-menu-item index="prop" @click="showPropImportDialog">
+              <el-icon>
+                <DocumentCopy />
+              </el-icon>
+              .prop
+            </el-menu-item>
+            <el-menu-item index="yaml" @click="showYamlImportDialog">
+              <el-icon>
+                <DocumentCopy />
+              </el-icon>
+              .yaml
+            </el-menu-item>
+          </el-sub-menu>
+
           <el-menu-item index="search" @click="searchDialogFormVisible = true">
             <el-icon>
               <Search />
@@ -199,6 +221,81 @@
         <span class="dialog-footer">
           <el-button @click="importDialogFormVisible = false">取消</el-button>
           <el-button type="primary" @click="importFile">提交</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="importPropDialogFormVisible" title="导入配置" width="70%" @closed="closedPropImportDialog">
+      <el-form :model="importPropForm" :inline="true">
+
+        <el-form-item>
+          <el-upload class="avatar-uploader" ref="importBootstrapRef" action="#" :limit="1" :auto-upload="false"
+            :on-change="bootstrapBeforeAvatarUpload">
+            <el-icon class="avatar-uploader-icon">
+              <Plus />选择bootstrap.properties
+            </el-icon>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item>
+          <el-upload class="avatar-uploader" file-listref="importPropDefaultRef" action="#" :limit="1"
+            :auto-upload="false" :on-change="propDefaultBeforeAvatarUpload">
+            <el-icon class="avatar-uploader-icon">
+              <Plus />选择application.properties
+            </el-icon>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item>
+          <el-upload class="avatar-uploader" ref="importPropProfilesRef" action="#" :limit="1" :auto-upload="false"
+            :on-change="propProfilesBeforeAvatarUpload">
+            <el-icon class="avatar-uploader-icon">
+              <Plus />选择profile文件
+            </el-icon>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <el-switch v-model="importPropForm.cover" inline-prompt active-text="覆盖" inactive-text="不覆盖" />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="importPropDialogFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="importPropFile">提交</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="importYamlDialogFormVisible" title="导入配置" width="70%" @closed="closedYamlImportDialog">
+      <el-form :model="importYamlForm" :inline="true">
+        <el-form-item>
+          <el-upload class="avatar-uploader" ref="importBootstrapRef" action="#" :limit="1" :auto-upload="false"
+            :on-change="yamlBootstrapBeforeAvatarUpload">
+            <el-icon class="avatar-uploader-icon">
+              <Plus />选择bootstrap.yml
+            </el-icon>
+          </el-upload>
+        </el-form-item>
+        <el-form-item>
+          <el-upload class="avatar-uploader" ref="importPropDefaultRef" action="#" :limit="1" :auto-upload="false"
+            :on-change="yamlDefaultBeforeAvatarUpload">
+            <el-icon class="avatar-uploader-icon">
+              <Plus />选择application.yml
+            </el-icon>
+          </el-upload>
+        </el-form-item>
+        <el-form-item>
+          <el-upload class="avatar-uploader" ref="importPropProfilesRef" action="#" :limit="1" :auto-upload="false"
+            :on-change="yamlProfilesBeforeAvatarUpload">
+            <el-icon class="avatar-uploader-icon">
+              <Plus />选择profile文件
+            </el-icon>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <el-switch v-model="importYamlForm.cover" inline-prompt active-text="覆盖" inactive-text="不覆盖" />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="importYamlDialogFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="importYamlFile">提交</el-button>
         </span>
       </template>
     </el-dialog>
@@ -364,6 +461,7 @@ import type Node from 'element-plus/es/components/tree/src/model/node'
 import { ArrowRight } from '@element-plus/icons-vue'
 import {
   Document,
+  DocumentCopy,
   Expand,
   Download,
   Upload,
@@ -378,7 +476,7 @@ import {
   Refresh,
   Edit
 } from '@element-plus/icons-vue'
-import { UploadInstance, FormInstance, FormRules } from 'element-plus'
+import { UploadInstance, UploadProps, UploadFile, FormInstance, FormRules, ElMessage } from 'element-plus'
 import { ref, reactive, computed } from 'vue'
 import router from '@/router/index'
 import axios from '@/network/index'
@@ -618,16 +716,19 @@ const exportSelected = () => {
   })
 }
 
+const getUploadActionUrl = (url: string) => {
+  return ('development' == process.env.NODE_ENV
+    ? process.env.VUE_APP_DEV_BASE_URL
+    : process.env.VUE_APP_PROD_BASE_URL)
+    + url
+}
 const importDialogFormVisible = ref(false)
-const uploadAction = ref(('development' == process.env.NODE_ENV
-  ? process.env.VUE_APP_DEV_BASE_URL
-  : process.env.VUE_APP_PROD_BASE_URL)
-  + '/hmis/manage/config/import/v1.0')
+const uploadAction = ref(getUploadActionUrl('/hmis/manage/config/import/v1.0'))
 const importRef = ref<UploadInstance>()
 const importForm = reactive({
   cover: true
 })
-const showImportDialog = () => {
+const showTxtImportDialog = () => {
   importDialogFormVisible.value = true;
   importForm.cover = true;
 }
@@ -638,6 +739,143 @@ const importFile = () => {
   importRef.value!.submit()
 }
 const uploadSuc = (res: any) => {
+  msg('上传成功', 'success')
+}
+const importPropDialogFormVisible = ref(false)
+const uploadPropAction = getUploadActionUrl('/hmis/manage/config/propImport/v1.0')
+const importPropDefaultRef = ref<UploadInstance>()
+const importPropProfilesRef = ref<UploadInstance>()
+const importBootstrapRef = ref<UploadInstance>()
+const importPropForm = reactive({
+  cover: true
+})
+const showPropImportDialog = () => {
+  importPropDialogFormVisible.value = true
+  importPropForm.cover = true
+}
+const closedPropImportDialog = () => {
+  importPropDefaultRef.value.clearFiles(['success', 'fail', 'ready']);
+  importPropProfilesRef.value.clearFiles(['success', 'fail', 'ready']);
+  importBootstrapRef.value.clearFiles(['success', 'fail', 'ready'])
+}
+let bootstrapFile: any
+let defaultPropFile: any
+let profilesPropFile: any
+const bootstrapBeforeAvatarUpload = (uploadFile: UploadFile) => {
+  console.log('提交前检查bootstrap文件:', uploadFile.raw)
+  if (uploadFile.name !== 'bootstrap.properties') {
+    ElMessage.error('bootstrap文件格式不对!')
+    return false
+  }
+  bootstrapFile = uploadFile.raw
+  return true
+}
+const propDefaultBeforeAvatarUpload = (uploadFile: UploadFile) => {
+  console.log('提交前检查默认prop文件:', uploadFile.raw)
+  if (uploadFile.name !== 'application.properties') {
+    ElMessage.error('默认文件格式不对!')
+    return false
+  }
+  defaultPropFile = uploadFile.raw
+  return true
+}
+const propProfilesBeforeAvatarUpload = (uploadFile: UploadFile) => {
+  console.log('提交前检查profiles的prop文件:', uploadFile.raw)
+  const array = uploadFile.name.split('.')
+  if (array[1] !== 'properties') {
+    ElMessage.error('profiles文件格式不对!')
+    return false
+  }
+  profilesPropFile = uploadFile.raw
+  return true
+}
+const importPropFile = () => {
+  const formData = new FormData();
+  formData.append("bootstrapFile", bootstrapFile)
+  formData.append("defaultFile", defaultPropFile)
+  formData.append("profilesFile", profilesPropFile)
+  formData.append("cover", importPropForm.cover + '')
+  axios({
+    url: uploadPropAction,
+    method: 'post',
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  }).then((res: any) => {
+    if (res.data.code == 1) {
+      msg('导入成功', 'success')
+    } else {
+      msg('导入失败', 'error')
+    }
+  })
+}
+const propUploadSuc = (res: any) => {
+  msg('上传成功', 'success')
+}
+const importYamlDialogFormVisible = ref(false)
+const uploadYamlAction = getUploadActionUrl('/hmis/manage/config/yamlImport/v1.0')
+const importYamlForm = reactive({
+  cover: true
+})
+const showYamlImportDialog = () => {
+  importYamlDialogFormVisible.value = true
+  importYamlForm.cover = true
+}
+const closedYamlImportDialog = () => {
+  closedPropImportDialog()
+}
+const yamlBootstrapBeforeAvatarUpload = (uploadFile: UploadFile) => {
+  console.log('提交前检查bootstrap文件:', uploadFile.raw)
+  if (uploadFile.name !== 'bootstrap.yml') {
+    ElMessage.error('bootstrap文件格式不对!')
+    return false
+  }
+  bootstrapFile = uploadFile.raw
+  return true
+}
+const yamlDefaultBeforeAvatarUpload = (uploadFile: UploadFile) => {
+  console.log('提交前检查默认yml文件:', uploadFile.raw)
+  if (uploadFile.name !== 'application.yml') {
+    ElMessage.error('默认文件格式不对!')
+    return false
+  }
+  defaultPropFile = uploadFile.raw
+  return true
+}
+const yamlProfilesBeforeAvatarUpload = (uploadFile: UploadFile) => {
+  console.log('提交前检查profiles的yaml文件:', uploadFile.raw)
+  const array = uploadFile.name.split('.')
+  if (array[1] !== 'yml') {
+    ElMessage.error('profiles文件格式不对!')
+    return false
+  }
+  profilesPropFile = uploadFile.raw
+  return true
+}
+const importYamlFile = () => {
+  const formData = new FormData();
+  formData.append("bootstrapFile", bootstrapFile)
+  formData.append("defaultFile", defaultPropFile)
+  formData.append("profilesFile", profilesPropFile)
+  formData.append("cover", importYamlForm.cover + '')
+  console.log('导入yml文件提交参数:', formData)
+  axios({
+    url: uploadYamlAction,
+    method: 'post',
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  }).then((res: any) => {
+    if (res.data.code == 1) {
+      msg('导入成功', 'success')
+    } else {
+      msg('导入失败', 'error')
+    }
+  })
+}
+const yamlUploadSuc = (res: any) => {
   msg('上传成功', 'success')
 }
 
@@ -929,5 +1167,34 @@ const refreshAppConfig = (scope: any) => {
 
 .leaf {
   height: 500px;
+}
+
+.avatar-uploader .avatar {
+  width: 250px;
+  height: 50px;
+  display: block;
+}
+</style>
+
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 14px;
+  color: #8c939d;
+  width: 250px;
+  height: 50px;
+  text-align: center;
 }
 </style>

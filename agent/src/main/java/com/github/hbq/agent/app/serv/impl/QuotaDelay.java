@@ -1,6 +1,5 @@
 package com.github.hbq.agent.app.serv.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.github.hbq.agent.app.pojo.QuotaData;
 import com.github.hbq.agent.app.serv.InstanceRegistry;
 import com.github.hbq.agent.app.serv.QuotaDataGet;
@@ -27,8 +26,7 @@ public class QuotaDelay implements Delayed {
 
   private QuotaDataGet get;
 
-  public QuotaDelay(long delayMills, SpringContext context, QuotaDataGet get) {
-    this.delayMills = delayMills;
+  public QuotaDelay(SpringContext context, QuotaDataGet get) {
     this.context = context;
     this.get = get;
     this.initMills = System.currentTimeMillis();
@@ -36,6 +34,7 @@ public class QuotaDelay implements Delayed {
 
   @Override
   public long getDelay(TimeUnit unit) {
+    long delayMills = TimeUnit.MILLISECONDS.convert(get.cycle().getTime(), get.cycle().getUnit());
     long diff = delayMills - (System.currentTimeMillis() - initMills);
     return diff;
   }
