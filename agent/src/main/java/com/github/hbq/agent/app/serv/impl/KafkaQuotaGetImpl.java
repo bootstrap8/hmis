@@ -1,6 +1,5 @@
 package com.github.hbq.agent.app.serv.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.github.hbq.agent.app.pojo.CycleInfo;
 import com.github.hbq.agent.app.pojo.InstInfo;
 import com.github.hbq.agent.app.pojo.QuotaData;
@@ -14,9 +13,12 @@ import com.github.hbq.common.utils.FormatTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.event.EventListener;
 
 /**
  * @author hbq
@@ -31,6 +33,22 @@ public class KafkaQuotaGetImpl extends AbstractQuotaDataGet {
 
   @Autowired
   private SpringContext context;
+
+  @EventListener
+  public void envListener(EnvironmentChangeEvent event) {
+    Set<String> set = event.getKeys();
+    for (String key : set) {
+      if (key.contains("hbq.agent.kafka")) {
+        log.info("kafka流控指标采集器配置发生变化，需要重新注册指标。{}", set);
+        setSubmit(false);
+        try {
+          afterPropertiesSet();
+        } catch (Exception e) {
+        }
+        return;
+      }
+    }
+  }
 
   public void incrementAndGetIn(int c) {
     in.incrementAndGet(c);

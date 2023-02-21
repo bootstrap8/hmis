@@ -18,7 +18,9 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,8 +28,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 /**
  * @author hbq
  */
+@RefreshScope
 @Slf4j
-public class MapDictImpl implements Dict<Map> {
+public class MapDictImpl implements Dict<Map>, DisposableBean {
 
   private volatile Map<String, DictInfo> dictMap = new LinkedHashMap<>(100);
   private volatile List<String> fns = new ArrayList<>(100);
@@ -38,6 +41,13 @@ public class MapDictImpl implements Dict<Map> {
   @Scheduled(cron = "${hbq.common.dict.reload.cron:0 0 * * * *}")
   public void schedule() {
     reloadImmediately();
+  }
+
+  @Override
+  public void destroy() throws Exception {
+    log.info("清理字典缓存数据.");
+    dictMap.clear();
+    fns.clear();
   }
 
   @PostConstruct

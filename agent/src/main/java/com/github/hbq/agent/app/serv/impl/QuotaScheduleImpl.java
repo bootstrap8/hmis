@@ -1,6 +1,5 @@
 package com.github.hbq.agent.app.serv.impl;
 
-import com.github.hbq.agent.app.pojo.CycleInfo;
 import com.github.hbq.agent.app.serv.QuotaDataGet;
 import com.github.hbq.agent.app.serv.QuotaSchedule;
 import com.github.hbq.common.spring.context.SpringContext;
@@ -44,9 +43,7 @@ public class QuotaScheduleImpl implements QuotaSchedule, InitializingBean, Dispo
 
   @Override
   public boolean submit(QuotaDataGet g) {
-    CycleInfo c = g.cycle();
-    long delayMills = TimeUnit.MILLISECONDS.convert(c.getTime(), c.getUnit());
-    QuotaDelay d = new QuotaDelay(delayMills, context, g);
+    QuotaDelay d = new QuotaDelay(context, g);
     boolean reg = q.offer(d);
     if (reg) {
       log.info("注册应用指标采集器: {}", g.identify());

@@ -7,8 +7,6 @@ import com.github.hbq.manage.config.pojo.LeafBean;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +30,12 @@ public interface ConfigService {
   Set<LeafBean> exportTree(UserInfo ui, Map map);
 
   void importData(UserInfo ui, MultipartFile file, boolean overwrite);
+
+  void propFileImport(MultipartFile bootstrapFile, MultipartFile defaultFile,
+      MultipartFile profilesFile, boolean overwrite);
+
+  void yamlFileImport(MultipartFile bootstrapFile, MultipartFile defaultFile,
+      MultipartFile profilesFile, boolean overwrite);
 
   Set<LeafBean> searchTree(UserInfo ui, Map map);
 

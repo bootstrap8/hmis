@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
-import {ElLoading} from 'element-plus'
+import { ElLoading } from 'element-plus'
 
 console.log('环境信息: ', process.env.NODE_ENV);
 
@@ -9,19 +9,19 @@ const defaultAuthentication = "default-token"
 
 export default (config: any) => {
   let instance = axios.create(
-      "development" == process.env.NODE_ENV ?
-          // dev环境
-          {
-            baseURL: process.env.VUE_APP_DEV_BASE_URL,
-            timeout: 5000,
-            headers: {defaultAuthentication}
-          } :
-          // prod环境
-          {
-            baseURL: process.env.VUE_APP_PROD_BASE_URL,
-            timeout: 5000,
-            headers: {Authentication: store.getters.getAuthentication || defaultAuthentication}
-          });
+    "development" == process.env.NODE_ENV ?
+      // dev环境
+      {
+        baseURL: process.env.VUE_APP_DEV_BASE_URL,
+        timeout: 5000,
+        headers: { Authentication: store.getters.getAuthentication || defaultAuthentication }
+      } :
+      // prod环境
+      {
+        baseURL: process.env.VUE_APP_PROD_BASE_URL,
+        timeout: 5000,
+        headers: { Authentication: store.getters.getAuthentication || defaultAuthentication }
+      });
 
   let loadingInstance: any;
 

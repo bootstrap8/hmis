@@ -76,8 +76,8 @@ import springfox.documentation.spring.web.plugins.WebMvcRequestHandlerProvider;
 /**
  * @author hbq
  */
-@Slf4j
 @Configuration
+@Slf4j
 @ComponentScan(basePackageClasses = {CheckCtrl.class, RSACtrl.class,
     AESCtrl.class, SnowflakeCtrl.class, DictCtrl.class})
 public class HbqAutoConfiguration implements ApplicationContextAware {
@@ -226,6 +226,7 @@ public class HbqAutoConfiguration implements ApplicationContextAware {
     return new ParamsKeyGenerator();
   }
 
+  @Primary
   @Bean("hbq-common-spring-cache-CacheManager")
   @ConditionalOnExpression("${hbq.common.restful.cache.enable:true}")
   CacheConfig apiCacheConfig() {
@@ -236,7 +237,7 @@ public class HbqAutoConfiguration implements ApplicationContextAware {
   StringEncryptor stringEncryptor() {
     PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
     SimpleStringPBEConfig config = new SimpleStringPBEConfig();
-    String pwd = environment.getProperty("jasypt.encryptor.password", "ailk!QAZ@#$)IY&^");
+    String pwd = environment.getProperty("jasypt.encryptor.password", "hbq969@gmail.com");
     config.setPassword(pwd);
     config.setAlgorithm("PBEWITHHMACSHA512ANDAES_256");
     config.setKeyObtentionIterations("1000");

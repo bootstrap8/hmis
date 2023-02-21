@@ -5,6 +5,8 @@ import com.github.hbq.common.spring.context.SpringContext;
 import com.github.hbq.common.spring.context.UserInfo;
 import com.github.hbq.common.utils.Count;
 import com.github.hbq.common.utils.FormatTime;
+import com.github.hbq.common.utils.ResourceUtils;
+import com.github.hbq.common.utils.StrUtils;
 import com.github.hbq.common.utils.UidBox;
 import com.github.hbq.manage.config.dao.ConfigDao;
 import com.github.hbq.manage.config.pojo.Backup;
@@ -17,13 +19,17 @@ import com.github.hbq.manage.config.serv.ZookeeperService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -219,6 +225,42 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
   }
 
   @Override
+  public void propFileImport(MultipartFile bootstrapFile, MultipartFile defaultFile,
+      MultipartFile profilesFile, boolean overwrite) {
+    try {
+      Map bootstrapProps = readFile(bootstrapFile);
+      Map defaultProps = readFile(defaultFile);
+      Map profileProps = readFile(profilesFile);
+      ImportLinesConfig(profilesFile.getOriginalFilename(), overwrite, bootstrapProps, defaultProps, profileProps);
+    } catch (Exception e) {
+      log.error("", e);
+      throw new RuntimeException(e.getCause());
+    }
+  }
+
+  @Override
+  public void yamlFileImport(MultipartFile bootstrapFile, MultipartFile defaultFile,
+      MultipartFile profilesFile, boolean overwrite) {
+    try {
+      // 读取应用信息
+      String name = profilesFile.getOriginalFilename();
+      Map bootstrapProps = ResourceUtils.yml2Properties(IOUtils.toString(bootstrapFile.getInputStream(), Charset.forName("utf-8")));
+      Map defaultProps = ResourceUtils.yml2Properties(IOUtils.toString(defaultFile.getInputStream(), Charset.forName("utf-8")));
+      Map profileProps = ResourceUtils.yml2Properties(IOUtils.toString(profilesFile.getInputStream(), Charset.forName("utf-8")));
+      ImportLinesConfig(name, overwrite, bootstrapProps, defaultProps, profileProps);
+    } catch (Exception e) {
+      log.error("", e);
+      throw new RuntimeException(e.getCause());
+    }
+  }
+
+  private Properties readFile(MultipartFile file) throws IOException {
+    Properties props = new Properties();
+    props.load(file.getInputStream());
+    return props;
+  }
+
+  @Override
   public Set<LeafBean> searchTree(UserInfo ui, Map map) {
     String path = MapUtils.getString(map, "path");
     String name = MapUtils.getString(map, "name");
@@ -380,6 +422,52 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     } catch (Exception e) {
       log.error("", e);
     }
+  }
+
+  private void ImportLinesConfig(String profileFileName, boolean overwrite,
+      Map bootstrapProps, Map defaultProps, Map profileProps) throws Exception {
+    // 读取应用信息
+    String name = profileFileName;
+    String profile = name.substring(name.indexOf('-') + 1, name.indexOf('.'));
+    String path = MapUtils.getString(bootstrapProps, "spring.cloud.zookeeper.config.root");
+    if (StrUtils.strNotEmpty(path) && path.endsWith("/")) {
+      path = path.substring(0, path.length() - 1);
+    }
+    final String dir = path;
+    String sn = MapUtils.getString(bootstrapProps, "spring.application.name");
+    log.info("导入properties文件解析到, profile: {}, path: {}, appName: {}", profile, dir, sn);
+
+    // 导入默认配置
+    Iterator<Entry> it = defaultProps.entrySet().iterator();
+    List<String> defaultLines = new ArrayList<>(defaultProps.size());
+    while (it.hasNext()) {
+      Entry e = it.next();
+      String line = String.join("", dir, "/", sn, "=",
+          String.valueOf(e.getKey()), "=", String.valueOf(e.getValue()));
+      defaultLines.add(line);
+    }
+    zookeeperService.importData(defaultLines, overwrite);
+    log.info("导入应用: {}, [default] 配置成功", sn);
+
+    // 使用profile覆盖default
+    it = profileProps.entrySet().iterator();
+    while (it.hasNext()) {
+      Entry e = it.next();
+      defaultProps.put(e.getKey(), e.getValue());
+    }
+
+    // 导入profile配置
+    List<String> profileLines = new ArrayList<>(defaultProps.size());
+    String profileLine;
+    it = profileProps.entrySet().iterator();
+    while (it.hasNext()) {
+      Entry e = it.next();
+      profileLine = String.join("", dir, "/", sn, ",", profile, "=",
+          String.valueOf(e.getKey()), "=", String.valueOf(e.getValue()));
+      profileLines.add(profileLine);
+    }
+    zookeeperService.importData(profileLines, overwrite);
+    log.info("导入应用: {}, [{}] 默认配置成功", sn, profile);
   }
 
   private void createConfigHistory() {

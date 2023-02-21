@@ -80,11 +80,15 @@
 /com/github/hbq/manage,dev=hbq.config.clean-history-operate.cron=0 0 0 * * *
 /com/github/hbq/manage,dev=hbq.config.clean-history-operate.expire.time=30
 /com/github/hbq/manage,dev=hbq.config.clean-history-operate.expire.unit=DAYS
+/com/github/hbq/manage,dev=hbq.config.clean-backup.cron=0 0 0 * * *
+/com/github/hbq/manage,dev=hbq.config.clean-backup.expire.time=180
+/com/github/hbq/manage,dev=hbq.config.clean-backup.expire.unit=DAYS
 /com/github/hbq/manage,dev=management.health.defaults.enabled=false
 /com/github/hbq/manage,dev=management.endpoints.enabled-by-default=false
 /com/github/hbq/manage,dev=management.endpoint.gateway.enabled=false
+/com/github/hbq/manage,dev=management.endpoint.refresh.enabled=true
 /com/github/hbq/manage,dev=management.endpoints.web.base-path=/hbq-actuator
-/com/github/hbq/manage,dev=management.endpoints.web.exposure.include=net,thread-top
+/com/github/hbq/manage,dev=management.endpoints.web.exposure.include=net,thread-top,refresh
 /com/github/hbq/manage,dev=management.endpoints.jmx.exposure.exclude=*
 /com/github/hbq/manage,dev=spring.cloud.gateway.enabled=false
 /com/github/hbq/manage,dev=zkUrl=192.168.56.2:12181

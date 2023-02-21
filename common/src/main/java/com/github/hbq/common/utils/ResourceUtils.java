@@ -1,9 +1,21 @@
 package com.github.hbq.common.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.dataformat.javaprop.JavaPropsFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
@@ -67,6 +79,91 @@ public class ResourceUtils {
       currentDir = String.join(path.startsWith(File.separator) ? "" : File.separator, currentDir, path);
     }
     return currentDir;
+  }
+
+  public static Map<String, String> yml2Properties(String content) {
+    final String DOT = ".";
+    Map<String, String> props = new HashMap<>(500);
+    try {
+      YAMLFactory yamlFactory = new YAMLFactory();
+      YAMLParser parser = yamlFactory.createParser(content);
+      String key = "";
+      String value;
+      JsonToken token = parser.nextToken();
+      while (token != null) {
+        if (JsonToken.START_OBJECT.equals(token)) {
+          // "{" 表示字符串开头，不做解析
+        } else if (JsonToken.FIELD_NAME.equals(token)) {
+          if (key.length() > 0) {
+            key = key + DOT;
+          }
+          key = key + parser.getCurrentName();
+          token = parser.nextToken();
+          if (JsonToken.START_OBJECT.equals(token)) {
+            continue;
+          }
+          value = parser.getText();
+          props.put(key, value);
+//          lines.add(key + "=" + value);
+          int dotOffset = key.lastIndexOf(DOT);
+          if (dotOffset > 0) {
+            key = key.substring(0, dotOffset);
+          }
+        } else if (JsonToken.END_OBJECT.equals(token)) {
+          int dotOffset = key.lastIndexOf(DOT);
+          if (dotOffset > 0) {
+            key = key.substring(0, dotOffset);
+          } else {
+            key = "";
+//            lines.add("");
+          }
+        }
+        token = parser.nextToken();
+      }
+      parser.close();
+      log.info("{}", JSON.toJSONString(props));
+      return props;
+    } catch (Exception e) {
+      log.error("解析yml内容异常", e);
+      throw new RuntimeException(e);
+    }
+
+  }
+
+  public static void properties2Yaml(String file) {
+    JsonParser parser = null;
+    JavaPropsFactory factory = new JavaPropsFactory();
+    try {
+      parser = factory.createParser(
+          "");
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    try {
+      YAMLFactory yamlFactory = new YAMLFactory();
+      YAMLGenerator generator = yamlFactory.createGenerator(
+          new OutputStreamWriter(new FileOutputStream(file), Charset.forName("utf-8")));
+
+      JsonToken token = parser.nextToken();
+
+      while (token != null) {
+        if (JsonToken.START_OBJECT.equals(token)) {
+          generator.writeStartObject();
+        } else if (JsonToken.FIELD_NAME.equals(token)) {
+          generator.writeFieldName(parser.getCurrentName());
+        } else if (JsonToken.VALUE_STRING.equals(token)) {
+          generator.writeString(parser.getText());
+        } else if (JsonToken.END_OBJECT.equals(token)) {
+          generator.writeEndObject();
+        }
+        token = parser.nextToken();
+      }
+      parser.close();
+      generator.flush();
+      generator.close();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

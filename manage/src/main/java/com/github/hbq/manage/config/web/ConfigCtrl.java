@@ -231,7 +231,7 @@ public class ConfigCtrl {
     }
   }
 
-  @ApiOperation("导入配置")
+  @ApiOperation("导入txt配置文件")
   @Version("v1.0")
   @RequestMapping(path = "/import/{v}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseBody
@@ -248,6 +248,54 @@ public class ConfigCtrl {
       return (e instanceof RuntimeException) ?
           Result.fail(e.getMessage()) :
           Result.fail("导入配置异常");
+    }
+  }
+
+  @ApiOperation("导入properties文件")
+  @Version("v1.0")
+  @RequestMapping(path = "/propImport/{v}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @ResponseBody
+  public Result<?> propImport(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestParam("bootstrapFile") MultipartFile bootstrapFile,
+      @RequestParam("defaultFile") MultipartFile defaultFile,
+      @RequestParam("profilesFile") MultipartFile profilesFile,
+      @RequestParam("cover") boolean cover) {
+    try {
+      log.info("导入properties文件: bootstrapFile:{}, defaultFile: {}, profilesFile: {}, cover: {}",
+          bootstrapFile.getOriginalFilename(), defaultFile.getOriginalFilename(), profilesFile.getOriginalFilename(), cover);
+      configService.propFileImport(bootstrapFile, defaultFile, profilesFile, cover);
+      return Result.suc("导入成功");
+    } catch (Exception e) {
+      log.error("导入properties文件异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("导入properties文件异常");
+    }
+  }
+
+  @ApiOperation("导入yaml文件")
+  @Version("v1.0")
+  @RequestMapping(path = "/yamlImport/{v}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @ResponseBody
+  public Result<?> yamlImport(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestParam("bootstrapFile") MultipartFile bootstrapFile,
+      @RequestParam("defaultFile") MultipartFile defaultFile,
+      @RequestParam("profilesFile") MultipartFile profilesFile,
+      @RequestParam("cover") boolean cover) {
+    try {
+      log.info("导入yaml文件: bootstrapFile:{}, defaultFile: {}, profilesFile: {}, cover: {}",
+          bootstrapFile.getOriginalFilename(), defaultFile.getOriginalFilename(), profilesFile.getOriginalFilename(), cover);
+      configService.yamlFileImport(bootstrapFile, defaultFile, profilesFile, cover);
+      return Result.suc("导入成功");
+    } catch (Exception e) {
+      log.error("导入yaml文件异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("导入yaml文件异常");
     }
   }
 
