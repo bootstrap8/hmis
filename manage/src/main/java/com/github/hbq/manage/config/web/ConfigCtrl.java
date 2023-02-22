@@ -7,7 +7,7 @@ import com.github.hbq.manage.config.pojo.Backup;
 import com.github.hbq.manage.config.pojo.HistoryOperate;
 import com.github.hbq.manage.config.pojo.LeafBean;
 import com.github.hbq.manage.config.serv.ConfigService;
-import com.github.hbq.manage.config.serv.ZookeeperService;
+import com.github.hbq.manage.config.serv.DiscoveryAdapter;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -39,10 +39,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class ConfigCtrl {
 
   @Autowired
-  private ZookeeperService zookeeperService;
+  private ConfigService configService;
 
   @Autowired
-  private ConfigService configService;
+  private DiscoveryAdapter discoveryAdapter;
 
   @ApiOperation("查询节点树信息")
   @Version("v1.0")
@@ -422,6 +422,45 @@ public class ConfigCtrl {
       return (e instanceof RuntimeException) ?
           Result.fail(e.getMessage()) :
           Result.fail("恢复备份数据异常");
+    }
+  }
+
+  @ApiOperation("查询应用列表")
+  @Version("v1.0")
+  @RequestMapping(path = "/queryAppInfos/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<?> queryAppInfos(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestBody Map map) {
+    log.info("查询应用列表: {}", map);
+    try {
+      return Result.suc(discoveryAdapter.queryAppInfos(map));
+    } catch (Exception e) {
+      log.error("查询应用列表异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("查询应用列表异常");
+    }
+  }
+
+  @ApiOperation("刷新应用配置")
+  @Version("v1.0")
+  @RequestMapping(path = "/refreshConfig/{v}", method = RequestMethod.POST)
+  @ResponseBody
+  public Result<?> refreshConfig(
+      @RequestHeader(name = "userInfo", required = false) String userInfo,
+      @ApiParam(required = true, defaultValue = "v1.0") @PathVariable String v,
+      @RequestBody Map map) {
+    log.info("刷新应用配置: {}", map);
+    try {
+      discoveryAdapter.refreshConfig(map);
+      return Result.suc("刷新成功");
+    } catch (Exception e) {
+      log.error("刷新应用配置异常", e);
+      return (e instanceof RuntimeException) ?
+          Result.fail(e.getMessage()) :
+          Result.fail("刷新应用配置异常");
     }
   }
 }

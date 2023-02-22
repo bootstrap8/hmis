@@ -1,4 +1,4 @@
-package com.github.hbq.manage.agent.serv.impl;
+package com.github.hbq.manage.config.serv.impl;
 
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;

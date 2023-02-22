@@ -4,14 +4,27 @@ if [[ -f "../setenv.sh" ]];then
 . ../setenv.sh
 fi
 
+getProcessNo(){
+ echo "`ps -ef|grep hmis-manage|grep -v grep|awk '{print $2}'`"
+}
 
-ProcessNo=`ps -ef|grep hmis-manage|grep -v grep|awk '{print $2}'`
-if [[ -n "${ProcessNo}" ]]; then
-  echo -e "Find Process Info ...\n"
+ProcessNo=`getProcessNo`
+if [[ -n ${ProcessNo} ]]; then
+  echo "Find Process Info ..."
   echo "ProcessNo: ${ProcessNo}"
   echo "Process Directory: `pwdx ${ProcessNo}|awk '{print $2}'`"
-  echo -e "Waiting Process Kill ...\n"
   sleep 1
   kill ${ProcessNo}
-  echo -e "manage,${ProcessNo} was killed.\n"
+  echo "Waiting Process Exit ..."
+  i=1
+  while true;
+  do
+    if [[ -z `getProcessNo` ]];then
+      break;
+    fi
+    sleep 1
+    echo "[${i}s]Check Process If Exit..."
+    i=$((i+1))
+  done
+  echo "${ProcessNo} was killed."
 fi

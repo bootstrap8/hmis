@@ -1076,7 +1076,7 @@ const refreshForm = reactive({
 const appData = ref<MicroService[]>()
 const searchApp = () => {
   axios({
-    url: '/hmis/manage/agent/appInfo/queryAppInfos/v1.0',
+    url: '/hmis/manage/config/queryAppInfos/v1.0',
     method: 'post',
     data: refreshForm
   }).then((res: any) => {
@@ -1089,7 +1089,7 @@ const searchApp = () => {
 }
 const refreshAppConfig = (scope: any) => {
   axios({
-    url: '/hmis/manage/agent/appInfo/refreshConfig/v1.0',
+    url: '/hmis/manage/config/refreshConfig/v1.0',
     method: 'post',
     data: { name: scope.row.name }
   }).then((res: any) => {
