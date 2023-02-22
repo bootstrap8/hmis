@@ -1,4 +1,4 @@
-package com.github.hbq.manage.agent.serv.impl;
+package com.github.hbq.manage.config.serv.impl;
 
 import cn.hutool.core.lang.Assert;
 import com.alibaba.fastjson.JSON;
@@ -7,7 +7,7 @@ import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.catalog.model.CatalogService;
 import com.github.hbq.common.utils.StrUtils;
-import com.github.hbq.manage.agent.serv.DiscoveryAdapter;
+import com.github.hbq.manage.config.serv.DiscoveryAdapter;
 import com.google.common.base.Joiner;
 import java.util.ArrayList;
 import java.util.HashMap;

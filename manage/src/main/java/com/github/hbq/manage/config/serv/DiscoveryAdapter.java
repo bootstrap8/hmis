@@ -1,4 +1,4 @@
-package com.github.hbq.manage.agent.serv;
+package com.github.hbq.manage.config.serv;
 
 import java.util.List;
 import java.util.Map;
