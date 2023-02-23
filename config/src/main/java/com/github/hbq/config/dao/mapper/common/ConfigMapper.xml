@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.hbq.config.dao.ConfigDao">
+  <insert id="saveHistoryOperate" parameterType="com.github.hbq.config.pojo.HistoryOperate">
+    insert into hbq_config_history(user_name, operate, op_time)
+    values (#{user}, #{operate}, #{opTime})
+  </insert>
+
+  <delete id="deleteHistoryOperate">
+    delete
+    from hbq_config_history
+    where op_time <![CDATA[ <= ]]> #{opTime}
+  </delete>
+
+  <resultMap id="historyOperateMap" type="com.github.hbq.config.pojo.HistoryOperate">
+    <result property="user" column="user_name" javaType="java.lang.String"/>
+    <result property="operate" column="operate" javaType="java.lang.String"/>
+    <result property="opTime" column="op_time" javaType="java.lang.Long"/>
+  </resultMap>
+
+  <select id="queryHistoryOperates" parameterType="map"
+    resultMap="historyOperateMap">
+    select user_name AS "user_name",
+    operate AS "operate",
+    op_time AS "op_time"
+    from hbq_config_history
+    <where>
+      <if test="user!=null and user!=''">
+        <bind name="userLike" value="'%' + user + '%'"/>
+        and user_name like #{userLike}
+      </if>
+      <if test="operate!=null and operate!=''">
+        and operate = #{operate}
+      </if>
+      and op_time <![CDATA[ >= ]]> #{startTime}
+      and op_time <![CDATA[ < ]]> #{endTime}
+    </where>
+  </select>
+
+  <select id="queryBackups" resultType="com.github.hbq.config.pojo.Backup">
+    select a.id AS "id",
+    a.bk_time AS "backTime",
+    a.size AS "size"
+    from hbq_config_bk_main a
+    <where>
+      and a.bk_time <![CDATA[ >= ]]> #{startTime}
+      and a.bk_time <![CDATA[ < ]]> #{endTime}
+    </where>
+    order by a.bk_time desc
+  </select>
+
+  <select id="queryBackupDetails" resultType="com.github.hbq.config.pojo.BackupDetail">
+    select id      AS "id",
+           path    AS "path",
+           name    AS "name",
+           value   AS "value",
+           bk_time AS "backTime"
+    from hbq_config_bk_detail
+    where id = #{id}
+  </select>
+
+  <delete id="deleteBackupById">
+    delete
+    from hbq_config_bk_main
+    where id = #{id}
+  </delete>
+
+  <delete id="deleteBackupDetailById">
+    delete
+    from hbq_config_bk_detail
+    where id = #{id}
+  </delete>
+
+  <delete id="deleteBackupByTime">
+    delete
+    from hbq_config_bk_main
+    where bk_time <![CDATA[ <= ]]> #{backTime}
+  </delete>
+
+  <delete id="deleteBackupDetailByTime">
+    delete
+    from hbq_config_bk_detail
+    where bk_time <![CDATA[ <= ]]> #{backTime}
+  </delete>
+</mapper>

@@ -1,1 +1,2 @@
- org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.github.hbq.common.autoconfig.HbqAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.github.hbq.common.autoconfig.HbqAutoConfiguration
+org.springframework.cloud.bootstrap.BootstrapConfiguration=org.springframework.cloud.bootstrap.Config

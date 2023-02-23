@@ -2,6 +2,12 @@ import {createRouter, createWebHistory, createWebHashHistory} from 'vue-router'
 
 const routes = [
   {
+    path: '/default',
+    name: '主页',
+    meta: {breadcrumb: []},
+    component: () => import("@/views/HomeView.vue")
+  },
+  {
     path: '/home',
     name: '主页',
     meta: {breadcrumb: ['首页']},
@@ -54,12 +60,6 @@ const routes = [
     name: '指标应用实例列表',
     meta: {breadcrumb: ['指标监控', '指标列表', '实例列表']},
     component: () => import('@/views/monitor/InstanceList.vue')
-  },
-  {
-    path: '/config/home',
-    name: '配置中心UI控制台',
-    meta: {breadcrumb: ['配置管理', 'UI控制台']},
-    component: () => import('@/views/config/main.vue')
   },
   {
     path: '/open-ai/chatgpt',
