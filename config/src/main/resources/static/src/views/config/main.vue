@@ -1092,7 +1092,7 @@
       if (res.data.code == 1) {
         appData.value = res.data.body
       } else {
-        msg('查询失败', 'error')
+        msg(res.data.msg, 'error')
       }
     })
   }
@@ -1105,7 +1105,7 @@
       if (res.data.code == 1) {
         msg('刷新成功', 'success')
       } else {
-        msg('查询失败', 'error')
+        msg(res.data.msg, 'error')
       }
     })
   }
