@@ -1,5 +1,23 @@
 ## 配置中心
 
+
+
+### 背景场景
+
+​	目前主流的开源配置中心有：`SpringCloud Config`、`Nacos`、`Apollo`、`Disconf`，都是比较优秀的开源方案，为啥还要搞一个出来，主要原因为2个方面吧：首先`zk`本身的机制就支持集群部署保证了配置服务的可用性和安全性，可以将`zk`作为数据存储介质，另外也方便日后有特殊的需求能自行进行扩展实现。
+
+
+
+
+
+### 部署架构
+
+![image-20230223133110505](README/image/README/image-20230223133110505-1677130665982.png)
+
+
+
+
+
 ### 安装部署
 
 #### 安装`Zookeeper`集群
@@ -95,7 +113,7 @@ cd hmis-master/config
 mvn -skipTests=true clean package
 ```
 
-![image-20230223120116304](README/image/README/image-20230223120116304-1677125212198.png)
+![image-20230223120116304](README/image/README/image-20230223120116304.png)
 
 
 
@@ -110,7 +128,7 @@ cd config-1.0/target
 java -jar -Dspring_cloud_zookeeper_enabled=false config-1.0.jar
 ```
 
-![image-20230223114951609](README/image/README/image-20230223114951609-1677125212199.png)
+![image-20230223114951609](README/image/README/image-20230223114951609.png)
 
 
 
@@ -177,11 +195,11 @@ VUE_APP_PROD_BASE_URL=http://192.168.56.2:20000/hmis/config/ui
 
 再在路由界面配置路由转发规则
 
-![image-20230223094303870](README/image/README/image-20230223094303870-1677125212199.png)
+![image-20230223094303870](README/image/README/image-20230223094303870.png)
 
 
 
-![image-20230223094345730](README/image/README/image-20230223094345730-1677125212199.png)
+![image-20230223094345730](README/image/README/image-20230223094345730.png)
 
 
 
@@ -195,7 +213,7 @@ VUE_APP_PROD_BASE_URL=http://192.168.56.2:20000/hmis/config/ui
 
 http://192.168.56.2:21000/ui/index.html
 
-![image-20230223094712116](README/image/README/image-20230223094712116-1677125212199.png)
+![image-20230223094712116](README/image/README/image-20230223094712116.png)
 
 
 
@@ -203,7 +221,7 @@ http://192.168.56.2:21000/ui/index.html
 
 http://192.168.56.2:20000/hmis/config/ui/index.html
 
-![image-20230223094804943](README/image/README/image-20230223094804943-1677125212199.png)
+![image-20230223094804943](README/image/README/image-20230223094804943.png)
 
 
 
@@ -211,13 +229,13 @@ http://192.168.56.2:20000/hmis/config/ui/index.html
 
 #### 配置显示
 
-![image-20230218190638211](README/image/README/image-20230218190638211-1677125212199.png)
+![image-20230218190638211](README/image/README/image-20230218190638211.png)
 
 
 
 #### 创建目录
 
-![image-20230218190734442](README/image/README/image-20230218190734442-1677125212199.png)
+![image-20230218190734442](README/image/README/image-20230218190734442.png)
 
 
 
@@ -225,13 +243,13 @@ http://192.168.56.2:20000/hmis/config/ui/index.html
 
 #### 新增配置
 
-![image-20230218190810792](README/image/README/image-20230218190810792-1677125212199.png)
+![image-20230218190810792](README/image/README/image-20230218190810792.png)
 
 
 
 #### 批量删除配置
 
-![image-20230218190856164](README/image/README/image-20230218190856164-1677125212199.png)
+![image-20230218190856164](README/image/README/image-20230218190856164.png)
 
 
 
@@ -239,15 +257,15 @@ http://192.168.56.2:20000/hmis/config/ui/index.html
 
 #### 删除单条配置
 
-![image-20230218190923666](README/image/README/image-20230218190923666-1677125212199.png)
+![image-20230218190923666](README/image/README/image-20230218190923666.png)
 
 
 
 #### 导出配置
 
-![image-20230219153156385](README/image/README/image-20230219153156385-1677125212199.png)
+![image-20230219153156385](README/image/README/image-20230219153156385.png)
 
-![image-20230219153232040](README/image/README/image-20230219153232040-1677125212200.png)
+![image-20230219153232040](README/image/README/image-20230219153232040.png)
 
 
 
@@ -257,11 +275,11 @@ http://192.168.56.2:20000/hmis/config/ui/index.html
 
 由`ConfigUtils`工具类根据`springboot`配置文件生成`txt`文件
 
-![image-20230221160409117](README/image/README/image-20230221160409117-1677125212200.png)
+![image-20230221160409117](README/image/README/image-20230221160409117.png)
 
-![image-20230218190953924](README/image/README/image-20230218190953924-1677125212200.png)
+![image-20230218190953924](README/image/README/image-20230218190953924.png)
 
-![image-20230218191011742](README/image/README/image-20230218191011742-1677125212200.png)
+![image-20230218191011742](README/image/README/image-20230218191011742.png)
 
 导入文件可通过工具类创建生成 `com.github.hbq.common.utils.ConfigUtils`
 
@@ -281,13 +299,13 @@ ConfigUtils.of("manage").build("xxx");
 
 ##### properties文件
 
-![image-20230221160425061](README/image/README/image-20230221160425061-1677125212200.png)
+![image-20230221160425061](README/image/README/image-20230221160425061.png)
 
 
 
 
 
-![image-20230221184540201](README/image/README/image-20230221184540201-1677125212200.png)
+![image-20230221184540201](README/image/README/image-20230221184540201.png)
 
 
 
@@ -295,17 +313,17 @@ ConfigUtils.of("manage").build("xxx");
 
 ##### yml文件
 
-![image-20230221184905795](README/image/README/image-20230221184905795-1677125212200.png)
+![image-20230221184905795](README/image/README/image-20230221184905795.png)
 
 
 
-![image-20230221184735625](README/image/README/image-20230221184735625-1677125212200.png)
+![image-20230221184735625](README/image/README/image-20230221184735625.png)
 
 
 
 #### 配置查询
 
-![image-20230218191240444](README/image/README/image-20230218191240444-1677125212200.png)
+![image-20230218191240444](README/image/README/image-20230218191240444.png)
 
 
 
@@ -313,7 +331,7 @@ ConfigUtils.of("manage").build("xxx");
 
 #### 操作日志查询
 
-![image-20230218191321592](README/image/README/image-20230218191321592-1677125212200.png)
+![image-20230218191321592](README/image/README/image-20230218191321592.png)
 
 
 
@@ -321,7 +339,7 @@ ConfigUtils.of("manage").build("xxx");
 
 #### 备份恢复
 
-![image-20230219153413216](README/image/README/image-20230219153413216-1677125212200.png)
+![image-20230219153413216](README/image/README/image-20230219153413216.png)
 
 
 
@@ -329,7 +347,7 @@ ConfigUtils.of("manage").build("xxx");
 
 #### 刷新应用配置
 
-![image-20230220185443141](README/image/README/image-20230220185443141-1677125212200.png)
+![image-20230220185443141](README/image/README/image-20230220185443141.png)
 
 
 
