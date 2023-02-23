@@ -69,7 +69,9 @@ cd hmis-master/config
 mvn -skipTests=true clean package
 ```
 
-<img src="README/image/README/image-20230223093504601.png" alt="image-20230223093504601" style="zoom:50%;" align="left"/>
+![image-20230223110305342](README/image/README/image-20230223110305342.png)
+
+
 
 
 
