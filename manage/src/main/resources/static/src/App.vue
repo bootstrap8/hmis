@@ -69,7 +69,7 @@
                   </el-icon>
                   配置中心
                 </template>
-                <el-menu-item index="/config/home">UI控制台</el-menu-item>
+                <el-menu-item index="/default" @click="openConfigConsole">UI控制台</el-menu-item>
               </el-sub-menu>
               <el-sub-menu index="/open-ai">
                 <template #title>
@@ -114,6 +114,13 @@
 
   const goBack = () => {
     window.history.back()
+  }
+
+  const openConfigConsole=() =>{
+    const baseUrl=('development' == process.env.NODE_ENV
+        ? process.env.VUE_APP_DEV_BASE_URL
+        : process.env.VUE_APP_PROD_BASE_URL)
+    window.open(baseUrl+'/hmis/config/ui/index.html')
   }
 </script>
 

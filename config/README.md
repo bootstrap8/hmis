@@ -1,53 +1,159 @@
 ## 配置中心
 
-### 微服务适配
+### 安装部署
+
+#### 安装`Zookeeper`集群
+
+参考 [Apache Zookeeper](https://zookeeper.apache.org/doc/r3.5.10/zookeeperStarted.html)
 
 
 
-- 配置文件
+#### 单机部署(standalone)
 
-参考：[monitor/src/main/resources/bootstrap.properties](../monitor/src/main/resources/bootstrap.properties)
+1. 获取源码
+
+```bash
+git clone https://github.com/hbq969/hmis.git
+```
+
+
+
+2. 调整环境参数
+
+`vim hmis-master/config/src/main/resources/static/.env`
 
 ```properties
-spring.application.name=monitor
-spring.cloud.zookeeper.enabled=${spring_cloud_zookeeper_enabled}
-spring.cloud.zookeeper.connect-string=${spring_cloud_zookeeper_connectString}
-spring.cloud.zookeeper.config.root=/com/github/hbq
-spring.cloud.zookeeper.config.watcher.enabled=false
-spring.cloud.zookeeper.config.defaultContext=common
-spring.cloud.zookeeper.config.profileSeparator=,
-spring.cloud.zookeeper.auth.schema=digest
-spring.cloud.zookeeper.auth.info=${spring_cloud_zookeeper_auth_info}
+# standalone
+VUE_APP_DEV_BASE_URL=.
+VUE_APP_PROD_BASE_URL=.
 ```
 
 
 
-| 属性名                                         | 属性值            | 说明                     |
-| :--------------------------------------------- | :---------------- | :----------------------- |
-| spring.application.name                        | monitor           | 服务名                   |
-| spring.cloud.zookeeper.enabled                 | true              | 配置是否从配置中心读取   |
-| spring.cloud.zookeeper.connect-string          | 192.168.56.2:2181 | 配置中心地址             |
-| spring.cloud.zookeeper.config.root             | /com/github/hbq   | 配置目录                 |
-| spring.cloud.zookeeper.config.watcher.enabled  | false             | 是否启用动态监听配置变化 |
-| spring.cloud.zookeeper.config.defaultContext   | common            | 默认配置读取目录         |
-| spring.cloud.zookeeper.config.profileSeparator | ,                 | profiles分隔符           |
-| spring.cloud.zookeeper.auth.schema             | digest            | zk加密算法               |
-| spring.cloud.zookeeper.auth.info               | ****              | zk认证密码               |
+`vim hmis-master/config/src/main/resources/application.propeties`
 
+```bash
+# 数据库
+spring.datasource.dbcp2.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.dbcp2.url=jdbc:mysql://192.168.56.2:3306/hbq?useUnicode=true&serverTimezone=GMT%2B8&characterEncoding=utf8
+spring.datasource.dbcp2.username=hbq
+spring.datasource.dbcp2.password=hbq
+spring.datasource.dbcp2.max-total=5
+spring.datasource.dbcp2.max-wait-millis=300000
+spring.datasource.dbcp2.validation-query=select 1
 
+# mybatis
+mybatis.config-location=classpath:jpaConfig.xml
+mybatis.mapper-locations=classpath*:com/**/common/*Mapper.xml,classpath*:com/**/mysql/*Mapper.xml
 
-- maven依赖
+# Consul
+spring.cloud.consul.enabled=true
+spring.cloud.consul.discovery.enabled=true
+spring.cloud.consul.host=192.168.56.2
+spring.cloud.consul.port=8500
 
-```xml
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-zookeeper-config</artifactId>
-</dependency>
+# ZK集群地址(配置中心数据存储)
+zkUrl=192.168.56.2:12181
+zkSessionTimeoutMills=5000
 ```
 
 
 
-### 管理界面
+3. 构建打包
+
+```bash
+cd hmis-master/config/src/main/resources/static
+npm install
+npm run build
+cd hmis-master/config
+mvn -skipTests=true clean package
+```
+
+<img src="README/image/README/image-20230223093504601.png" alt="image-20230223093504601" style="zoom:50%;" align="left"/>
+
+
+
+4. 安装部署
+
+- vm
+
+```bash
+tar -xvf config-1.0.tar.gz
+cd config-1.0/deploy/bootstrap
+sh start.sh
+```
+
+
+
+- docker
+
+```
+cd config-1.0/deploy/docker
+sh start.sh
+```
+
+
+
+- k8s
+
+```
+cd config-1.0/deploy/kubernetes
+sh create.sh
+```
+
+注意：
+
+需要暴露监听端口，要么使用`NodePort`方式，要么使用网关或其他代理组件进行暴露，否则没法访问`UI`控制台。
+
+
+
+#### 配合gateway部署
+
+调整环境参数
+
+`vim hmis-master/config/src/main/resources/static/.env`
+
+```properties
+# gateway
+VUE_APP_DEV_BASE_URL=http://192.168.56.2:20000/hmis/config/ui
+VUE_APP_PROD_BASE_URL=http://192.168.56.2:20000/hmis/config/ui
+```
+
+
+
+再在路由界面配置路由转发规则
+
+![image-20230223094303870](README/image/README/image-20230223094303870.png)
+
+
+
+![image-20230223094345730](README/image/README/image-20230223094345730.png)
+
+
+
+
+
+### UI控制台
+
+#### 访问方式
+
+- 单机模式(standalone)
+
+http://192.168.56.2:21000/ui/index.html
+
+![image-20230223094712116](README/image/README/image-20230223094712116.png)
+
+
+
+- gateway模式
+
+http://192.168.56.2:20000/hmis/config/ui/index.html
+
+![image-20230223094804943](README/image/README/image-20230223094804943.png)
+
+
+
+
 
 #### 配置显示
 
@@ -173,9 +279,9 @@ ConfigUtils.of("manage").build("xxx");
 
 
 
-此功能需要应用端做如下改动：
+此功能需要config开启服务发现，应用开启服务注册：
 
-- 增加配置(Consul注册中心版本，其他适配后续版本支持)
+- config端增加配置(Consul注册中心版本，其他适配后续版本支持)
 
 ```properties
 # 如果向注册中心注册时不带上actuator-path这个标签，则使用默认值/hbq-actuator
@@ -186,7 +292,7 @@ management.endpoint.refresh.enabled=true
 management.endpoints.web.exposure.include=refresh
 ```
 
-- 应用中需要动态加载配置的类上添加如下注解
+- 应用端开启服务注册，并且需要动态加载配置的类上添加如下注解
 
 ```java
 @RefreshScope
@@ -202,6 +308,57 @@ public class DemoService {
   
 }
 ```
+
+
+
+### 应用如何接入zk配置中心
+
+
+
+- 配置文件
+
+`src/main/resources/bootstrap.properties`
+
+```properties
+spring.application.name=demo
+spring.cloud.zookeeper.enabled=${spring_cloud_zookeeper_enabled}
+spring.cloud.zookeeper.connect-string=${spring_cloud_zookeeper_connectString}
+spring.cloud.zookeeper.config.root=/com/github/hbq
+spring.cloud.zookeeper.config.watcher.enabled=false
+spring.cloud.zookeeper.config.defaultContext=common
+spring.cloud.zookeeper.config.profileSeparator=,
+spring.cloud.zookeeper.auth.schema=digest
+spring.cloud.zookeeper.auth.info=${spring_cloud_zookeeper_auth_info}
+```
+
+
+
+| 属性名                                         | 属性值             | 说明                                                         |
+| :--------------------------------------------- | :----------------- | :----------------------------------------------------------- |
+| spring.application.name                        | demo               | 服务名                                                       |
+| spring.cloud.zookeeper.enabled                 | true               | 配置是否从配置中心读取<br/>可以通过deploy/setenv.sh传入环境变量 |
+| spring.cloud.zookeeper.connect-string          | 192.168.56.2:12181 | 配置中心地址<br/>可以通过deploy/setenv.sh传入环境变量        |
+| spring.cloud.zookeeper.config.root             | /com/github/hbq    | 配置目录                                                     |
+| spring.cloud.zookeeper.config.watcher.enabled  | false              | 是否启用动态监听配置变化                                     |
+| spring.cloud.zookeeper.config.defaultContext   | common             | 默认配置读取目录                                             |
+| spring.cloud.zookeeper.config.profileSeparator | ,                  | profiles分隔符                                               |
+| spring.cloud.zookeeper.auth.schema             | digest             | zk加密算法                                                   |
+| spring.cloud.zookeeper.auth.info               | ****               | zk认证密码<br/>可以通过deploy/setenv.sh传入环境变量          |
+
+
+
+- maven依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zookeeper-config</artifactId>
+</dependency>
+```
+
+
+
+
 
 
 
